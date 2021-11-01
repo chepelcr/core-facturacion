@@ -1,0 +1,31 @@
+precio de costo
+precio de venta
+cantidad actual
+alerta de minimo
+
+monto total de articulos en inventario
+cantidad de articulos en inventario
+imprimir
+exportar
+entradas, salidas,
+
+CAJEROS
+
+
+corte del dia
+corte por fecha
+
+entradas de efectivo
+	entrada de dinero
+	dinero inicial en caja
+
+dinero en caja
+	ventas en efectivo
+	entradas
+	pagos a proveedores
+
+pagos de contado
+EFECTIVO
+TARJETA
+SIMPE O TRANSFERENCIA
+
