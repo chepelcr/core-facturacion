@@ -838,6 +838,7 @@ class Model
         
         catch (\Exception $ex)
         {
+            var_dump($ex);
             if($this->auditorias)
             {
                 $this->insertError($ex);

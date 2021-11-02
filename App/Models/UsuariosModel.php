@@ -10,19 +10,17 @@ class UsuariosModel extends Model
 	protected $nombreTabla = 'usuarios';
 	protected $pk_tabla = 'id_usuario';
 
+	protected $dbGroup = 'seguridad';
+
 	protected $camposTabla = [
 		'cedula_usuario',
 		'nombre',
-		'apellido',
 		'correo',
-		'nombre_usuario',
-		'contrasenia',
-		'id_sucursal',
 		'id_rol',
-		'id_empresa',
+		'telefono',
 		'estado',
-		'createdAt',
-		'updatedAt'
+		'created_at',
+		'updated_at'
 	];
 
 	protected $autoIncrement = true;

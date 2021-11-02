@@ -1,161 +1,182 @@
-<?php 
+<?php
 
 namespace App\Controllers;
 
 use App\Models\RolesModel;
 use App\Models\UbicacionesModel;
 use App\Models\UsuariosModel;
-use Core\Auditorias\AuditoriaModel ;
+use Core\Auditorias\AuditoriaModel;
 use Core\Auditorias\ErroresModel;
 
 /**
-* Descripción: Controlador para la entidad usuario
-*/
+ * Descripción: Controlador para la entidad usuario
+ */
 class Seguridad extends BaseController
-	{
-		public function index()
-		{
-				$usuariosModel = new UsuariosModel();
-				$usuarios = $usuariosModel->getAll();
+{
+	protected $isModulo = true;
+		
+	protected $objetos = ['usuarios', 'roles', 'auditorias', 'errores'];
 
-				$ubicacionesModel = new UbicacionesModel();
-                $provincias = $ubicacionesModel->provincias();
-				
-				$nombreVista = 'seguridad/usuario/listado';
-				
-				$head = '<!--DataTables-->
+	public function index()
+	{
+		$usuariosModel = new UsuariosModel();
+		$usuarios = $usuariosModel->getAll();
+
+		$nombreVista = 'seguridad/usuario/listado';
+
+		$head = '<!--DataTables-->
                 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
 
-				$script = '<!--DataTables-->
+		$script = '<!--DataTables-->
 				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 				
 				<!-- Listado -->
-				<script src="'.getFile('dist/js/base/listado.js').'"></script>
+				<script src="' . getFile('dist/js/base/listado.js') . '"></script>
 
 				<!-- Ubicaciones -->
-				<script src="'.getFile('dist/js/base/ubicaciones.js').'"></script>
+				<script src="' . getFile('dist/js/base/ubicaciones.js') . '"></script>
 				
 				<!-- Usuarios -->
-				<script src="'.getFile('dist/js/seguridad/usuarios.js').'"></script>';
+				<script src="' . getFile('dist/js/seguridad/usuarios.js') . '"></script>';
 
-				$dataProvincias = array(
-                    'provincias'=>$provincias
-                );
+		$nombreForm = 'seguridad/usuario/form';
 
-				$nombreForm = 'seguridad/usuario/form';
+		$dataModal = array(
+			'nombreForm' => $nombreForm,
+		);
 
-				$dataModal = array(
-					'nombreForm'=>$nombreForm,
-					'dataForm'=>array(
-						'dataProvincias'=>$dataProvincias,
-					)
-				);
+		$dataView = array(
+			'usuarios' => $usuarios,
+			'dataModal' => $dataModal
+		);
 
-				$dataView = array(
-					'usuarios'=>$usuarios,
-					'dataModal'=>$dataModal
-					
-				);
+		$dataHead = array(
+			'head' => $head
+		);
 
-				$dataHead = array(
-					'head'=>$head
-				);
+		$titulo = 'Seguridad';
+		$objeto = 'Usuarios';
+		$pagina = 'Listado';
 
-				$titulo = 'Seguridad';
-				$objeto = 'Usuarios';
-				$pagina = 'Listado';
+		$dataHeader = array(
+			'titulo' => $titulo,
+			'objeto' => $objeto,
+			'pagina' => $pagina
+		);
 
-				$dataHeader = array(
-					'titulo'=>$titulo,
-					'objeto'=>$objeto,
-					'pagina'=>$pagina
-				);
+		$data = array(
+			'nombreVista' => $nombreVista,
+			'dataView' => $dataView,
+			'dataHead' => $dataHead,
+			'dataHeader' => $dataHeader,
+			'script' => $script
+		);
 
-				$data = array(
-					'nombreVista'=>$nombreVista,
-					'dataView'=>$dataView,
-					'dataHead'=>$dataHead,
-					'dataHeader'=>$dataHeader,
-					'script'=>$script
-				);
-	
-				return view('layout', $data);
-		}//Fin de la funcion para retornar los usuarios del sistema
+		return view('layout', $data);
+	} //Fin de la funcion para retornar los usuarios del sistema
 
-		/**Obtener todos los roles del sistema */
-		public function roles()
-		{
-			if(is_login())
-			{
-				$rolesModel = new RolesModel();
-				$roles = $rolesModel->getAll();
+	/**Obtener todos los roles del sistema */
+	public function roles()
+	{
+			$rolesModel = new RolesModel();
+			$roles = $rolesModel->getAll();
 
-				$objeto = 'rol';
+			$nombreVista = 'seguridad/rol/listado';
+			$nombreForm = 'seguridad/rol/form';
 
-				$nombreVista = $objeto.'/listado';
-				$nombreForm = $objeto.'/form';
-
-				$head = '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
-				$script = '<!--DataTables-->
+			$head = '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
+			$script = '<!--DataTables-->
 				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 				
 				<!-- Listado -->
-				<script src="'.getFile('dist/js/listado.js').'"></script>
+				<script src="' . getFile('dist/js/base/listado.js') . '"></script>
 				
 				<!-- Roles -->
-				<script src="'.getFile('dist/js/rol.js').'"></script>';
+				<script src="' . getFile('dist/js/seguridad/rol.js') . '"></script>';
 
-				$dataModal = array(
-					'nombreForm'=>$nombreForm,
-				);
-				
-				$dataView = array(
-					'dataModal'=>$dataModal,
-					'roles'=>$roles,
-				);
+			$dataModal = array(
+				'nombreForm' => $nombreForm,
+			);
 
-				$dataHead = array(
-					'head'=>$head
-				);
+			$dataView = array(
+				'dataModal' => $dataModal,
+				'roles' => $roles,
+			);
 
-				$titulo = 'Sucursal';
-				$objeto = 'Usuarios';
-				$pagina = 'Roles';
+			$dataHead = array(
+				'head' => $head
+			);
 
-				$dataHeader = array(
-					'titulo'=>$titulo,
-					'objeto'=>$objeto,
-					'pagina'=>$pagina
-				);
+			$titulo = 'Sucursal';
+			$objeto = 'Usuarios';
+			$pagina = 'Roles';
 
-				$data = array(
-					'nombreVista'=>$nombreVista,
-					'dataView'=>$dataView,
-					'dataHead'=>$dataHead,
-					'dataHeader'=>$dataHeader,
-					'script'=>$script
-				);
-	
-				return view('layout', $data);
-			}//Fin de la validacion
+			$dataHeader = array(
+				'titulo' => $titulo,
+				'objeto' => $objeto,
+				'pagina' => $pagina
+			);
 
-			else
-				header('Location: '.baseUrl());
-		}//Fin de la funcion
+			$data = array(
+				'nombreVista' => $nombreVista,
+				'dataView' => $dataView,
+				'dataHead' => $dataHead,
+				'dataHeader' => $dataHeader,
+				'script' => $script
+			);
 
-		public function auditorias()
-		{
-			if(is_login())
-			{
-				$auditoriaModel = new AuditoriaModel();
+			return view('layout', $data);
+	} //Fin de la funcion
 
-				$head = '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
+	public function perfil()
+	{
+			$usuariosModel = new UsuariosModel();
+			$perfil = $usuariosModel->getById(getSession('id_usuario'));
 
-				$script = '<!--DataTables-->
+			$script = '<!-- Perfil de usuario -->
+				<script src="' . getFile('dist/js/seguridad/perfil.js') . '"></script>';
+
+			$titulo = 'Seguridad';
+			$objeto = 'Perfil';
+			$pagina = 'Informacion';
+
+			$dataHeader = array(
+				'titulo' => $titulo,
+				'objeto' => $objeto,
+				'pagina' => $pagina
+			);
+
+			$dataForm = array(
+				'nombreForm' => 'seguridad/perfil/contrasenia'
+			);
+
+			$dataView = array(
+				'perfil' => $perfil,
+				'dataForm' => $dataForm,
+			);
+
+			$data = array(
+				'nombreVista' => 'seguridad/perfil/perfil',
+				'dataView' => $dataView,
+				'dataHeader' => $dataHeader,
+				'script' => $script
+			);
+
+			return view('layout', $data);
+	}
+
+	public function auditorias()
+	{
+		if (is_login()) {
+			$auditoriaModel = new AuditoriaModel();
+
+			$head = '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
+
+			$script = '<!--DataTables-->
 				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 				
 				<!-- Listado -->
-				<script src="'.getFile('dist/js/base/listado.js').'"></script>
+				<script src="' . getFile('dist/js/base/listado.js') . '"></script>
 
 				<script>
 				$(document).on("click", "#btnAgregar", function(e) {
@@ -165,94 +186,90 @@ class Seguridad extends BaseController
 				});
 				</script>';
 
-				$dataView = array(
-					'auditorias'=> $auditoriaModel->getAll(),
-				);
+			$dataView = array(
+				'auditorias' => $auditoriaModel->getAll(),
+			);
 
 
-				$dataHead = array(
-					'head'=>$head
-				);
+			$dataHead = array(
+				'head' => $head
+			);
 
-				$titulo = 'Seguridad';
-				$objeto = 'Auditorias';
-				$pagina = 'Listado';
+			$titulo = 'Seguridad';
+			$objeto = 'Auditorias';
+			$pagina = 'Listado';
 
-				$dataHeader = array(
-					'titulo'=>$titulo,
-					'objeto'=>$objeto,
-					'pagina'=>$pagina
-				);
+			$dataHeader = array(
+				'titulo' => $titulo,
+				'objeto' => $objeto,
+				'pagina' => $pagina
+			);
 
-				$data = array(
-					'nombreVista' => 'seguridad/auditoria/listado',
-					'dataView'=>$dataView,
-					'dataHeader'=>$dataHeader,
-					'dataHead'=> $dataHead,
-					'script'=> $script
-				);
+			$data = array(
+				'nombreVista' => 'seguridad/auditoria/listado',
+				'dataView' => $dataView,
+				'dataHeader' => $dataHeader,
+				'dataHead' => $dataHead,
+				'script' => $script
+			);
 
-				return view('layout', $data);
-			}//Fin de la validacion
-		}//Fin de la funcion para mostrar el listado de auditorias
+			return view('layout', $data);
+		} //Fin de la validacion
+	} //Fin de la funcion para mostrar el listado de auditorias
 
-		public function errores()
-		{
-			if(is_login())
-			{
-				$erroresModel = new ErroresModel();
+	public function errores()
+	{
+			$erroresModel = new ErroresModel();
 
-				$errores = $erroresModel->getAll();
-				
-				$nombreVista = 'seguridad/auditoria/errores';
-				
-				$head = '<!--DataTables-->
+			$errores = $erroresModel->getAll();
+
+			$nombreVista = 'seguridad/auditoria/errores';
+
+			$head = '<!--DataTables-->
                 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
 
-				$script = '<!--DataTables-->
+			$script = '<!--DataTables-->
 				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 				
 				<!-- Listado -->
-				<script src="'.getFile('dist/js/base/listado.js').'"></script>';
+				<script src="' . getFile('dist/js/base/listado.js') . '"></script>';
 
-				$dataView = array(
-					'errores'=> $errores,
-				);
+			$dataView = array(
+				'errores' => $errores,
+			);
 
-				$dataHead = array(
-					'head'=>$head
-				);
+			$dataHead = array(
+				'head' => $head
+			);
 
-				$titulo = 'Seguridad';
-				$objeto = 'Auditorias';
-				$pagina = 'Errores';
+			$titulo = 'Seguridad';
+			$objeto = 'Auditorias';
+			$pagina = 'Errores';
 
-				$dataHeader = array(
-					'titulo'=>$titulo,
-					'objeto'=>$objeto,
-					'pagina'=>$pagina
-				);
+			$dataHeader = array(
+				'titulo' => $titulo,
+				'objeto' => $objeto,
+				'pagina' => $pagina
+			);
 
-				$data = array(
-					'nombreVista' => $nombreVista,
-					'dataView'=>$dataView,
-					'dataHeader'=>$dataHeader,
-					'dataHead'=> $dataHead,
-					'script'=> $script
-				);
+			$data = array(
+				'nombreVista' => $nombreVista,
+				'dataView' => $dataView,
+				'dataHeader' => $dataHeader,
+				'dataHead' => $dataHead,
+				'script' => $script
+			);
 
-				return view('layout', $data);
-			}//Fin de la validacion
-		}//Fin de la funcion para mostrar todos los errores
+			return view('layout', $data);
+	} //Fin de la funcion para mostrar todos los errores
 
-		public function obtener_error()
-		{
-			if(is_login())
-			{
-				$erroresModel = new ErroresModel();
-				$error = $erroresModel->getById(getSegment(3));
+	public function obtener_error()
+	{
+		if (is_login()) {
+			$erroresModel = new ErroresModel();
+			$error = $erroresModel->getById(getSegment(3));
 
-				return json_decode($error);
-			}//Fin de la validacion
-		}//Fin de la funcion para obtener un error
-	}//Fin de la clase
+			return json_decode($error);
+		} //Fin de la validacion
+	} //Fin de la funcion para obtener un error
+}//Fin de la clase

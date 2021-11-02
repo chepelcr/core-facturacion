@@ -12,11 +12,12 @@ class RolesModel extends Model
 	protected $nombreTabla = "roles";
 	protected $pk_tabla = "id_rol";
 
+	protected $dbGroup = 'seguridad';
+
 	protected $camposTabla = [
 		'nombre_rol',
 		'estado',
-		'createdAt',
-		'updatedAt'
+		'created_at',
 	];
 
 	protected $autoIncrement = true;

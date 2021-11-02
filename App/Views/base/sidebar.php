@@ -3,7 +3,7 @@
     <a href="<?=baseUrl()?>" class="brand-link">
         <img src="<?=getFile('dist/img/logo.png')?>" alt="Logo"
             class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">Sitema de ordenes</span>
+        <span class="brand-text font-weight-light">Sistema de ordenes</span>
     </a>
 
     <!-- Sidebar -->

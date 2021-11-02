@@ -3,10 +3,10 @@ var cedula_usuario = "";
 $(document).ready(function() {
 
     //Agregar un nuevo usuario
-    $("#frmUsuario").on('submit', function(e) {
+    $("#frm").on('submit', function(e) {
         e.preventDefault();
 
-        $.ajax({
+        /*$.ajax({
             "url": base + "usuario/guardar",
             "method": "post",
             "data": $('#frmUsuario').serialize(),
@@ -28,7 +28,9 @@ $(document).ready(function() {
             else {
                 mensajeAutomatico('Atencion','Ha ocurrido un error', 'error');
             } //Fin del else
-        });
+        });*/
+
+        mensaje("Atencion", "Usuario agregado correctamente", "success");
     });
 
     //Modificar un usuario
@@ -58,7 +60,7 @@ $(document).ready(function() {
         var id_usuario = this.value;
 
         $.ajax({
-            "url": base + "usuario/obtener/" + id_usuario,
+            "url": base + "seguridad/obtener/" + id_usuario + '/usuarios',
             "dataType": "json",
         }).done(function(response) {
             
@@ -74,6 +76,7 @@ $(document).ready(function() {
 
         //Mostrar el modal del usuario
         $('#modalAccion').modal('show');
+        $(".modal-title").html('Modificar usuario');
 
         $('.btt-mod').show();
         $('.btt-grd').hide();
@@ -84,7 +87,7 @@ $(document).ready(function() {
 function verificar() {
     cedula_usuario = $("#cedula_usuario").val();
     
-    $.ajax({
+    /*$.ajax({
         "url": base + "usuario/verificar",
         "method": "post",
         "data": {
@@ -94,28 +97,56 @@ function verificar() {
     }).done(function(response) {
         
         if (response) {
-            mensaje("Alerta", "El usuario ya se encuentra agregado", "info");
+            mensaje("Alerta", "La cedula indicada ya se encuentra registrada", "info");
 
-            $.each(response, function(key, valor) {
-                $("#" + key).val(valor)
-                $("#" + key).attr("disabled", true);
-            });
-
-            $("#estado").prop("checked", response.estado);
+            $(".inp").attr("disabled", true);
 
             $("#cedula_usuario").attr("disabled", false);
             $("#btnGuardar").attr("disabled", true);
-            $("#btnCabys").attr("disabled", true);
         }//Fin del usuario existente
 
-        else{
-            $('inp').val('');
-            $("#cedula_usuario").val(cedula_usuario);
+        else
+        {
+            $('inp').attr("disabled", false);
         }
-    });
-}
+    });*/
+
+    mensaje("Alerta", "La cedula indicada ya se encuentra registrada", "info");
+}//Fin de verificar
+
+function verificar_correo() 
+{
+    var correo_usuario = $("#correo").val();
+
+    /*$.ajax({
+        "url": base + "seguridad/verificar_correo",
+        "method": "post",
+        "data": {
+            "correo": correo
+        },
+        "dataType": "json",
+    }).done(function(response) {
+        
+        if (response) {
+            mensaje("Alerta", "El correo indicado ya se encuentra registrado", "info");
+
+            $(".inp").attr("disabled", true);
+
+            $("#correo_usuario").attr("disabled", false);
+            $("#btnGuardar").attr("disabled", true);
+        }
+
+        else
+        {
+            $('inp').attr("disabled", false);
+        }
+    });*/
+
+    mensaje("Alerta", "El correo ya se encuentra registrado", "info");
+}//Fin de verificar_correo
 
 //Mostrar el modal para agregar o modificar un usuario
 $(document).on('click', '#btnAgregar', function() {
+    $(".modal-title").html('Agregar usuario');
     $("#cedula_usuario").attr("disabled", false);
 });

@@ -23,7 +23,7 @@
             </a>
         </li>
 
-        <!-- Errores y auditorias -->
+        <!-- Auditorias -->
         <li class="nav-item">
             <a href="<?= baseUrl('seguridad/auditorias')?>" class="nav-link">
                 <p>Auditorias</p>
@@ -31,12 +31,19 @@
             </a>
         </li>
 
-        <!-- Errores y auditorias -->
+        <!-- Errores -->
         <li class="nav-item">
             <a href="<?= baseUrl('seguridad/errores')?>" class="nav-link">
                 <p>Errores</p>
                 <i class="fas fa-exclamation-triangle right nav-icon"></i>
             </a>
         </li>
+
+        <!-- Perfil -->
+        <li class="nav-item">
+            <a href="<?= baseUrl('seguridad/perfil')?>" class="nav-link">
+                <p>Perfil</p>
+                <i class="fas fa-user-circle nav-icon right"></i>
+            </a>
     </ul>
 </li>

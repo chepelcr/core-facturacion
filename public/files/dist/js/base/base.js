@@ -21,16 +21,17 @@ document.addEventListener('keyup', (event) => {
 
 //Enviar un mensaje al usuario
 function mensaje(titulo, mensaje, icono) {
-    swal({
+    Swal.fire({
+        icon: icono,
         title: titulo,
         text: mensaje,
-        icon: icono
-    })//Fin del mensaje
+        showConfirmButton: false
+      })
 }//Fin del mensaje
 
 //Mensaje que se cierra automaticamente
 function mensajeAutomatico(titulo, mensaje, icono) {
-    swal({
+    Swal.fire({
         title: titulo,
         text: mensaje,
         icon: icono,

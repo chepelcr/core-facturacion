@@ -18,9 +18,9 @@
                 <table class="table table-bordered table-hover" id="listado">
                     <thead>
                         <tr>
-                            <th>Nombre del rol</th>
-                            <th>Fecha de creacion</th>
-                            <th>Acciones</th>
+                            <th class="col-7">Nombre del rol</th>
+                            <th class="col-3">Fecha de creacion</th>
+                            <th class="col-2">Acciones</th>
                         </tr>
                     </thead>
 
@@ -28,7 +28,7 @@
                         <?php foreach ($roles as $rol):?>
                         <tr>
                             <td><?=$rol->nombre_rol?></td>
-                            <td><?=$rol->createdAt?></td>
+                            <td><?=$rol->created_at?></td>
                             <td>
                                 <button class="btn btn-info" id="modificar" value="<?=$rol->id_rol?>">Modificar</button>
                                 <!--Modificar articulo-->

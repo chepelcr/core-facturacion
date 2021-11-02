@@ -18,18 +18,19 @@
                 <table class="table table-bordered table-hover" id="listado">
                     <thead>
                         <tr>
-                            <th>Numero de cédula</th>
-                            <th>Nombre completo</th>
-                            <th>Correo electronico</th>
-                            <th>Opciones</th>
+                            <th class="col-3">Numero de cédula</th>
+                            <th class="col-5">Nombre completo</th>
+                            <th class="col-3">Telefono</th>
+                            <th class="col-1">Opciones</th>
                         </tr>
                     </thead>
+                    
                     <tbody>
                         <?php foreach ($usuarios as $key => $usuario):?>
                         <tr>
                             <td><?=$usuario->cedula_usuario?></td>
-                            <td><?=$usuario->nombre?> <?=$usuario->apellido?></td>
-                            <td><?=$usuario->correo?></td>
+                            <td><?=$usuario->nombre?></td>
+                            <td><?=$usuario->telefono?></td>
                             <td>
                                 <button class="btn btn-info" id="modificar"
                                     value="<?=$usuario->id_usuario?>">Modificar</button>
