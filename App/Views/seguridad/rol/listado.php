@@ -2,12 +2,11 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <nav class="nav nav-pills flex-column flex-sm-row">
-                    <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad')?>">Usuarios</a>
-                    <a class="flex-sm-fill text-sm-center nav-link active" href="<?=baseUrl('seguridad/roles')?>">Roles</a>
-
-                    <button class="btn btn-danger col-md-3" id="btnAgregar">Agregar rol</button>
-                </nav>
+            <div class="row">
+                    <?php
+                        echo view('seguridad/nav', array('submodulo'=>'roles', 'objeto'=>'rol'));
+                    ?>
+                </div>
             </div>
         </div>
     </div>
@@ -51,6 +50,7 @@
                                             type="button">Ver permisos</button>
                                         
                                         <?php
+
                                             if(validar_permiso('seguridad', 'roles', 'modificar'))
                                             {
                                         ?>

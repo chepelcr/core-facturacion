@@ -38,13 +38,5 @@
                 <i class="fas fa-exclamation-triangle right nav-icon"></i>
             </a>
         </li>
-
-        <!-- Perfil -->
-        <li class="nav-item">
-            <a href="<?= baseUrl('seguridad/perfil')?>" class="nav-link">
-                <p>Perfil</p>
-                <i class="fas fa-user-circle nav-icon right"></i>
-            </a>
-        </li>
     </ul>
 </li>
