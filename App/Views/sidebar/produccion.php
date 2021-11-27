@@ -46,6 +46,19 @@
                     </a>
                 </li>';
         }
+
+        //Clientes
+        if(!isset($submodulos['clientes']))
+        {
+            echo 
+            '<!-- Listado Clientes -->
+                <li class="nav-item">
+                    <a href="'. baseUrl('produccion/clientes').'" class="nav-link">
+                        <p>Clientes</p>
+                        <i class="fas fa-users nav-icon right"></i>
+                    </a>
+                </li>';
+        }
         ?>
     </ul>
 </li>

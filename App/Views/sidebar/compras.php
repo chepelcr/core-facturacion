@@ -8,18 +8,6 @@
 
     <ul class="nav nav-treeview">
         <?php
-            //Clientes
-            if(isset($submodulos['clientes']))
-            {
-                echo 
-                '<!-- Listado Clientes -->
-                    <li class="nav-item">
-                        <a href="'. baseUrl('compra/clientes').'" class="nav-link">
-                            <p>Clientes</p>
-                            <i class="fas fa-user-tie nav-icon right"></i>
-                        </a>
-                    </li>';
-            }
 
             //Lotes de compra
             if(isset($submodulos['lotes']))
@@ -35,7 +23,7 @@
             }
 
             //Proveedores
-            if(isset($submodulos['proveedores']))
+            if(!isset($submodulos['proveedores']))
             {
                 echo 
                 '<!-- Listado Proveedores -->
