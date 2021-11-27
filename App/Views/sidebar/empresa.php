@@ -7,18 +7,12 @@
     </a>
 
     <ul class="nav nav-treeview">
-        <?php
-            if(in_array('informacion', $submodulos))
-            {
-                echo 
-                '<!-- Inventario -->
-                    <li class="nav-item">
-                        <a href="'. baseUrl('empresa').'" class="nav-link">
-                            <p>Informacion</p>
-                            <i class="nav-icon right fas fa-boxes"></i>
-                        </a>
-                    </li>';
-            }
-        ?>
+        <!-- Inventario -->
+        <li class="nav-item">
+            <a href="<?= baseUrl('empresa')?>" class="nav-link">
+                <p>Informacion</p>
+                <i class="nav-icon right fas fa-boxes"></i>
+            </a>
+        </li>
     </ul>
 </li>

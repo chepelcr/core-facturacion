@@ -27,6 +27,8 @@
                 <?php
                     echo view('sidebar/dashboard');
 
+                    echo view('sidebar/empresa');
+
                     $modulos = getModulos();
 
                     foreach ($modulos as $nombre_modulo => $submodulos) {

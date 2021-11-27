@@ -8,29 +8,44 @@
 
     <ul class="nav nav-treeview">
     <?php
-            if(in_array('lotes', $submodulos))
-            {
-                echo 
-                '<!-- Inventario -->
-                    <li class="nav-item">
-                        <a href="'. baseUrl('produccion').'" class="nav-link">
-                            <p>Lotes de produccion</p>
-                            <i class="nav-icon right fas fa-boxes"></i>
-                        </a>
-                    </li>';
-            }
+        //Lotes de produccion
+        if(isset($submodulos['lotes']))
+        {
+            echo 
+            '<!-- Listado Lotes -->
+                <li class="nav-item">
+                    <a href="'. baseUrl('produccion/lotes').'" class="nav-link">
+                        <p>Lotes de produccion</p>
+                        <i class="fas fa-boxes nav-icon right"></i>
+                    </a>
+                </li>';
+        }
 
-            if(in_array('productos', $submodulos))
-            {
-                echo 
-                '<!-- Listado productos -->
-                    <li class="nav-item">
-                        <a href="'. baseUrl('produccion/productos').'" class="nav-link">
-                            <p>Productos</p>
-                            <i class="fas fa-folder nav-icon right"></i>
-                        </a>
-                    </li>';
-            }
+        //Ordenes de compra
+        if(!isset($submodulos['ordenes']))
+        {
+            echo 
+            '<!-- Listado Ordenes de compra -->
+                <li class="nav-item">
+                    <a href="'. baseUrl('produccion/ordenes').'" class="nav-link">
+                        <p>Ordenes de compra</p>
+                        <i class="fas fa-shopping-cart nav-icon right"></i>
+                    </a>
+                </li>';
+        }
+
+        //Productos que se fabrican
+        if(isset($submodulos['productos']))
+        {
+            echo 
+            '<!-- Listado Productos -->
+                <li class="nav-item">
+                    <a href="'. baseUrl('produccion/productos').'" class="nav-link">
+                        <p>Productos</p>
+                        <i class="fas fa-box-open nav-icon right"></i>
+                    </a>
+                </li>';
+        }
         ?>
     </ul>
 </li>

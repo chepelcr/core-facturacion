@@ -8,26 +8,54 @@
 
     <ul class="nav nav-treeview">
         <?php
-            if(in_array('lotes', $submodulos))
+            //Clientes
+            if(isset($submodulos['clientes']))
             {
                 echo 
-                '<!-- Inventario -->
+                '<!-- Listado Clientes -->
                     <li class="nav-item">
-                        <a href="'. baseUrl('compras').'" class="nav-link">
-                            <p>Lotes de compra</p>
-                            <i class="nav-icon right fas fa-boxes"></i>
+                        <a href="'. baseUrl('compra/clientes').'" class="nav-link">
+                            <p>Clientes</p>
+                            <i class="fas fa-user-tie nav-icon right"></i>
                         </a>
                     </li>';
             }
 
-            if(in_array('productos', $submodulos))
+            //Lotes de compra
+            if(isset($submodulos['lotes']))
             {
                 echo 
-                '<!-- Listado documentos -->
+                '<!-- Listado Lotes -->
                     <li class="nav-item">
-                        <a href="'. baseUrl('compras/productos').'" class="nav-link">
+                        <a href="'. baseUrl('compra/lotes').'" class="nav-link">
+                            <p>Lotes</p>
+                            <i class="fas fa-boxes nav-icon right"></i>
+                        </a>
+                    </li>';
+            }
+
+            //Proveedores
+            if(isset($submodulos['proveedores']))
+            {
+                echo 
+                '<!-- Listado Proveedores -->
+                    <li class="nav-item">
+                        <a href="'. baseUrl('compra/proveedores').'" class="nav-link">
+                            <p>Proveedores</p>
+                            <i class="fas fa-truck nav-icon right"></i>
+                        </a>
+                    </li>';
+            }
+
+            //Productos
+            if(isset($submodulos['productos']))
+            {
+                echo 
+                '<!-- Listado Productos -->
+                    <li class="nav-item">
+                        <a href="'. baseUrl('compra/productos').'" class="nav-link">
                             <p>Productos</p>
-                            <i class="fas fa-folder nav-icon right"></i>
+                            <i class="fas fa-box-open nav-icon right"></i>
                         </a>
                     </li>';
             }
