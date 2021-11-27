@@ -1,152 +1,188 @@
 var cedula_usuario = "";
+var id_usuario = "";
 
-$(document).ready(function() {
+//Habilitar un usuario
+function habilitar(id_usuario) {
+    $.ajax({
+        "url": base + "seguridad/activar/" + id_usuario + "/usuarios",
+        "method": "post",
+        "dataType": "json",
+    }).done(function (response) {
+        if (!response.error) {
+            mensajeAutomaticoRecargar("Alerta", 'Usuario habilitado correctamente', "success");
+        } //Fin del if
+        else {
+            mensajeAutomatico('Atencion', 'Ha ocurrido un error: ' + response.error, 'error');
+        } //Fin del else
+    });
+}//Fin de habilitar un usuario
 
+//Deshabilitar un usuario
+function deshabilitar(id_usuario) {
+    $.ajax({
+        "url": base + "seguridad/desactivar/" + id_usuario + "/usuarios",
+        "method": "post",
+        "dataType": "json",
+    }).done(function (response) {
+        if (!response.error) {
+            mensajeAutomaticoRecargar("Alerta", 'Usuario deshabilitado correctamente', "success");
+        } //Fin del if
+        else {
+            mensajeAutomatico('Atencion', 'Ha ocurrido un error: ' + response.error, 'error');
+        } //Fin del else
+    });
+}//Fin de deshabilitar un usuario
+
+$(document).ready(function () {
     //Agregar un nuevo usuario
-    $("#frm").on('submit', function(e) {
+    $("#frm").on('submit', function (e) {
         e.preventDefault();
 
-        /*$.ajax({
-            "url": base + "usuario/guardar",
-            "method": "post",
-            "data": $('#frmUsuario').serialize(),
-            "dataType": "json",
-        }).done(function(response) {
-            
-            if (response != 0) {
-                swal({
-                    title: "Atencion",
-                    text: "Usuario agregado correctamente",
-                    icon: "success",
-                    timer: 3000,
-                    buttons: false
-                }).then(function(){
-                    location.reload();    
-                });//Fin del mensaje
-                
-            } //Fin del if
-            else {
-                mensajeAutomatico('Atencion','Ha ocurrido un error', 'error');
-            } //Fin del else
-        });*/
+        Pace.track(function () {
+            $.ajax({
+                "url": base + "seguridad/guardar/usuarios",
+                "method": "post",
+                "data": $('#frm').serialize(),
+                "dataType": "json",
+            }).done(function (response) {
 
-        mensaje("Atencion", "Usuario agregado correctamente", "success");
+                if (!response.error) {
+                    mensajeAutomaticoRecargar("Alerta", 'Usuario agregado correctamente', "success");
+                } //Fin del if
+                else {
+                    mensajeAutomatico('Atencion', 'Ha ocurrido un error: ' + response.error.sentencia, 'error');
+                } //Fin del else
+            });
+        });
     });
 
     //Modificar un usuario
-    $(document).on('click', '.btt-mod', function(e) {
-        e.preventDefault();
-        
+    $(document).on('click', '.btt-mod', function (e) {
         $.ajax({
-            "url": base + "usuario/update",
+            "url": base + "seguridad/update/" + id_usuario + "/usuarios",
             "method": "post",
-            "data": $('#frmUsuario').serialize(),
+            "data": $('#frm').serialize(),
             "dataType": "json",
-        }).done(function(response) {
-            
-            if (response != 0) {
-                mensajeAutomatico('Atencion', 'Usuario actualizado correctamente', 'success').then(function(){
-                    location.reload();
-                });
+        }).done(function (response) {
+            if (!response.error) {
+                mensajeAutomaticoRecargar("Alerta", 'Usuario modificado correctamente', "success");
             } //Fin del if
             else {
-                mensajeAutomatico('Atencion', 'Ha ocurrido un error', 'error');
+                mensajeAutomatico('Atencion', 'Ha ocurrido un error: ' + response.error, 'error');
             } //Fin del else
         });
     });//Fin de modificar un usuario
 
+    //Editar un usuario
+    $(document).on('click', '.btt-edt', function (e) {
+        $("#cedula_usuario").attr("readonly", true);
+    });//Fin de editar un usuario
+
+
     //Cuando se le da click al boton de modificar
-    $(document).on('click', '#modificar', function() {
-        var id_usuario = this.value;
+    $(document).on('click', '#modificar', function () {
+        id_usuario = this.value;
 
         $.ajax({
             "url": base + "seguridad/obtener/" + id_usuario + '/usuarios',
             "dataType": "json",
-        }).done(function(response) {
-            
-            if (response) {
-                $.each(response, function(key, valor) {
-                    $("#" + key).val(valor)
-                    $("#" + key).attr("disabled", false);
-                });
+        }).done(function (response) {
+            if (!response.error) {
+                id_usuario = response.id_usuario;
 
-                $("#cedula_usuario").attr("disbled", true);
+                llenarFrm(response, 'Editar usuario');
+
+                $("#cedula_usuario").attr("readonly", true);
+            }
+
+            else {
+                mensajeAutomatico('Atencion', 'Ha ocurrido un error: ' + response.error, 'error');
             }
         });
+    });
 
-        //Mostrar el modal del usuario
-        $('#modalAccion').modal('show');
-        $(".modal-title").html('Modificar usuario');
+    //Cuando se le da click al boton de ver
+    $(document).on('click', '#ver', function () {
+        id_usuario = this.value;
 
-        $('.btt-mod').show();
-        $('.btt-grd').hide();
+        $.ajax({
+            "url": base + "seguridad/obtener/" + id_usuario + '/usuarios',
+            "dataType": "json",
+        }).done(function (response) {
+            if (!response.error) {
+                verFrm(response, 'Informacion del usuario');
+            }
+
+            else
+            {
+                mensajeAutomatico('Atencion', 'Ha ocurrido un error: ' + response.error, 'error');
+            }
+        });
+    });
+
+    //Cuando se le da click al boton de enviar contrasenia
+    $(document).on('click', '#enviar', function () {
+        id_usuario = this.value;
+
+        Pace.track(function () {
+            $.ajax({
+                "url": base + "seguridad/enviar_contrasenia/" + id_usuario,
+                "dataType": "json",
+            }).done(function (response) {
+                if (response.estado!='0') {
+                    mensajeAutomatico("Alerta", 'Contraseña enviada correctamente', "success");
+                } //Fin del if
+                else {
+                    mensajeAutomatico('Atencion', 'Ha ocurrido un error: ' + response.error, 'error');
+                } //Fin del else
+            });//Fin del ajax
+        });
+    });
+
+    //Cuando se le da click al boton de desactivar
+    $(document).on('click', '#desactivar', function () {
+        id_usuario = this.value;
+
+        deshabilitar(id_usuario);
+    });
+
+    //Cuando se le da click al boton de activar
+    $(document).on('click', '#activar', function () {
+        id_usuario = this.value;
+
+        habilitar(id_usuario);
+    });
+
+    //Cuando se le da click al boton de agregar
+    $(document).on('click', '#btnAgregar', function () {
+        $(".titulo-form").html('Agregar usuario');
     });
 });
 
 //Verificar numero de cedula del usuario
 function verificar() {
     cedula_usuario = $("#cedula_usuario").val();
-    
-    /*$.ajax({
-        "url": base + "usuario/verificar",
-        "method": "post",
-        "data": {
-            "cedula_usuario": cedula_usuario
-        },
-        "dataType": "json",
-    }).done(function(response) {
-        
-        if (response) {
-            mensaje("Alerta", "La cedula indicada ya se encuentra registrada", "info");
 
-            $(".inp").attr("disabled", true);
+    if(cedula_usuario!=''){
 
-            $("#cedula_usuario").attr("disabled", false);
-            $("#btnGuardar").attr("disabled", true);
-        }//Fin del usuario existente
+        $.ajax({
+            "url": base + "seguridad/validar/" + cedula_usuario + "/usuarios",
+            "dataType": "json",
+        }).done(function (response) {
+            if (response) {
+                mensajeAutomatico("Alerta", "El usuario ya se encuentra agregado", "info");
 
-        else
-        {
-            $('inp').attr("disabled", false);
-        }
-    });*/
+                $('.inp').attr("readonly", true);
+                $("#cedula_usuario").attr("readonly", false);
 
-    mensaje("Alerta", "La cedula indicada ya se encuentra registrada", "info");
-}//Fin de verificar
+                $("#btnGuardar").attr("disabled", true);
+            }//Fin del usuario existente
 
-function verificar_correo() 
-{
-    var correo_usuario = $("#correo").val();
-
-    /*$.ajax({
-        "url": base + "seguridad/verificar_correo",
-        "method": "post",
-        "data": {
-            "correo": correo
-        },
-        "dataType": "json",
-    }).done(function(response) {
-        
-        if (response) {
-            mensaje("Alerta", "El correo indicado ya se encuentra registrado", "info");
-
-            $(".inp").attr("disabled", true);
-
-            $("#correo_usuario").attr("disabled", false);
-            $("#btnGuardar").attr("disabled", true);
-        }
-
-        else
-        {
-            $('inp').attr("disabled", false);
-        }
-    });*/
-
-    mensaje("Alerta", "El correo ya se encuentra registrado", "info");
-}//Fin de verificar_correo
-
-//Mostrar el modal para agregar o modificar un usuario
-$(document).on('click', '#btnAgregar', function() {
-    $(".modal-title").html('Agregar usuario');
-    $("#cedula_usuario").attr("disabled", false);
-});
+            else
+            {
+                $('.inp').attr("readonly", false);
+                $("#btnGuardar").attr("disabled", false);
+            }
+        });
+    }//Fin de validacion de cedula
+}//Fin de verificar numero de cedula del usuario
