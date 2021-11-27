@@ -17,7 +17,7 @@ class RolesModel extends Model
 	protected $camposTabla = [
 		'nombre_rol',
 		'estado',
-		'created_at',
+		'fecha_creacion',
 	];
 
 	protected $autoIncrement = true;

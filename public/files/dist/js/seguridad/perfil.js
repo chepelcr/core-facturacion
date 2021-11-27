@@ -44,4 +44,4 @@ function verificar_contraseña() {
     if(nueva_contraseña != contra_nueva_conf){
         mensaje("Atencion", "La nueva contraseña no coincide, verifiquela e intente de nuevo.", "error");
     }//Fin de la validacion
-}
+}//Fin de la funcion

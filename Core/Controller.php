@@ -12,11 +12,14 @@
         /**Modelo de la aplicacion */
         private Model $model;
 
-        /**Nombre del objeto que usara el controlador por defecto */
+        /**Nombre del objeto que usara el controlador en la solicitud */
         protected $modelName = '';
 
         /**Determinar si el controlador es un modulo general */
         protected $isModulo = false;
+
+        /**Nombre del modulo que contendra los submodulos */
+        protected $nombre_modulo = '';
 
         /**Campos para la validacion de objetos de un modulo
          * 
@@ -169,8 +172,12 @@
                 case 'all':
                     if($validacion_login)
                     {
+                        if($this->isModulo)
+                            if(validar_permiso($this->nombre_modulo, $objeto, 'consultar'))
+                                return json_encode($model->getAll());
+                        
                         //Si el usuario ya inicio sesion
-                        if(is_login())
+                        elseif(is_login())
                             return json_encode($model->getAll());
 
                         //Si el usuario no ha iniciado sesion
@@ -237,13 +244,210 @@
 			return json_encode($validacion);
 		}//Fin de la validacion de un objeto
 
-        public function update($objeto = null){}
+        /**Desactivar un objeto de la base de datos */
+        public function desactivar($id = '', $objeto = null)
+        {
+            $validacion_login = false;
+
+            /**Validar si el controlador es un modulo */
+            if($this->isModulo)
+            {
+                //Si el objeto no es nulo, y se encuentra registrado en el modulo
+                if(!is_null($objeto) && in_array($objeto, $this->objetos))
+                {
+                    //Validar si el usuario tiene que iniciar sesion para obtener los datos
+                    if(isset($this->validacion_login[$objeto]))
+                        $validacion_login = $this->validacion_login[$objeto];
+
+                    //Se establece el nombre del modelo en el objeto entrante.
+                    $this->modelName = $objeto;
+                }//Fin de la validacion
+
+                //Si el objeto es nulo o no existe en el controlador
+                else
+                {
+                    //Si el objeto es nulo
+                    if(is_null($objeto))
+                    {
+                        return json_encode(array(
+                            'error' => 'No se ha indicado un objeto para la solicitud'
+                        ));
+                    }
+                    
+                    //Si el objeto indicado no existe en el modulo
+                    if(!is_null($objeto) && !in_array($objeto, $this->objetos))
+                    {
+                        return json_encode(array(
+                            'error' => 'El objeto indicado no se encuentra en el modulo'
+                        ));
+                    }
+                }//Fin de la validacion
+            }//Fin de validacion del modulo
+
+            //Si el objeto no es un modulo
+            else
+            {
+                //Si el objeto no es nulo
+                if(!is_null($objeto))
+                {
+                    return json_encode(array(
+                        'error' => 'Tipo de solicitud no permitida'
+                    ));
+                }//Fin de la validacion
+
+                $validacion_login = $this->validacion_login;
+            }//Fin de la validacion de modulo
+
+            if($id!='')
+            {
+                $data = array(
+                    'estado' => 0,
+                    'fecha_eliminacion' => date('Y-m-d H:i:s')
+                );
+
+                if($validacion_login)
+                {
+                    //Si el usuario ya inicio sesion
+                    if(is_login())
+                    {
+                        if(!validar_permiso($this->nombre_modulo, $objeto, 'modificar'))
+                            return json_encode(array(
+                                'error' => 'No tiene permisos para realizar esta accion'
+                            ));
+
+                        $model = $this->model();
+
+                        $id = $model->update($data, $id);
+                    }//Fin de validacion de login
+                }//Fin de la validacion
+
+                else
+                {
+                    $model = $this->model();
+                    
+                    $id = $model->update($data, $id);
+                }//Fin de la validacion de login
+
+                if($id!=0)
+                    return json_encode(array(
+                        'estado' => 1
+                    ));
+
+                else
+                {
+                    $error = $model->getError();
+                    
+                    return json_encode(array(
+                        'error' => $error->sentencia
+                    ));
+                }//Fin del else
+            }//Fin de la validacion de id
+
+            else
+                return json_encode(array(
+                    'error' => 'No se ha indicado un id para la solicitud'));
+        }//Fin de la funcion para desactivar un objeto
+
+        /**Activar un objeto de la base de datos */
+        public function activar($id = '', $objeto = null)
+        {
+            $validacion_login = false;
+
+            /**Validar si el controlador es un modulo */
+            if($this->isModulo)
+            {
+                //Si el objeto no es nulo, y se encuentra registrado en el modulo
+                if(!is_null($objeto) && in_array($objeto, $this->objetos))
+                {
+                    //Validar si el usuario tiene que iniciar sesion para cambiar el estado del objeto
+                    if(isset($this->validacion_login[$objeto]))
+                        $validacion_login = $this->validacion_login[$objeto];
+
+                    //Se establece el nombre del modelo en el objeto entrante.
+                    $this->modelName = $objeto;
+                }//Fin de la validacion
+
+                //Si el objeto es nulo o no existe en el controlador
+                else
+                {
+                    //Si el objeto es nulo
+                    if(is_null($objeto))
+                    {
+                        return $this->data_error(1, 'No se ha indicado un objeto para la solicitud');
+                    }
+                    
+                    //Si el objeto indicado no existe en el modulo
+                    if(!is_null($objeto) && !in_array($objeto, $this->objetos))
+                    {
+                        $error = $this->data_error(2, 'El objeto indicado no se encuentra en el modulo');
+                    }
+
+                    return $this->error($error);
+                }//Fin de la validacion
+            }//Fin de validacion del modulo
+
+            //Si el objeto no es un modulo
+            else
+            {
+                //Si el objeto no es nulo
+                if(!is_null($objeto))
+                {
+                    return $this->data_error(3, 'Tipo de solicitud no permitida');
+                }//Fin de la validacion
+
+                $validacion_login = $this->validacion_login;
+            }//Fin de la validacion de modulo
+
+            if($id!='')
+            {
+                $data = array(
+                    'estado' => 1,
+                    'fecha_eliminacion' => null
+                );
+
+                if($validacion_login)
+                {
+                    //Si el usuario ya inicio sesion
+                    if(is_login())
+                    {
+                        if(!validar_permiso($this->nombre_modulo, $objeto, 'modificar'))
+                            return json_encode(array(
+                                'error' => 'No tiene permisos para realizar esta accion'
+                            ));
+
+                        $model = $this->model();
+                        
+                        $id = $model->update($data, $id);
+                    }//Fin de validacion de login
+                }//Fin de la validacion
+
+                else
+                {
+                    $model = $this->model();
+                    
+                    $id = $model->update($data, $id);
+                }//Fin de la validacion de login
+
+                if($id!=0)
+                    return json_encode(array(
+                        'estado' => 1
+                    ));
+
+                else
+                {
+                    $error = $model->getError();
+                    
+                    return json_encode(array('error' => $error['sentencia']));
+                }//Fin del else
+            }//Fin de la validacion de id
+
+            else
+            {
+                return json_encode(array('error' => 'No se ha indicado un id para la solicitud'));
+            }//Fin de la validacion de id
+        }//Fin de la funcion para activar un objeto
+
+        public function update($id, $objeto = null){}
 
         public function guardar($objeto = null){}
-
-        /**Validar si el usuario puede realzar una accion solicitada en la aplicacion */
-        public function validar_permisos($objeto = null, $accion = '')
-        {
-
-        }//Fin de la funcion
     }//Fin de la clase

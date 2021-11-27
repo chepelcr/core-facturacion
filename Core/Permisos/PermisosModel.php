@@ -12,13 +12,17 @@
 
         protected $vistaTabla = 'permisos_view';
 
+        protected $dbGroup = 'seguridad';
+
         protected $camposTabla = [
             'id_rol',
             'id_modulo',
             'id_submodulo',
             'id_accion',
+            'fecha_crecion',
+            'fecha_modificacion',
+            'fecha_eliminacion',
             'estado',
-            'created_at'
         ];
 
         protected $camposVista = [
@@ -31,8 +35,6 @@
         protected $autoIncrement = true;
 
         protected $auditorias = true;
-
-        protected $dbGroup = 'seguridad';
 
         /**Obtener todos los modulos de un rol */
         public function modulos($id_rol)
@@ -61,7 +63,26 @@
             $data = [];
 
             foreach ($submodulos as $submodulo) {
-                $data[] = $submodulo->nombre_submodulo;
+
+                $permisosModel = new PermisosModel();
+
+                $acciones = $permisosModel->acciones($id_rol, $id_modulo, $submodulo->id_submodulo);
+
+                $data[$submodulo->nombre_submodulo] = $acciones;
+            }
+
+            return $data;
+        }//Fin de la funcion
+
+        public function acciones($id_rol, $id_modulo, $id_submodulo)
+        {
+            $this->select('id_accion')->select('nombre_accion')->where('id_rol', $id_rol)->where('id_modulo', $id_modulo)->where('id_submodulo', $id_submodulo);
+            $acciones = $this->getAll();
+
+            $data = [];
+
+            foreach ($acciones as $accion) {
+                $data[] = $accion->nombre_accion;
             }
 
             return $data;

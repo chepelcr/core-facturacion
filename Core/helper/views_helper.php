@@ -13,7 +13,10 @@ function view($nombreVista, $data=null)
 
     if($data!=null)
     {
-	//extract($data);
+        if(is_object($data))
+        {
+            $data = (array) $data;
+        }
         $view->setData($data);
     }
 
@@ -35,11 +38,6 @@ function getFile($name = '')
 
     return false;
 }//Fin de la funcion
-
-function getFilesFolder()
-{
-    return 'files/';
-}//Fin de la fución para retornar la carpeta donde se encuentran almacenados los archivos de la aplicacion
 
 /**Obtener una variable desde una solicitud POST */
 function post($name = null)

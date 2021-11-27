@@ -54,27 +54,62 @@ class Routes
 			case 'guardar':
 				/**Si la solicitud contiene datos */
 				if(post())
-					echo $controller->guardar();
+				{
+					if (getSegment(3))
+						echo $controller->guardar(getSegment(3));
+
+					/**Realizar la accion por defecto del metodo */
+					else
+						echo $controller->guardar();
+				}//Fin de la validacion de la solicitud
 
 				else
 					header('Location: '.baseUrl(getSegment(1)));
 			break;
 			
+			//Obtener una fila especifica del objeto solicitado  
+			//http://localhost/controlador/update/id/objeto
 			case 'update':
 				if(post())
-					/**Obtener una fila especifica del objeto solicitado 
-					 * 
-					 * http://localhost/controlador/update/objeto
-					*/
-					if (getSegment(3))
-						echo $controller->update(getSegment(3));
+				{
+					if(getSegment(3)&&getSegment(4))
+						echo $controller->update(getSegment(3), getSegment(4));
 
 					/**Realizar la accion por defecto del metodo */
-					else
-						echo $controller->update();
+					elseif (getSegment(3))
+						echo $controller->update(getSegment(3));
+				}//Fin de la validacion de la solicitud
 
 				else
 					header('Location: '.baseUrl(getSegment(1)));
+			break;
+
+			//Activar un objeto especifico
+			//http://localhost/controlador/activar/id/objeto
+			case 'activar':
+				if(getSegment(3)&&getSegment(4))
+					echo $controller->activar(getSegment(3), getSegment(4));
+
+				/**Realizar la accion por defecto del metodo */
+				elseif (getSegment(3))
+					echo $controller->activar(getSegment(3));
+
+				else
+					echo $controller->activar();
+			break;
+
+			//Desactivar un objeto especifico
+			//http://localhost/controlador/desactivar/id/objeto
+			case 'desactivar':
+				if(getSegment(3)&&getSegment(4))
+					echo $controller->desactivar(getSegment(3), getSegment(4));
+
+				/**Realizar la accion por defecto del metodo */
+				elseif (getSegment(3))
+					echo $controller->desactivar(getSegment(3));
+
+				else
+					echo $controller->desactivar();
 			break;
 
 			case 'obtener':

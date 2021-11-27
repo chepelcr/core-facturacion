@@ -19,7 +19,7 @@ function deshabilitar(id_producto) {
             });
         }
     });
-}
+}//Fin de la funcion para desactivar un producto
 
 function habilitar(id_producto) {
     Swal.fire({

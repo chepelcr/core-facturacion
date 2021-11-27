@@ -5,7 +5,7 @@
 require_once '../Core/Config/Routes.php';
 
 /**Guarda el nombre del controlador por defecto */
-$default_controller = 'Produccion';
+$default_controller = 'Login';
 
 /**Guarda el nombre de la funcion que se llamara si no hay una definida */
 $default_action = 'index';

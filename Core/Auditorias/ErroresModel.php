@@ -9,6 +9,8 @@ class ErroresModel extends Model
 	protected $nombreTabla = "error";
 	protected $pk_tabla = "id_error";
 
+	protected $dbGroup = 'seguridad';
+
 	protected $camposTabla = [
 		'sentencia',
 		'controlador',

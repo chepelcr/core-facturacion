@@ -45,5 +45,6 @@
                 <p>Perfil</p>
                 <i class="fas fa-user-circle nav-icon right"></i>
             </a>
+        </li>
     </ul>
 </li>

@@ -5,7 +5,7 @@
 	
 	class Conexion
 	{
-		private static $instance= array();
+		private static $instance=NULL;
 		
 		private function __construct(){}
 
@@ -27,5 +27,5 @@
 			//Retornar la instancia de conexion
 			return self::$instance[$dbGroup];
 		}//Fin de getConnect
-	}//Fin de la clase Conexion
+	}
 ?>

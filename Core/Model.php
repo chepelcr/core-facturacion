@@ -20,7 +20,7 @@ class Model
     protected $vistaTabla;
 
     /** Nombre de la llave primaria */
-	protected $pk_tabla = "id";
+	protected $pk_tabla = false;
 
     /** Columnas que se deben ingresar al modelo */
     protected $camposTabla = [];
@@ -153,7 +153,7 @@ class Model
     /**Obtener el error generado en el modelo */
     public function getError()
     {
-        return $this->error;
+        return json_decode(json_encode($this->error));
     }
 
     /**Actualizar un registro en la base de datos */
@@ -193,6 +193,7 @@ class Model
                 $data = array(
                     'id_fila'=> $id,
                     'tabla'=>$this->nombreTabla,
+                    'accion'=>'UPDATE',
                     'id_usuario'=>$id_usuario
                 );
 
@@ -354,12 +355,15 @@ class Model
             $camposTabla = $this->camposTabla;
             $camposVista = $this->camposVista;
 
-            $data[$espacio] = $pk_tabla;
+            if($pk_tabla)
+            {
+                $data[$espacio] = $pk_tabla;
+                $espacio = $espacio + 1;
+            }
 
             foreach ($camposTabla as $campo) {
-                $espacio = $espacio+1;
-
                 $data[$espacio] = $campo;
+                $espacio = $espacio+1;
             }//Fin del ciclo para llenar los campos
 
             if(isset($this->vistaTabla))
@@ -658,26 +662,68 @@ class Model
     {
         $pk = $this->pk_tabla;
 
-        //Campos para la tabla
-        $campos = "(".$pk;
-        $camposTabla = $this->camposTabla;
-
-        $values = "(:".$pk;
-
-        $data = $this->insertPk($data);
-
-        //Ciclo para crear la sentencia con los campos y valores que seran agregados a la tabla
-        foreach ($data as $clave => $valor) 
+        if($this->autoIncrement = true)
         {
-            //Ciclo para validar si el campo se encuentra en la tabla
-            foreach ($camposTabla as $campo) {
-                if($clave == $campo)
-                {
-                    $campos = $campos.", ".$clave;
-                    $values = $values.", :".$clave;
-                }
-            }//Fin del ciclo de validacion
-        }//Fin del ciclo
+            //Campos para la tabla
+            $campos = "(".$pk;
+            $camposTabla = $this->camposTabla;
+
+            $values = "(:".$pk;
+
+            $data = $this->insertPk($data);
+
+            //Ciclo para crear la sentencia con los campos y valores que seran agregados a la tabla
+            foreach ($data as $clave => $valor) 
+            {
+                //Ciclo para validar si el campo se encuentra en la tabla
+                foreach ($camposTabla as $campo) {
+                    if($clave == $campo)
+                    {
+                        $campos = $campos.", ".$clave;
+                        $values = $values.", :".$clave;
+                    }
+                }//Fin del ciclo de validacion
+            }//Fin del ciclo
+        }//Fin del if
+
+        else
+        {
+            //Campos para la tabla
+            $campos = "(";
+            $camposTabla = $this->camposTabla;
+
+            $values = "(";
+
+            $data = $this->insertPk($data);
+
+            $espacio = 1;
+
+            //Ciclo para crear la sentencia con los campos y valores que seran agregados a la tabla
+            foreach ($data as $clave => $valor) 
+            {
+                //Ciclo para validar si el campo se encuentra en la tabla
+                foreach ($camposTabla as $campo) {
+                    if($clave == $campo)
+                    {
+                        switch ($espacio) {
+                            case '1':
+                                $campos = $campos.$clave;
+                                $values = $values.":".$clave;
+
+                                $espacio++;
+                                break;
+                            
+                            default:
+                                $campos = $campos.", ".$clave;
+                                $values = $values.", :".$clave;
+                                break;
+                        }//Fin del switch
+                    }//Fin del if
+                }//Fin del ciclo de validacion
+            }//Fin del ciclo
+        }
+
+        
 
         if($this->useTimesnaps)
         {
@@ -737,6 +783,7 @@ class Model
                         $audit = array(
                             'id_fila'=> $data[$this->pk_tabla],
                             'tabla'=>$this->nombreTabla,
+                            'accion' => 'INSERT',
                             'id_usuario'=>$id_usuario
                         );
 
@@ -838,7 +885,6 @@ class Model
         
         catch (\Exception $ex)
         {
-            var_dump($ex);
             if($this->auditorias)
             {
                 $this->insertError($ex);
@@ -919,6 +965,7 @@ class Model
                         $data = array(
                             'id_fila'=> $id,
                             'tabla'=>$this->nombreTabla,
+                            'accion' => 'DELETE',
                             'id_usuario'=>$id_usuario
                         );
     

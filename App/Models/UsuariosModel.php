@@ -13,14 +13,19 @@ class UsuariosModel extends Model
 	protected $dbGroup = 'seguridad';
 
 	protected $camposTabla = [
-		'cedula_usuario',
 		'nombre',
+		'apellidos',
+		'nombre_usuario',
+		'cedula_usuario',
+		'tipo_cedula',
 		'correo',
 		'id_rol',
+		'id_empresa',
 		'telefono',
-		'estado',
-		'created_at',
-		'updated_at'
+		'fecha_registro',
+		'fecha_actualizacion',
+		'fecha_eliminacion',
+		'estado'
 	];
 
 	protected $autoIncrement = true;

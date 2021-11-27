@@ -15,10 +15,13 @@ class Seguridad extends BaseController
 {
 	protected $isModulo = true;
 		
-	protected $objetos = ['usuarios', 'roles', 'auditorias', 'errores'];
+	protected $objetos = ['usuarios', 'roles'];
 
 	public function index()
 	{
+		if(!is_login())
+			return redirect(baseUrl('login'));
+			
 		$usuariosModel = new UsuariosModel();
 		$usuarios = $usuariosModel->getAll();
 
@@ -215,6 +218,8 @@ class Seguridad extends BaseController
 
 			return view('layout', $data);
 		} //Fin de la validacion
+
+		return redirect(baseUrl());
 	} //Fin de la funcion para mostrar el listado de auditorias
 
 	public function errores()
