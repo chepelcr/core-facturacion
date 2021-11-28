@@ -22,19 +22,6 @@
                     </li>';
             }
 
-            //Proveedores
-            if(!isset($submodulos['proveedores']))
-            {
-                echo 
-                '<!-- Listado Proveedores -->
-                    <li class="nav-item">
-                        <a href="'. baseUrl('compra/proveedores').'" class="nav-link">
-                            <p>Proveedores</p>
-                            <i class="fas fa-truck nav-icon right"></i>
-                        </a>
-                    </li>';
-            }
-
             //Productos
             if(isset($submodulos['productos']))
             {

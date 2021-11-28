@@ -9,15 +9,19 @@ $(document).ready(function () {
             $(e).addClass("active");
         }
     });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+    
+    document.addEventListener('keyup', (event) => {
+        var name = event.key;
+        var code = event.code;
+        // Alert the key name and key code on keydown
+        //alert(`Key pressed ${name} \r\n Key code value: ${code}`);
+    }, false);
+    
 });
-
-document.addEventListener('keyup', (event) => {
-    var name = event.key;
-    var code = event.code;
-    // Alert the key name and key code on keydown
-    //alert(`Key pressed ${name} \r\n Key code value: ${code}`);
-}, false);
-
 
 //Enviar un mensaje al usuario
 function mensaje(titulo, mensaje, icono) {
@@ -26,7 +30,7 @@ function mensaje(titulo, mensaje, icono) {
         title: titulo,
         text: mensaje,
         showConfirmButton: false
-      })
+    })
 }//Fin del mensaje
 
 //Mensaje que se cierra automaticamente
@@ -39,3 +43,16 @@ function mensajeAutomatico(titulo, mensaje, icono) {
         buttons: false
     })//Fin del mensaje
 }
+
+//Mensaje que se cierra automaticamente y recarga la pagina
+function mensajeAutomaticoRecargar(titulo, mensaje, icono) {
+    Swal.fire({
+        title: titulo,
+        text: mensaje,
+        icon: icono,
+        timer: 2000,
+        showConfirmButton: false,
+    }).then((result) => {
+        location.reload();
+    })//Fin del mensaje
+}//Fin del mensaje

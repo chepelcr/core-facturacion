@@ -17,6 +17,8 @@ use Core\Permisos\SubmodulosAccionesModel;
 class Seguridad extends BaseController
 {
 	protected $isModulo = true;
+
+	protected $nombre_modulo = 'seguridad';
 		
 	protected $objetos = ['usuarios', 'roles'];
 

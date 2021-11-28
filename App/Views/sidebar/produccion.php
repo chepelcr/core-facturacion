@@ -8,32 +8,6 @@
 
     <ul class="nav nav-treeview">
     <?php
-        //Lotes de produccion
-        if(isset($submodulos['lotes']))
-        {
-            echo 
-            '<!-- Listado Lotes -->
-                <li class="nav-item">
-                    <a href="'. baseUrl('produccion/lotes').'" class="nav-link">
-                        <p>Lotes de produccion</p>
-                        <i class="fas fa-boxes nav-icon right"></i>
-                    </a>
-                </li>';
-        }
-
-        //Ordenes de compra
-        if(!isset($submodulos['ordenes']))
-        {
-            echo 
-            '<!-- Listado Ordenes de compra -->
-                <li class="nav-item">
-                    <a href="'. baseUrl('produccion/ordenes').'" class="nav-link">
-                        <p>Ordenes de compra</p>
-                        <i class="fas fa-shopping-cart nav-icon right"></i>
-                    </a>
-                </li>';
-        }
-
         //Productos que se fabrican
         if(isset($submodulos['productos']))
         {
@@ -47,15 +21,15 @@
                 </li>';
         }
 
-        //Clientes
-        if(!isset($submodulos['clientes']))
+        //Lotes de produccion
+        if(isset($submodulos['lotes']))
         {
             echo 
-            '<!-- Listado Clientes -->
+            '<!-- Listado Lotes -->
                 <li class="nav-item">
-                    <a href="'. baseUrl('produccion/clientes').'" class="nav-link">
-                        <p>Clientes</p>
-                        <i class="fas fa-users nav-icon right"></i>
+                    <a href="'. baseUrl('produccion/lotes').'" class="nav-link">
+                        <p>Lotes de produccion</p>
+                        <i class="fas fa-boxes nav-icon right"></i>
                     </a>
                 </li>';
         }

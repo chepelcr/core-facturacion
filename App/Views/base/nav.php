@@ -16,13 +16,13 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
         <!-- Perfil -->
-        <li class="nav-item">
-            <a title="Perfil" href="<?= baseUrl('seguridad/perfil')?>" class="nav-link">
+        <li data-placement="left" data-toggle="tooltip" title="Perfil" class="nav-item">
+            <a href="<?= baseUrl('seguridad/perfil')?>" class="nav-link">
                 <i class="fas fa-user-circle nav-icon right"></i>
             </a>
         </li>
 
-        <li class="nav-item">
+        <li data-toggle="tooltip" data-placement="bottom" title="Cerrar sesión" class="nav-item">
             <a class="nav-link" href="<?=baseUrl('login/salir')?>" role="button">
                 <i class="fa fa-sign-out col-2"></i>
             </a>
