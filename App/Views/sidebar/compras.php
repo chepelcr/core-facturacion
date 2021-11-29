@@ -15,7 +15,7 @@
                 echo 
                 '<!-- Listado Lotes -->
                     <li class="nav-item">
-                        <a href="'. baseUrl('compra/lotes').'" class="nav-link">
+                        <a href="'. baseUrl('compras').'" class="nav-link">
                             <p>Lotes</p>
                             <i class="fas fa-boxes nav-icon right"></i>
                         </a>
@@ -28,7 +28,7 @@
                 echo 
                 '<!-- Listado Productos -->
                     <li class="nav-item">
-                        <a href="'. baseUrl('compra/productos').'" class="nav-link">
+                        <a href="'. baseUrl('compras/productos').'" class="nav-link">
                             <p>Productos</p>
                             <i class="fas fa-box-open nav-icon right"></i>
                         </a>

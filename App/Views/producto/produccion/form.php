@@ -9,82 +9,81 @@
                 <div class="row">
                     <input hidden disabled class="form-control inp" type="number" id="id_articulo" name="id_articulo">
                     <!-- Nombre del articulo -->
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="nombre" class="text-left">Descripción</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    <span class="input-group-text">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
                                 </div>
-                                <input class="form-control form-control-lg inp" id="descripcion" name="descripcion"
-                                    type="text" required max="100">
+                                <input class="form-control inp" id="descripcion" name="descripcion" type="text" required
+                                    max="100">
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <!-- Tipo de producto (compra o produccion) -->
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label class="text-left">Imagen</label>
+                            <label for="tipo" class="text-left">Tipo</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">
-                                        <i class="fas fa-folder-plus"></i>
+                                        <i class="fas fa-hand-pointer"></i>
                                     </span>
                                 </div>
-                                <input accept="image/png,image/jpeg" class="form-control inp" id="imagen" name="imagen"
-                                    type="file">
+                                <select class="form-control inp" id="tipo" name="tipo" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="C">Compra</option>
+                                    <option value="P">Producción</option>
+                                </select>
                             </div>
                         </div>
                     </div>
 
                     <!-- Unidad de medida -->
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label class="text-left">Unidad de
-                                        medida</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="fas fa-shopping-basket"></i>
-                                            </span>
-                                        </div>
-                                        <select class="form-control inp" name="id_unidad" required id="id_unidad">
-                                            <option value="">Seleccionar</option>
-
-                                            <?php foreach($unidades as $unidad): ?>
-                                            <option value="<?php echo $unidad->id_unidad; ?>">
-                                                <?php echo $unidad->descripcion; ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="text-left">Unidad de
+                                medida</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-ruler-combined"></i>
+                                    </span>
                                 </div>
-                            </div>
+                                <select class="form-control inp" name="id_unidad" required id="id_unidad">
+                                    <option value="">Seleccionar</option>
+                                    <!-- Metros -->
+                                    <optgroup label="Metros">
+                                        <option value="1">Metro</option>
+                                        <option value="2">Centimetro</option>
+                                    </optgroup>
 
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="text-left">Unidades por empaque</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="fas fa-marker"></i>
-                                            </span>
-                                        </div>
-                                        <input class="form-control inp" id="unidad_empaque" name="unidad_empaque"
-                                            required type="number" value="1" min="1">
-                                    </div>
-                                </div>
-                            </div>
+                                    <!-- Kilogramos -->
+                                    <optgroup label="Kilogramos">
+                                        <option value="3">Kilogramo</option>
+                                        <option value="4">Gramo</option>
+                                    </optgroup>
 
-                            <!-- Estado -->
-                            <div class="col-md-3">
-                                <div class="form-group text-center">
-                                    <label>Activo</label>
-                                    <div class="input-group">
-                                        <input class="form-control inp" id="estado" name="estado" type="checkbox">
-                                    </div>
-                                </div>
+                                    <!-- Litros -->
+                                    <optgroup label="Litros">
+                                        <option value="5">Litro</option>
+                                        <option value="6">Mililitro</option>
+                                    </optgroup>
+
+                                    <!-- Unidades -->
+                                    <optgroup label="Unidades">
+                                        <option value="7">Unidad</option>
+                                    </optgroup>
+
+                                    <!-- Servicios -->
+                                    <optgroup label="Servicio">
+                                        <option value="8">Servicio</option>
+                                    </optgroup>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -111,7 +110,8 @@
                                         <i class="fas fa-cart-arrow-down"></i>
                                     </span>
                                 </div>
-                                <input onblur="validarCodigo()" class="form-control inp" type="number" id="codigo" name="codigo">
+                                <input onblur="validarCodigo()" class="form-control inp" type="number" id="codigo"
+                                    name="codigo">
                             </div>
                         </div>
                     </div>

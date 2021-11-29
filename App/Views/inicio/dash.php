@@ -12,17 +12,10 @@
             </div>
 
             <div class="card-body text-center">
-                <div class="d-flex justify-content-between">
-                    <!-- Link a la pagina de empresa -->
-                    <a role="button" class="btn btn-dark" href="<?= baseUrl('empresa') ?>">
-                        Informacion
-                    </a>
-
-                    <!-- Link a la pagina de ordenes de compra -->
-                    <a role="button" class="btn btn-dark" href="<?= baseUrl('empresa/ordenes') ?>">
-                        Ordenes
-                    </a>
-                </div>
+                <!-- Link a la pagina de empresa -->
+                <a role="button" class="btn btn-dark" href="<?= baseUrl('empresa') ?>">
+                    Informacion
+                </a>
             </div>
         </div>
     </div>
@@ -42,12 +35,12 @@
             <div class="card-body text-center">
                 <div class="d-flex justify-content-between">
                     <!-- Link a la pagina de productos de compra -->
-                    <a role="button" class="btn btn-dark" href="<?= baseUrl('compra/productos') ?>">
+                    <a role="button" class="btn btn-dark" href="<?= baseUrl('compras/productos') ?>">
                         Productos
                     </a>
 
                     <!-- Link a la pagina de lotes de compra -->
-                    <a role="button" class="btn btn-dark" href="<?= baseUrl('compra/lotes') ?>">
+                    <a role="button" class="btn btn-dark" href="<?= baseUrl('compras') ?>">
                         Lotes de compra
                     </a>
                 </div>
@@ -75,7 +68,7 @@
                     </a>
 
                     <!-- Link a la pagina de lotes de produccion -->
-                    <a role="button" class="btn btn-dark" href="<?= baseUrl('produccion/lotes') ?>">
+                    <a role="button" class="btn btn-dark" href="<?= baseUrl('produccion') ?>">
                         Lotes de produccion
                     </a>
                 </div>

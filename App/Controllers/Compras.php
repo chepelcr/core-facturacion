@@ -5,12 +5,12 @@
 
 	namespace App\Controllers;
 
-class Produccion extends BaseController
+	class Compras extends BaseController
 	{
 		public function index()
 		{
-			$nombreVista = 'lotes/produccion/listado';
-			$nombreForm = 'lotes/produccion/form';
+			$nombreVista = 'lotes/compras/listado';
+			$nombreForm = 'lotes/compras/form';
 
 			$lotes = array();
 
@@ -32,7 +32,8 @@ class Produccion extends BaseController
 				);
 
 				$dataView = array(
-					'dataModal'=>$dataModal
+					'dataModal'=>$dataModal,
+					'lotes'=>$lotes,
 				);
 
 				$dataHead = array(
@@ -40,7 +41,7 @@ class Produccion extends BaseController
 				);
 
 				$dataHeader = array(
-					'titulo'=>'Produccion',
+					'titulo'=>'Materia prima',
 					'objeto'=>'Lotes',
 					'pagina'=>'Reporte'
 				);
@@ -60,8 +61,8 @@ class Produccion extends BaseController
 		/**Obtener los productos utilizados en la creacion de lotes */
 		public function productos()
 		{
-				$nombreVista = 'producto/produccion/listado';
-				$nombreForm = 'producto/produccion/form';
+				$nombreVista = 'producto/compras/listado';
+				$nombreForm = 'producto/compras/form';
 
 				$productos = array();
 				
@@ -76,7 +77,7 @@ class Produccion extends BaseController
 				<script src="'.getFile('dist/js/base/listado.js').'"></script>
 
 				<!-- Articulos -->
-				<script src="'.getFile('dist/js/produccion/productos.js').'"></script>';
+				<script src="'.getFile('dist/js/compras/productos.js').'"></script>';
 
 				$dataModal = array(
 					'nombreForm'=>$nombreForm,
@@ -84,7 +85,7 @@ class Produccion extends BaseController
 
 				$dataView = array(
 					'dataModal'=>$dataModal,
-					'articulos'=>$productos
+					'articulos'=>$productos,
 				);
 
 				$dataHead = array(
@@ -92,7 +93,7 @@ class Produccion extends BaseController
 				);
 
 				$dataHeader = array(
-					'titulo'=>'Produccion',
+					'titulo'=>'Materia prima',
 					'objeto'=>'Productos',
 					'pagina'=>'Listado'
 				);
