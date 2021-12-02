@@ -1,5 +1,9 @@
 var base = "http://localhost/modas-laura/Sitema-costos/public/";
 
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+});
+
 $(document).ready(function () {
     //Sidebar dinamico
     $(".nav-link").each(function (i, e) {
@@ -10,10 +14,6 @@ $(document).ready(function () {
         }
     });
 
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-    
     document.addEventListener('keyup', (event) => {
         var name = event.key;
         var code = event.code;

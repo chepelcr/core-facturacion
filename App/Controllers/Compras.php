@@ -7,6 +7,19 @@
 
 	class Compras extends BaseController
 	{
+		protected $nombre_modulo = 'compras';
+
+		protected $objetos = [
+			'productosCompra',
+			'lotesCompra',
+		];
+
+		protected $validacion_login = array(
+			'lotesCompra' => true,
+			'productosCompra'=> true,
+		);
+
+		/**Obtener los lotes de compra de la empresa */
 		public function index()
 		{
 			$nombreVista = 'lotes/compras/listado';
@@ -58,7 +71,7 @@
 
 		}
 
-		/**Obtener los productos utilizados en la creacion de lotes */
+		/**Obtener los productos catalogados como materia prima */
 		public function productos()
 		{
 				$nombreVista = 'producto/compras/listado';
@@ -108,5 +121,30 @@
 	
 				return view('layout', $data);
 		}//Fin de la funcion para mostrar el listado
+
+		/** Guardar un objeto en la base de datos */ 
+		public function guardar($objeto = null)
+		{
+			if(is_login())
+			{
+				if(!is_null($objeto) && in_array($objeto, $this->objetos)) 
+				{
+					$model = $this->model($objeto);
+
+					switch($objeto)
+					{
+						case 'productos':
+							//Validar el permiso de acceso
+							if(validar_permiso($this->nombre_modulo, 'productos', 'insertar'))
+							{
+								$data = array(
+									'descripcion' => post('descripcion'),
+								);
+							}
+						break;
+					}
+				}
+			}
+		}//Fin de la funcion guardar
 	}//Fin de la clase
 ?>

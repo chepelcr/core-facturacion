@@ -75,9 +75,11 @@ $(document).ready(function () {
 
     //Editar un usuario
     $(document).on('click', '.btt-edt', function (e) {
-        $("#cedula_usuario").attr("readonly", true);
-    });//Fin de editar un usuario
+        activar_campos(false);
 
+        $("#cedula_usuario").attr("readonly", true);
+        $("#cedula_usuario").attr("disabled", true);
+    });//Fin de editar un usuario
 
     //Cuando se le da click al boton de modificar
     $(document).on('click', '#modificar', function () {
@@ -93,6 +95,7 @@ $(document).ready(function () {
                 llenarFrm(response, 'Editar usuario');
 
                 $("#cedula_usuario").attr("readonly", true);
+                $("#cedula_usuario").attr("disabled", true);
             }
 
             else {
@@ -172,15 +175,17 @@ function verificar() {
             if (response) {
                 mensajeAutomatico("Alerta", "El usuario ya se encuentra agregado", "info");
 
-                $('.inp').attr("readonly", true);
+                activar_campos(false);
+
                 $("#cedula_usuario").attr("readonly", false);
+                $("#cedula_usuario").attr("disabled", false);
 
                 $("#btnGuardar").attr("disabled", true);
             }//Fin del usuario existente
 
             else
             {
-                $('.inp').attr("readonly", false);
+                activar_campos(false);
                 $("#btnGuardar").attr("disabled", false);
             }
         });

@@ -37,7 +37,8 @@
                     <div class="col-md-12">
                         <div class="fc-button-group">
                             <button type="submit" class="w-100 btn btn-primary btt-grd">Guardar</button>
-                            <button type="button" class="w-100 btn btn-primary btt-mod">Modificar</button>
+                            <button type="button" class="w-100 btn btn-secondary btt-edt">Editar</button>
+                            <button type="button" class="w-100 btn btn-danger btt-mod">Guardar cambios</button>
                         </div>
                     </div>
                 </div>

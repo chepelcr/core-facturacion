@@ -3,13 +3,13 @@
 
     use Core\Model;
 
-    class ProductosModel extends Model
+    class ProductosCompraModel extends Model
     {
         protected $nombreTabla = 'productos';
         protected $pk_tabla = 'id_producto';
 
-        protected $vista_tabla = 'productos_produccion_view';
-
+        protected $vistaTabla = 'productos_compras_view';
+        
         protected $camposTabla = [
             'id_unidad',
             'codigo_cabys',

@@ -20,8 +20,8 @@ class Inicio extends BaseController
 					'head'=>''
 				);
 
-				$titulo = 'Minisuper Ivo';
-				$objeto = 'Sucursal';
+				$titulo = 'Modas Laura';
+				$objeto = 'Sitema de costos';
 				$pagina = 'Inicio';
 
 				$dataHeader = array(
