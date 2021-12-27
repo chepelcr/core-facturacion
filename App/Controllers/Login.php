@@ -99,7 +99,9 @@ class Login extends BaseController
 		{
 			destroy();
 
-			return redirect(baseUrl());
+			return json_encode(array(
+				'estado' => '1',
+			));
 		}//Fin de la funcion
 
 

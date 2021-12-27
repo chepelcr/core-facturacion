@@ -7,55 +7,67 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <head>
     <?php
-        if(isset($dataHead))
-            echo view('base/head', $dataHead);
-
-        else
-            echo view('base/head');
+        echo view('base/head');
     ?>
 
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition layout-fixed layout-footer-fixed layout-top-nav layout-navbar-fixed">
     <div class="wrapper">
 
         <?php
-            echo view('base/nav');
+            $modulos = getModulos();
 
-            echo view('base/sidebar');
+            echo view('base/nav', array('modulos'=>$modulos));
+
+            //echo view('base/sidebar', array('modulos'=>$modulos));
          ?>
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            
-            <?php
-                if(isset($dataHeader))
-                    echo view('base/header', $dataHeader);
-            ?>
+            <?=view('base/header');?>
 
-            <div class="container">
+            <section class="content">
                 <div class="container-fluid">
-                    <?php
-                        if(isset($dataView))
-                            echo view($nombreVista, $dataView);
-                
-                        else 
-                            echo view($nombreVista);
-                    ?>
+                    <div class="row">
+                        <div class="col-md-12" id="inicio">
+                            <?php
+                                echo view('inicio/dash', array('modulos'=>$modulos));
+                            ?>
+                        </div>
+
+                        <div class="col-md-12">
+                            <!-- Recorre submodulos y cargar modulo de inicio y barra de navegacion -->
+                            <?php
+                                foreach ($modulos as $modulo) {
+                                    $nombre_modulo = $modulo->nombre_modulo;
+                            ?>
+
+                            <div class="contenedor" id="contenedor_<?=$nombre_modulo?>">
+                                <?php 
+                                    if($modulo->nombre_modulo != 'documentos')
+                                        echo view('base/inicio_modulo', $modulo);
+
+                                    else
+                                        echo view('inicio/documentos');
+                                ?>
+                            </div>
+
+                            <?php } ?>
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <div class="card card-body contenedor" id="contenedor">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
         <!-- /.content-wrapper -->
 
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-            <div class="p-3">
-                <h5>Title</h5>
-                <p>Sidebar content</p>
-            </div>
-        </aside>
-        <!-- /.control-sidebar -->
+        <?= view('base/persona/perfil', array('perfil'=> getPerfil()))?>
 
         <!-- Main Footer -->
         <?php echo view('base/footer')?>

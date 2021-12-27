@@ -8,22 +8,36 @@
         protected $nombreTabla = 'productos';
         protected $pk_tabla = 'id_producto';
 
-        protected $vista_tabla = 'productos_produccion_view';
+        protected $vistaTabla = 'productos_view';
 
         protected $camposTabla = [
             'id_unidad',
+            'unidad_empaque',
+            'id_empresa',
+            'id_categoria',
             'codigo_cabys',
             'codigo_venta',
-            'tipo_producto',
+            'codigo_interno',
             'descripcion',
             'impuesto',
-            'valor unitario',
-            'id_empresa',
+            'porcentaje_descuento',
+            'descuento',
+            'valor_unitario',
+            'valor_impuesto',
+            'valor_total',
             'fecha_creacion',
-            'fecha_actualizacion',
+            'fecha_modificacion',
             'fecha_eliminacion',
             'estado'
         ];
+
+        protected $camposVista = [
+            'simbolo_unidad',
+            'nombre_unidad',
+            'nombre_categoria',
+        ];
+
+        protected $dbGroup = 'facturacion';
 
         protected $autoIncrement = true;
 

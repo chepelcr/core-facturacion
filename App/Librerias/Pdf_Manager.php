@@ -2,7 +2,6 @@
 
 namespace App\Librerias;
 use Dompdf\Dompdf;
-use Dompdf\Options;
 
 class Pdf_Manager extends Dompdf
 {
@@ -11,16 +10,34 @@ class Pdf_Manager extends Dompdf
         parent::__construct();
     }
     
+    /**Ver un archivo en pdf */
     public function load_view($view, $data = array()) {
         $dompdf = new Dompdf(array('isPhpEnabled' => true, 'isRemoteEnabled' => true));
         $dompdf->setPaper("letter");
         $html = view($view,$data);
         $dompdf->loadHtml($html);
-	$dompdf->render();
+	    $dompdf->render();
 
-	ob_end_clean();
+	    ob_end_clean();
         
         $dompdf->stream($data["nombre_archivo"], array("Attachment"=>0));// en navegador
+    }
+
+    /**Descargar un archivo en pdf */
+    public function download_view($view, $data = array()) {
+        $dompdf = new Dompdf(array('isPhpEnabled' => true, 'isRemoteEnabled' => true));
+        $dompdf->setPaper("letter");
+        $html = view($view,$data);
+        $dompdf->loadHtml($html);
+	    $dompdf->render();
+
+        //Poner el header para descargar el archivo
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="'.$data['nombre_archivo'].'.pdf"');
+
+	    ob_end_clean();
+        
+        $dompdf->stream($data["nombre_archivo"], array("Attachment"=>1));// en navegador
     }
     
     public function temp_view($view, $data = array()) {
@@ -40,16 +57,17 @@ class Pdf_Manager extends Dompdf
         return base64_encode($dompdf->output());
     }
 
+    /**Guardar un archivo pdf en el sistema */
     public function save_view($view, $data = array()) {
         $dompdf = new Dompdf(array('isPhpEnabled' => true));
         $html = view($view,$data);
         $dompdf->loadHtml($html);
         $dompdf->render();
-        $folder = "archivos";
+        $folder = "F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos";
         if(!is_dir($folder)) {
             mkdir($folder);
         }
-        $file = $folder."/".$data['nombre_archivo'];
+        $file = $folder."\\".$data['nombre_archivo'];
         $output = $dompdf->output();
         file_put_contents($file, $output);
     }

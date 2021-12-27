@@ -7,8 +7,9 @@ use Core\Model;
 class EmpresasModel extends Model
 {
     protected $nombreTabla = 'empresas';
-    protected $pk_tabla = 'id_empresa';
     protected $vistaTabla = 'empresas_view';
+
+    protected $pk_tabla = 'id_empresa';
 
     protected $camposTabla = [
         'identificacion',
@@ -21,21 +22,25 @@ class EmpresasModel extends Model
         'telefono',
         'cod_pais',
         'correo',
-        'activo'
+        'estado'
     ];
 
     protected $camposVista = [
         'tipo_identificacion',
+        'nombre',
+        'codigo_telefono',
+        'nombre_pais',
         'cod_provincia',
-        'provincia',
         'cod_canton',
-        'canton',
         'cod_distrito',
-        'distrito',
         'cod_barrio',
+        'provincia',
+        'canton',
+        'distrito',
         'barrio',
-        'codigo_telefono'
     ];
+
+    protected $dbGroup = 'seguridad';
 
     protected $auditorias = true;
     protected $autoIncrement = true;

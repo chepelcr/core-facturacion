@@ -4,7 +4,7 @@
         <?= view('seguridad/auditoria/nav')?>
     </div>
 
-    <div class="card-body">
+    <div class="card-body scroll_vertical" style="max-height: 300px;">
         <table class="table table-bordered table-hover text-center" id="listado">
             <thead>
                 <tr>

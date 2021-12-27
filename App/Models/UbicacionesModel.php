@@ -20,6 +20,8 @@ class UbicacionesModel extends Model
         'barrio',
     ];
 
+    protected $dbGroup = 'seguridad';
+
     protected $autoIncrement = true;
     protected $auditorias = true;
 
@@ -59,6 +61,28 @@ class UbicacionesModel extends Model
         {
             $this->where('cod_canton', $cod_canton);
         }//Fin de los cantones
+
+        return $this->getAll();
+    }//Fin de la funcion
+
+    public function barrios($cod_provincia = null, $cod_canton = null, $cod_distrito = null)
+    {
+        $this->select('cod_canton')->select('cod_distrito')->select('cod_barrio')->select('barrio');
+
+        if($cod_provincia)
+        {
+            $this->where('cod_provincia', $cod_provincia);
+        }//Fin de filtro por provincia
+
+        if($cod_canton)
+        {
+            $this->where('cod_canton', $cod_canton);
+        }//Fin de los cantones
+
+        if($cod_distrito)
+        {
+            $this->where('cod_distrito', $cod_distrito);
+        }//Fin de los distritos
 
         return $this->getAll();
     }//Fin de la funcion

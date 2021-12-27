@@ -5,15 +5,24 @@ use App\Models\UbicacionesModel;
 
 class Ubicacion extends BaseController
 {
-    /**Obtener los cantones o para una provincia */
-    public function cantones()
+    /**Obtener todas las provincias */
+    public function provincias()
     {
         $ubicacionesModel = new UbicacionesModel();
+        $provincias = $ubicacionesModel->provincias();
 
-        if(isset($_POST['cod_provincia'])&&$_POST['cod_provincia']!="")
+        return json_encode($provincias);
+    }//Fin de la funcion provincias
+
+    /**Obtener los cantones para una provincia */
+    public function cantones()
+    {
+        if(getSegment(3))
         {
-            return json_encode($ubicacionesModel->cantones($_POST['cod_provincia']));
-        }//Fin de validacion
+            $ubicacionesModel = new UbicacionesModel();
+
+            return json_encode($ubicacionesModel->cantones(getSegment(3)));
+        }
 
         return json_encode(false);
     }//Fin de la funcion
@@ -23,9 +32,9 @@ class Ubicacion extends BaseController
     {
         $ubicacionesModel = new UbicacionesModel();
 
-        if(isset($_POST['cod_provincia'])&&isset($_POST['cod_canton'])&&$_POST['cod_canton']!=""&&$_POST['cod_provincia']!="")
+        if(getSegment(3) && getSegment(4))
         {
-            return json_encode($ubicacionesModel->distritos($_POST['cod_provincia'], $_POST['cod_canton']));
+            return json_encode($ubicacionesModel->distritos(getSegment(3), getSegment(4)));
         }
 
         return json_encode(false);
@@ -36,13 +45,13 @@ class Ubicacion extends BaseController
     {
         $ubicacionesModel = new UbicacionesModel();
 
-        if(isset($_POST['cod_provincia'])&&isset($_POST['cod_canton'])&&isset($_POST['cod_distrito'])&&$_POST['cod_canton']!=""&&$_POST['cod_provincia']!="")
+        if(getSegment(3) && getSegment(4) && getSegment(5))
         {
-            $ubicacionesModel->where('cod_provincia', $_POST['cod_provincia'])->where('cod_canton', $_POST['cod_canton'])->where('cod_distrito', $_POST['cod_distrito']);
+            $ubicacionesModel->where('cod_provincia', getSegment(3))->where('cod_canton', getSegment(4))->where('cod_distrito', getSegment(5));
 
             return json_encode($ubicacionesModel->getAll());
         }//Fin de validacion
 
         return json_encode(false);
     }//Fin de la funcion
-}
+}//Fin de la clase

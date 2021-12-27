@@ -1,9 +1,9 @@
 <aside class="main-sidebar sidebar-dark-primary bg-modas elevation-4">
     <!-- Brand Logo -->
     <a href="<?=baseUrl()?>" class="brand-link">
-        <img src="<?=getFile('dist/img/logo.png')?>" alt="Logo"
-            class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">Sistema de ordenes</span>
+        <img src="<?=getFile('dist/img/logo.png')?>" alt="Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
+        <span class="brand-text font-weight-light">Modas Laura</span>
     </a>
 
     <!-- Sidebar -->
@@ -14,7 +14,18 @@
                 <img src="<?=getFile('dist/img/logo.png')?>" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">José Pablo</a>
+                <a href="#" class="d-block"><?= getSession('nombre_usuario')?></a>
+            </div>
+        </div>
+
+        <div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Buscar" aria-label="Buscar">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -27,12 +38,15 @@
                 <?php
                     echo view('sidebar/dashboard');
 
-                    echo view('sidebar/empresa');
+                    foreach ($modulos as $modulo) {
+                        $data = array(
+                            'modulo' => $modulo->nombre_modulo,
+                            'icono' => $modulo->icono,
+                            'submodulos' => $modulo->submodulos
+                        );
 
-                    $modulos = getModulos();
-
-                    foreach ($modulos as $nombre_modulo => $submodulos) {
-                        echo view('sidebar/'.$nombre_modulo, array('submodulos'=>$submodulos));
+                        echo view('sidebar/modulo', $data);
+                        //echo view('sidebar/'.$modulo->nombre_modulo, array('submodulos'=>$modulo->submodulos));
                     }
                 ?>
             </ul>

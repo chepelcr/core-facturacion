@@ -1,11 +1,13 @@
 <?php
-    if(validar_permiso(getSegment(1), $submodulo, 'insertar'))
+    if(isset($objeto) && validar_permiso(getSegment(1), $submodulo, 'insertar'))
     {
 ?>
     <div class="col-md-9 pr-1">
         <nav class="nav nav-pills flex-column flex-sm-row text-center">
-            <a class="flex-sm-fill text-sm-center nav-link pr-1" href="<?=baseUrl('seguridad')?>">Usuarios</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad')?>">Usuarios</a>
             <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad/roles')?>">Roles</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad/auditorias')?>">Auditorias</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad/errores')?>">Errores</a>
         </nav>
     </div>
 
@@ -20,8 +22,10 @@
 ?>
     <div class="col-md-12">
         <nav class="nav nav-pills flex-column flex-sm-row text-center">
-            <a class="flex-sm-fill text-sm-center nav-link pr-1" href="<?=baseUrl('seguridad')?>">Usuarios</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad')?>">Usuarios</a>
             <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad/roles')?>">Roles</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad/auditorias')?>">Auditorias</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?=baseUrl('seguridad/errores')?>">Errores</a>
         </nav>
     </div>
 

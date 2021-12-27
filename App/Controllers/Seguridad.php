@@ -3,7 +3,10 @@
 namespace App\Controllers;
 
 use App\Librerias\Correo;
+use App\Models\CodigosPaisesModel;
+use App\Models\EmpresasModel;
 use App\Models\RolesModel;
+use App\Models\TipoIdentificacionModel;
 use App\Models\UbicacionesModel;
 use App\Models\UsuariosModel;
 use Core\Auditorias\AuditoriaModel;
@@ -32,35 +35,64 @@ class Seguridad extends BaseController
 		'roles'=> true,
 	);
 
-	/**Ontener todos los usuarios del sistema */
 	public function index()
 	{
+		if(is_login())
+        {
+            $script = '<script>
+                $(document).ready(function(){
+                    cargar_inicio_modulo("seguridad");
+                });
+            </script>';
+
+            $data = array(
+                'script' => $script,
+            );
+
+            return $this->inicio($data);
+        }//Fin de la validacion
+
+        else
+            header('Location: '.baseUrl('login'));
+    }//Fin de la funcion index
+
+	/**Ontener todos los usuarios del sistema */
+	public function usuarios()
+	{
 		if(!is_login())
-			return redirect(baseUrl('login'));
+			return $this->error('No tiene permisos para acceder a esta página', '403');
 
 		$usuariosModel = new UsuariosModel();
 		$usuarios = $usuariosModel->getAll();
 
+		$tiposIdentificacionMoodel = new TipoIdentificacionModel();
+		$identificaciones = $tiposIdentificacionMoodel->getAll();
+
+		$codigosPaisesModel = new CodigosPaisesModel();
+		$codigos = $codigosPaisesModel->getAll();
+
 		$nombreVista = 'seguridad/usuario/listado';
-
-		$head = '<!--DataTables-->
-                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
-
-		$script = '<!--DataTables-->
-				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-				
-				<!-- Listado -->
-				<script src="' . getFile('dist/js/base/listado.js') . '"></script>
-
-				<!-- Ubicaciones -->
-				<script src="' . getFile('dist/js/base/ubicaciones.js') . '"></script>
-				
-				<!-- Usuarios -->
-				<script src="' . getFile('dist/js/seguridad/usuarios.js') . '"></script>';
 
 		$nombreForm = 'seguridad/usuario/form';
 
+		$datos_personales = array(
+			'identificaciones'=>$identificaciones,
+			'codigos'=>$codigos
+		);
+
+		$rolesModel = new RolesModel();
+		$empresasModel = new EmpresasModel();
+
+		$datos_usuario = array(
+			'empresas' => $empresasModel->getAll(),
+			'roles' => $rolesModel->getAll(),
+		);
+
 		$dataModal = array(
+			'dataForm'=>array(
+				'datos_personales'=>$datos_personales,
+				'datos_usuario'=>$datos_usuario
+			),
 			'nombreForm' => $nombreForm,
 		);
 
@@ -69,29 +101,20 @@ class Seguridad extends BaseController
 			'dataModal' => $dataModal
 		);
 
-		$dataHead = array(
-			'head' => $head
-		);
-
-		$titulo = 'Seguridad';
-		$objeto = 'Usuarios';
-		$pagina = 'Listado';
-
-		$dataHeader = array(
-			'titulo' => $titulo,
-			'objeto' => $objeto,
-			'pagina' => $pagina
-		);
-
 		$data = array(
 			'nombreVista' => $nombreVista,
 			'dataView' => $dataView,
-			'dataHead' => $dataHead,
-			'dataHeader' => $dataHeader,
-			'script' => $script
+			'script' => "<script>
+							$(document).ready(function(){
+								cargar_listado('seguridad', 'usuarios', '".baseUrl('seguridad/usuarios/listado')."');
+							});
+						</script>"
 		);
 
-		return view('layout', $data);
+		if(getSegment(3) == 'listado')
+			return view($nombreVista, $dataView);
+		else
+			return view('layout', $data);
 	} //Fin de la funcion para retornar los usuarios del sistema
 
 	/**Obtener todos los roles del sistema */
@@ -103,16 +126,6 @@ class Seguridad extends BaseController
 			$nombreVista = 'seguridad/rol/listado';
 			$nombreForm = 'seguridad/rol/form';
 
-			$head = '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
-			$script = '<!--DataTables-->
-				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-				
-				<!-- Listado -->
-				<script src="' . getFile('dist/js/base/listado.js') . '"></script>
-				
-				<!-- Roles -->
-				<script src="' . getFile('dist/js/seguridad/rol.js') . '"></script>';
-
 			$dataModal = array(
 				'nombreForm' => $nombreForm,
 			);
@@ -122,29 +135,20 @@ class Seguridad extends BaseController
 				'roles' => $roles,
 			);
 
-			$dataHead = array(
-				'head' => $head
-			);
-
-			$titulo = 'Sucursal';
-			$objeto = 'Usuarios';
-			$pagina = 'Roles';
-
-			$dataHeader = array(
-				'titulo' => $titulo,
-				'objeto' => $objeto,
-				'pagina' => $pagina
-			);
-
 			$data = array(
 				'nombreVista' => $nombreVista,
 				'dataView' => $dataView,
-				'dataHead' => $dataHead,
-				'dataHeader' => $dataHeader,
-				'script' => $script
+				'script' => "<script>
+								$(document).ready(function(){
+									cargar_listado('seguridad', 'roles', '".baseUrl('seguridad/roles/listado')."');
+								});
+							</script>"
 			);
 
-			return view('layout', $data);
+			if(getSegment(3) == 'listado')
+				return view($nombreVista, $dataView);
+			else
+				return view('layout', $data);
 	} //Fin de la funcion
 
 	/**Obtener el perfil de un usuario */
@@ -174,9 +178,54 @@ class Seguridad extends BaseController
 				'nombreForm' => 'seguridad/perfil/contrasenia'
 			);
 
+			$datos_personales = array(
+				'nombre' => $perfil->nombre,
+				'identificacion' => $perfil->identificacion,
+				'id_tipo_identificacion' => $perfil->id_tipo_identificacion,
+				'cod_pais' => $perfil->cod_pais,
+				'identificaciones'=>array(
+					(object) array( 
+						'id_tipo_identificacion' => $perfil->id_tipo_identificacion, 
+						'tipo_identificacion' => $perfil->tipo_identificacion ),
+				),
+				'codigos'=>
+					array(
+						(object) array( 
+							'cod_pais' => $perfil->cod_pais,
+							'nombre' => $perfil->nombre_pais ),
+					),
+			);
+
+			$datos_contacto = array(
+				'telefono' => $perfil->telefono,
+				'correo' => $perfil->correo,
+			);
+
+			$datos_usuario = array(
+				'nombre_usuario' => $perfil->nombre_usuario,
+				'id_empresa' => $perfil->id_empresa,
+				'empresas' => array(
+					(object) array( 
+						'id_empresa' => $perfil->id_empresa, 
+						'nombre' => $perfil->nombre_empresa ),
+				),
+				'id_rol' => $perfil->id_rol,
+				'roles' => array(
+					(object) array( 
+						'id_rol' => $perfil->id_rol, 
+						'nombre_rol' => $perfil->nombre_rol ),
+				),
+			);
+
+			$arrayPerfil = array(
+				'datos_personales' => $datos_personales,
+				'datos_contacto' => $datos_contacto,
+				'datos_usuario' => $datos_usuario,
+			);
+
 			$dataView = array(
-				'perfil' => $perfil,
 				'dataForm' => $dataForm,
+				'perfil' => $arrayPerfil,
 			);
 
 			$data = array(
@@ -199,50 +248,24 @@ class Seguridad extends BaseController
 		if (is_login()) {
 			$auditoriaModel = new AuditoriaModel();
 
-			$head = '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
-
-			$script = '<!--DataTables-->
-				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-				
-				<!-- Listado -->
-				<script src="' . getFile('dist/js/base/listado.js') . '"></script>
-
-				<script>
-				$(document).on("click", "#btnAgregar", function(e) {
-					e.preventDefault();
-			
-					mensajeAutomatico("Atencion", "Funcionalidad a implementar", "info");
-				});
-				</script>';
-
 			$dataView = array(
 				'auditorias' => $auditoriaModel->getAll(),
-			);
-
-
-			$dataHead = array(
-				'head' => $head
-			);
-
-			$titulo = 'Seguridad';
-			$objeto = 'Auditorias';
-			$pagina = 'Listado';
-
-			$dataHeader = array(
-				'titulo' => $titulo,
-				'objeto' => $objeto,
-				'pagina' => $pagina
 			);
 
 			$data = array(
 				'nombreVista' => 'seguridad/auditoria/listado',
 				'dataView' => $dataView,
-				'dataHeader' => $dataHeader,
-				'dataHead' => $dataHead,
-				'script' => $script
+				'script' => '<script>
+					$(document).ready(function(){
+						cargar_listado("seguridad", "auditorias", "' . baseUrl('seguridad/auditorias/listado') . '");
+					});
+				</script>'
 			);
 
-			return view('layout', $data);
+			if(getSegment(3) == 'listado')
+				return view('seguridad/auditoria/listado', $dataView);
+			else
+				return view('layout', $data);
 		} //Fin de la validacion
 
 		return redirect(baseUrl());
@@ -257,42 +280,24 @@ class Seguridad extends BaseController
 
 			$nombreVista = 'seguridad/auditoria/errores';
 
-			$head = '<!--DataTables-->
-                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
-
-			$script = '<!--DataTables-->
-				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-				
-				<!-- Listado -->
-				<script src="' . getFile('dist/js/base/listado.js') . '"></script>';
-
 			$dataView = array(
 				'errores' => $errores,
-			);
-
-			$dataHead = array(
-				'head' => $head
-			);
-
-			$titulo = 'Seguridad';
-			$objeto = 'Auditorias';
-			$pagina = 'Errores';
-
-			$dataHeader = array(
-				'titulo' => $titulo,
-				'objeto' => $objeto,
-				'pagina' => $pagina
 			);
 
 			$data = array(
 				'nombreVista' => $nombreVista,
 				'dataView' => $dataView,
-				'dataHeader' => $dataHeader,
-				'dataHead' => $dataHead,
-				'script' => $script
+				'script' => '<script>
+					$(document).ready(function(){
+						cargar_listado("seguridad", "errores", "' . baseUrl('seguridad/errores/listado') . '");
+					});
+				</script>'
 			);
-
-			return view('layout', $data);
+			
+			if(getSegment(3) == 'listado')
+				return view('seguridad/auditoria/errores', $dataView);
+			else
+				return view('layout', $data);
 	} //Fin de la funcion para mostrar todos los errores
 
 	/**Actualizar un objeto de la base de datos */
@@ -311,7 +316,6 @@ class Seguridad extends BaseController
 								$id = getSession('id_usuario');
 
 								$data = array(
-									'nombre' => post('nombre'),
 									'nombre_usuario' => post('nombre_usuario'),
 									'correo' => post('correo'),
 									'telefono' => post('telefono'),
@@ -321,7 +325,6 @@ class Seguridad extends BaseController
 	
 								if($model->update($data, $id)!=0)
 								{
-									setSession('nombre', post('nombre'));
 									setSession('nombre_usuario', post('nombre_usuario'));
 									setSession('correo', post('correo'));
 									setSession('telefono', post('telefono'));
@@ -526,6 +529,7 @@ class Seguridad extends BaseController
 									'id_modulo' => $submodulo_accion->id_modulo,
 									'id_submodulo' => $submodulo_accion->id_submodulo,
 									'id_accion' => $submodulo_accion->id_accion,
+									'estado' => 1
 								);
 
 								$model = new PermisosModel();

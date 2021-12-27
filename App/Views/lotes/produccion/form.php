@@ -1,7 +1,14 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-cog"></i>
-            Agregar producto</h3>
+            Agregar producto
+        </h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
     </div>
 
     <div class="card-body">
@@ -64,7 +71,14 @@
     <div class="card-header">
         <!-- Resumen de productos -->
         <h3 class="card-title"><i class="fas fa-cog"></i>
-            Resumen de productos</h3>
+            Resumen de productos
+        </h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
     </div>
 
     <div class="card-body">
@@ -122,7 +136,14 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-cog"></i>
-            Total del lote</h3>
+            Total del lote
+        </h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
     </div>
 
     <div class="card-body">

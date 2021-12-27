@@ -176,7 +176,6 @@ class Model
                 $update->bindValue($campo, $valor);
             }
 
-            
             if($id)
                 $update->bindValue($this->pk_tabla, $id);
 

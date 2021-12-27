@@ -1,18 +1,12 @@
-<!--Card-->
 <div class="card">
-    <div class="card-header">
-        <nav class="nav nav-pills flex-column flex-sm-row">
-            <button class="btn btn-danger col-md-3" id="btnAgregar">Agregar cliente</button>
-        </nav>
-    </div>
-    <div class="card-body">
-        <table class="table table-bordered table-hover" id="listado">
+    <div class="card-body scroll_vertical">
+        <table class="table table-bordered table-hover text-center" id="listado">
             <thead>
                 <tr>
-                    <th>Cedula del cliente</th>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Opciones</th>
+                    <th class="col-2">Identificación</th>
+                    <th class="col-6">Nombre completo</th>
+                    <th class="col-3">Correo electrónico</th>
+                    <th class="col-1">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,18 +16,27 @@
                     <td><?=$cliente->razon?></td>
                     <td><?=$cliente->correo?></td>
                     <td>
-                    <div class="dropdown text-center">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Opciones</button>
-                            <!--Modificar articulo-->
+                        <div class="btn-group">
+                            <!-- Ver informacion-->
+                            <button data-toggle="tooltip" title="Ver cliente"
+                                onclick="ver_cliente('<?=$cliente->id_cliente?>')" class="btn btn-secondary"
+                                type="button">
+                                <i class="fas fa-eye"></i>
+                            </button>
 
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <!--Modificar cliente-->
-                                <button id="modificar" value="<?=$cliente->id_cliente?>" class="dropdown-item" type="button">Modificar</button>
-
-                                <!--Ver documentos emitidos-->
-                                <button id="documentos" value="<?=$cliente->id_cliente?>" class="dropdown-item" type="button">Ver facturas</button>
-                            </div>
+                            <?php
+                                            if(validar_permiso('empresa', 'clientes', 'modificar'))
+                                            {
+                                        ?>
+                            <!--Modificar cliente-->
+                            <button data-toggle="tooltip" title="Modificar cliente"
+                                onclick="modificar_cliente('<?=$cliente->id_cliente?>')" class="btn btn-secondary"
+                                type="button">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <?php
+                                            }
+                                        ?>
                         </div>
                     </td>
                     <!--Fin de las opciones-->
@@ -51,5 +54,6 @@
 <!--/Card-->
 
 
-<!--Modal para agregar o modificar un usuario-->
+<!--Modal para agregar o modificar un cliente-->
 <?php echo view('base/form', $dataModal);?>
+<!--Fin del modal-->

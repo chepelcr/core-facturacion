@@ -16,11 +16,35 @@
 <!-- Font-Awesome -->
 <script src="https://kit.fontawesome.com/3e7bda16db.js" crossorigin="anonymous"></script>
 
-<!-- Base -->
-<script src="<?=getFile('dist/js/base/base.js')?>"></script>
+<!--DataTables-->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 
 <!-- Pace -->
 <script src="<?=getFile('dist/plugins/pace-progress/pace.min.js')?>"></script>
+
+<!-- Base -->
+<?=getScript('base/base')?>"></script>
+
+<!-- Mensajes -->
+<?=getScript('base/mensajes')?>
+
+<!-- Form -->
+<script src="<?=getFile('dist/js/base/form.js')?>"></script>
+
+<!-- Listado -->
+<script src="<?=getFile('dist/js/base/listado.js')?>"></script>
+
+<!-- Ubicaciones -->
+<?=getScript('base/ubicaciones')?>
+
+<!-- Inicio -->
+<script src="<?=getFile('dist/js/inicio/inicio.js')?>"></script>
+
+<!-- Empresa-->
+<script src="<?=getFile('dist/js/inicio/empresa.js')?>"></script>
+
+<!-- Facturas -->
+<script src="<?=getFile('dist/js/inicio/facturas.js')?>"></script>
 
 <?php 
     if(isset($script))

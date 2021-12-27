@@ -8,18 +8,20 @@ use Core\Model;
 class UsuariosModel extends Model
 {
 	protected $nombreTabla = 'usuarios';
+	protected $vistaTabla = 'usuarios_view';
+
 	protected $pk_tabla = 'id_usuario';
 
 	protected $dbGroup = 'seguridad';
 
 	protected $camposTabla = [
 		'nombre',
-		'apellidos',
 		'nombre_usuario',
-		'cedula_usuario',
-		'tipo_cedula',
+		'identificacion',
+		'id_tipo_identificacion',
 		'correo',
 		'id_rol',
+		'cod_pais',
 		'id_empresa',
 		'telefono',
 		'fecha_registro',
@@ -28,8 +30,21 @@ class UsuariosModel extends Model
 		'estado'
 	];
 
+	protected $camposVista = [
+        'tipo_identificacion',
+        'codigo_telefono',
+        'nombre_pais',
+		'nombre_empresa',
+		'nombre_rol',
+    ];
+
 	protected $autoIncrement = true;
 
 	protected $auditorias = true;
+
+	public function getPerfil()
+	{
+		return $this->getById(getSession('id_usuario'));
+	}
 }//Fin de la clase
 ?>

@@ -54,18 +54,12 @@ class Correo
 
             $receptor = $data->receptor;
 
-            //Receptores al correo
-            if(is_array($receptor))
-            {
-                foreach ($receptor as $nombre => $correo) {
-                    $mail->addAddress($correo, $nombre);
-                }//Fin del ciclo para insertar los receptores
-            }//Fin de la validacion de varios receptores
+            foreach ($receptor as $nombre => $correo) {
+                //pasar nomnbre a string
+                $nombre = (string) $nombre;
 
-            //Si solo es un receptor
-            else{
-                $mail->addAddress($receptor);
-            }//Fin de la validacion
+                $mail->addAddress($correo, $nombre);
+            }//Fin del ciclo para insertar los receptores
 
 
             //Copia de correo
@@ -96,20 +90,13 @@ class Correo
             if(isset($data->adjuntos))
             {
                 $adjuntos = $data->adjuntos;
-
-                //Si son varios archivos
-                if(is_array($adjuntos))
-                {
                     foreach ($adjuntos as $nombreArchivo => $ubicacion) {
+                        //Pasar nombre de archivo a string
+                        $nombreArchivo = (string) $nombreArchivo;
+
                         //Insertar los adjuntos
                         $mail->addAttachment($ubicacion, $nombreArchivo);
                     }//Fin del ciclo
-                }//Fin de la validacion de varios CC
-
-                //Si solo es un CC
-                else{
-                    $mail->addAttachment($adjuntos);
-                }//Fin de la validacion
             }//Fin de la validacion de archivos adjuntos
             
 
@@ -138,6 +125,8 @@ class Correo
                 );
 
                 insertAuditoria($data);
+
+                return true;
             }
         }
         
@@ -163,8 +152,8 @@ class Correo
             );
             
             insertError($data);
-        }
 
-        return false;
+            return false;
+        }
     }//Fin de la funcion para enviar un correo
 }//Fin de la clase

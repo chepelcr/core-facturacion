@@ -1,11 +1,7 @@
 <?php
 namespace App\Librerias;
 
-use App\Models\ClientesModel;
-use App\Models\ConsecutivosModel;
-use App\Models\DocumentoDetallesModel;
-use App\Models\DocumentoModel;
-use App\Models\EmpresasModel;
+use DOMDocument;
 
 /**libreria para el manejo de documentos electronicos con base en los requerimientos del MH */
 class Hacienda
@@ -14,14 +10,14 @@ class Hacienda
     private function token()
     {
         $data = array(
-            'client_id' => getenv('factura.clientID'),
+            'client_id' => getEnt('factura.clientID'),
             'client_secret' => '',
             'grant_type' => 'password',
-            'username' => getenv('factura.userToken'),
-            'password' => getenv('factura.userPass')
+            'username' => getEnt('factura.userToken'),
+            'password' => getEnt('factura.userPass')
         );
 
-        $curl= curl_init(getenv('factura.tokenURL'));
+        $curl= curl_init(getEnt('factura.tokenURL'));
         curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POST, true);
@@ -38,13 +34,14 @@ class Hacienda
     }//Fin de obtenerToken
 
     /**Fimar un documento XML */
-    private function firmarXml($clave)
+    public function firmarXml($clave)
     {
-        $p12= getenv('factura.p12');
-        $pin=getenv('factura.pin');
+        $p12 = getEnt('factura.p12');
+        $pin = getEnt('factura.pin');
 
-        $input= "archivos/xml/p_firmar/".$clave.".xml";
-        $ruta= "archivos/xml/firmados/".$clave."_f.xml";
+        $input = "F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\p_firmar\\".$clave.".xml";
+
+        $ruta = "F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\firmados\\".$clave."_f.xml";
 
         $Firmador = new Firmador();
         //firma y devuelve el base64_encode();
@@ -77,7 +74,7 @@ class Hacienda
             "Content-Type: application/json",
         );
 
-        $curl = curl_init(getenv('factura.urlRecepcion'));
+        $curl = curl_init(getEnt('factura.urlRecepcion'));
         curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
@@ -94,167 +91,80 @@ class Hacienda
         return json_encode(array('respuesta' =>$respuesta, 'status'=>$status ));      //echo $status;
     }
 
-    /**Actualizar un consecutivo */
-    private function actualizarConsecutivo($consecutivo, $id_consecutivo)
-    {
-        $consecutivosModel = new ConsecutivosModel();
-
-        $data = array(
-            "consecutivo" => $consecutivo,
+    public function validarXml($xml64){
+        $leer= json_encode(simplexml_load_string(base64_decode($xml64)));
+        $json= json_decode($leer);
+        //token
+        $header= array(
+            "Authorization: bearer ".$this->token(),
+            "Content-Type: application/json",
         );
 
-        return $consecutivosModel->update($data, $id_consecutivo);
-    }//Fin de la funcion
+        $curl = curl_init(getEnt('factura.urlRecepcion')."/".$json->Clave);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
 
-    /**Generar una factura XML*/
-    public function generar_xml($id_documento)
-    {
-        $documentosModel = new DocumentoModel();
-    
-        $documento = $documentosModel->getById($id_documento);
+        //ejecutar el curl
+        $response= curl_exec($curl);
+        $status= curl_getinfo($curl,CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        //obtener respuesta
+        $xml= json_decode($response, true);
 
-        if($documento)
-        {
-            $id_tipo_documento = $documento->tipo_documento;
+        if (isset($xml['respuesta-xml'])) {
+            $respuesta_xml= $xml['respuesta-xml'];
+            $stringXML= base64_decode($respuesta_xml);
 
-            $id_sucursal = getSession('id_sucursal');
-            $id_punto_venta = getEnt('punto_venta.id');
-
-            $ConsecutivosModel = new ConsecutivosModel();
-            
-            $ConsecutivosModel->where('id_punto', $id_punto_venta);
-            $ConsecutivosModel->where('id_sucursal', $id_punto_venta);
-
-            $ConsecutivosModel->where('ambiente', getEnt('factura.ambiente'));
-            $ConsecutivosModel->where('tipo_documento', $id_tipo_documento);
-
-            $consecutivo = $ConsecutivosModel->fila();
-
-            $id_factura = $consecutivo->consecutivo;
-
-            $this->actualizarConsecutivo($id_factura+1, $consecutivo->id_consecutivo);
-
-            $factura = str_pad($id_factura,10,0,STR_PAD_LEFT);
-
-            $sucursal = str_pad($id_sucursal,3,0,STR_PAD_LEFT);
-
-            $pv = str_pad($id_punto_venta,5,0,STR_PAD_LEFT);
-
-            $consecutivo = $sucursal.$pv.$id_tipo_documento.$factura;
-            
-            $empresasModel = new EmpresasModel();
-            $emisor = $empresasModel->getById(getSession('id_empresa'));
-
-            $cod= $emisor->codigo_telefono;
-            $ced= $emisor->identificacion;
-            $cedulaEmisor= str_pad($ced,12,"0",STR_PAD_LEFT);
-            $situacion="1";
-
-            $codigo_seguridad= substr(str_shuffle("0123456789"), 0, 8);
-
-            $clave= $cod.date('d').date('m').date('y').$cedulaEmisor.$consecutivo.$situacion.$codigo_seguridad;
-
-
-
-            $ClientesModel = new ClientesModel();
-
-            $ClientesModel->where('identificacion', $documento->receptor_cedula);
-            $receptor = $ClientesModel->fila();
-
-            $stringXML='<?xml version="1.0" encoding="utf-8"?>
-            <FacturaElectronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica">
-                <Clave>'.$clave.'</Clave>
-                <CodigoActividad>721001</CodigoActividad>
-                <NumeroConsecutivo>'.$consecutivo.'</NumeroConsecutivo>
-                <FechaEmision>'.date("c").'</FechaEmision>
-                <Emisor>
-                    <Nombre>'.$emisor->razon.'</Nombre>
-                    <Identificacion>
-                        <Tipo>'.$emisor->id_tipo_identificacion.'</Tipo>
-                        <Numero>'.$emisor->identificacion.'</Numero>
-                    </Identificacion>
-                    <NombreComercial>JR</NombreComercial>
-                    <Ubicacion>
-                        <Provincia>'.$emisor->cod_provincia.'</Provincia>
-                        <Canton>'.str_pad($emisor->cod_canton,2,"0",STR_PAD_LEFT).'</Canton>
-                        <Distrito>'.str_pad($emisor->cod_distrito,2,"0",STR_PAD_LEFT).'</Distrito>
-                        <Barrio>'.str_pad($emisor->cod_barrio,2,"0",STR_PAD_LEFT).'</Barrio>
-                        <OtrasSenas>'.$emisor->otras_senas.'</OtrasSenas>
-                    </Ubicacion>
-                    <Telefono>
-                        <CodigoPais>'.$emisor->codigo_telefono.'</CodigoPais>
-                        <NumTelefono>'.$emisor->telefono.'</NumTelefono>
-                    </Telefono>
-                    <CorreoElectronico>'.$emisor->correo.'</CorreoElectronico>
-                </Emisor>
-                <Receptor>
-                    <Nombre>'.$receptor->razon.'</Nombre>
-                    <Identificacion>
-                        <Tipo>'.$receptor->id_tipo_identificacion.'</Tipo>
-                        <Numero>'.$receptor->identificacion.'</Numero>
-                    </Identificacion>
-                    <NombreComercial/>
-                    <Ubicacion>
-                        <Provincia>'.$receptor->cod_provincia.'</Provincia>
-                        <Canton>'.str_pad($receptor->cod_canton,2,"0",STR_PAD_LEFT).'</Canton>
-                        <Distrito>'.str_pad($receptor->cod_distrito,2,"0",STR_PAD_LEFT).'</Distrito>
-                        <Barrio>'.str_pad($receptor->cod_barrio,2,"0",STR_PAD_LEFT).'</Barrio>
-                        <OtrasSenas>'.$receptor->otras_senas.'</OtrasSenas>
-                    </Ubicacion>
-                    <Telefono>
-                        <CodigoPais>'.$receptor->codigo_telefono.'</CodigoPais>
-                        <NumTelefono>'.$receptor->telefono.'</NumTelefono>
-                    </Telefono>
-                    <CorreoElectronico>'.$receptor->correo.'</CorreoElectronico>
-                </Receptor>
-                <CondicionVenta>'.$documento->condicion_venta.'</CondicionVenta>
-                <PlazoCredito>'.$documento->plazo_credito.'</PlazoCredito>
-                <MedioPago>'.$documento->medio_pago.'</MedioPago>
-                <DetalleServicio>';
-
-                $documentosDetalles = new DocumentoDetallesModel();
-
-                $documentosDetalles->where('id_documento', $id_documento);
-
-                $detalles = $documentosDetalles->getAll();
-
-                foreach ($detalles as $key => $detalle) 
-                {
-                    var_dump($detalle);
-                    var_dump($key);
-
-                    $stringXML.='<LineaDetalle>
-                    <NumeroLinea>'.$detalle->linea.'</NumeroLinea>
-                    <Codigo>'.$detalle->codigo.'</Codigo>
-                    <Cantidad>'.$detalle->cantidad.'</Cantidad>
-                    <UnidadMedida>'.$detalle->unidad_medida.'</UnidadMedida>
-                    <Detalle>'.$detalle->detalle.'</Detalle>
-                    <PrecioUnitario>'.$detalle->precio_unidad.'</PrecioUnitario>
-                    <MontoTotal>'.$detalle->monto_total.'</MontoTotal>';
-
-                    if ($detalle->monto_descuento>0) {
-                       $stringXML.='<Descuento>
-                            <MontoDescuento>'.$detalle->monto_descuento.'</MontoDescuento>
-                            <NaturalezaDescuento>'.$detalle->motivo_descuento.'</NaturalezaDescuento>
-                        </Descuento>';
-                    }
-
-                    $stringXML.='<SubTotal>'.$detalle->sub_total.'</SubTotal>
-                    <Impuesto>
-                        <Codigo>'.$detalle->codigo_impuesto.'</Codigo>
-                        <CodigoTarifa>'.$detalle->codigo_tarifa.'</CodigoTarifa>
-                        <Tarifa>'.$detalle->tarifa.'</Tarifa>
-                        <Monto>'.$detalle->monto_impuesto.'</Monto>  
-                    </Impuesto>
-                    
-                    <ImpuestoNeto>'.$detalle->impuesto_neto.'</ImpuestoNeto>
-                    <MontoTotalLinea>'.$detalle->total_linea.'</MontoTotalLinea>
-                </LineaDetalle>';
-                }
-
+            $salida="F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\respuesta\\".$json->Clave.".xml";
+            $doc = new DomDocument();
+            $doc->preseveWhiteSpace = false;
+            $doc->loadXml($stringXML);
+            $doc->save($salida);
         }
 
-        echo $stringXML;
-    }//Fin de la funcion para generar un archivo XML
+        return json_encode( array('response'=> $response , 'xml'=>$xml ));
+
+    }//Fin de validarXML
+
+    public function validar($clave){
+        $header= array(
+            "Authorization: bearer ".$this->token(),
+            "Content-Type: application/json",
+        );
+
+
+        $curl = curl_init(getEnt('factura.urlRecepcion')."/".$clave);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        //ejecutar el curl
+        $response= curl_exec($curl);
+        $status= curl_getinfo($curl,CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        //obtener respuesta
+
+        $xml= json_decode($response, true);
+
+        if (isset($xml['respuesta-xml'])) {
+            $respuesta_xml= $xml['respuesta-xml'];
+            $stringXML= base64_decode($respuesta_xml);
+
+            $salida="F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\respuesta\\".$clave.".xml";
+            $doc = new DOMDocument();
+            $doc->preseveWhiteSpace = false;
+            $doc->loadXml($stringXML);
+            $doc->save($salida);
+        }
+
+        return json_encode( array('response'=> $response , 'xml'=>$xml ));
+    }
 }//Fin de la clase

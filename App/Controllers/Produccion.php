@@ -1,111 +1,74 @@
-<?php 
-	/**
-	* Descripción: Controlador para la entidad libro
-	*/
+<?php
 
-	namespace App\Controllers;
+/**
+ * Descripción: Controlador para la entidad libro
+ */
+
+namespace App\Controllers;
 
 class Produccion extends BaseController
+{
+	public function index()
 	{
-		public function index()
-		{
-			$nombreVista = 'lotes/produccion/listado';
-			$nombreForm = 'lotes/produccion/form';
+		$nombreVista = 'lotes/produccion/listado';
+		$nombreForm = 'lotes/produccion/form';
 
-			$lotes = array();
+		$lotes = array();
 
-			$head = '<!--DataTables-->
-				<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
+		$dataModal = array(
+			'nombreForm' => $nombreForm,
+		);
+
+		$dataView = array(
+			'dataModal' => $dataModal
+		);
+
+		$data = array(
+			'nombreVista' => $nombreVista,
+			'dataView' => $dataView,
+			'script' => '<script>
+									$(document).ready(function(){
+										cargar_listado("produccion", "lotes", ' . baseUrl('produccion/lotes/listado') . ');
+									});
+								</script>'
+		);
+
+		return view('layout', $data);
+	}
+
+	/**Obtener los productos utilizados en la creacion de lotes */
+	public function lotes()
+	{
+		$nombreVista = 'lotes/produccion/listado';
+		$nombreForm = 'lotes/produccion/form';
+
+		$productos = array();
 
 
-				$script = '<!--DataTables-->
-				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-				
-				<!-- Listado -->
-				<script src="'.getFile('dist/js/base/listado.js').'"></script>
 
-				<!-- Articulos -->
-				<script src="'.getFile('dist/js/lotes/produccion.js').'"></script>';
+		$dataModal = array(
+			'nombreForm' => $nombreForm,
+		);
 
-				$dataModal = array(
-					'nombreForm'=>$nombreForm,
-				);
+		$dataView = array(
+			'dataModal' => $dataModal,
+			'articulos' => $productos
+		);
 
-				$dataView = array(
-					'dataModal'=>$dataModal
-				);
+		$data = array(
+			'nombreVista' => $nombreVista,
+			'dataView' => $dataView,
+			'script' => '<script>
+									$(document).ready(function(){
+										cargar_listado("produccion", "lotes", ' . baseUrl('produccion/lotes/listado') . ');
+									});
+								</script>'
+		);
 
-				$dataHead = array(
-					'head'=>$head
-				);
-
-				$dataHeader = array(
-					'titulo'=>'Produccion',
-					'objeto'=>'Lotes',
-					'pagina'=>'Reporte'
-				);
-
-				$data = array(
-					'nombreVista'=>$nombreVista,
-					'dataHeader'=>$dataHeader,
-					'dataView'=>$dataView,
-					'dataHead'=>$dataHead,
-					'script'=>$script
-				);
-	
-				return view('layout', $data);
-
+		if (getSegment(3) == 'listado') {
+			return view($nombreVista, $dataView);
 		}
 
-		/**Obtener los productos utilizados en la creacion de lotes */
-		public function productos()
-		{
-				$nombreVista = 'producto/produccion/listado';
-				$nombreForm = 'producto/produccion/form';
-
-				$productos = array();
-				
-				$head = '<!--DataTables-->
-				<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">';
-
-
-				$script = '<!--DataTables-->
-				<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-				
-				<!-- Listado -->
-				<script src="'.getFile('dist/js/base/listado.js').'"></script>
-
-				<!-- Articulos -->
-				<script src="'.getFile('dist/js/produccion/productos.js').'"></script>';
-
-				$dataModal = array(
-					'nombreForm'=>$nombreForm,
-				);
-
-				$dataView = array(
-					'dataModal'=>$dataModal,
-					'articulos'=>$productos
-				);
-
-				$dataHead = array(
-					'head'=>$head
-				);
-
-				$dataHeader = array(
-					'titulo'=>'Produccion',
-					'objeto'=>'Productos',
-					'pagina'=>'Listado'
-				);
-
-				$data = array(
-					'nombreVista'=>$nombreVista,
-					'dataHeader'=>$dataHeader,
-					'dataView'=>$dataView,
-					'dataHead'=>$dataHead,
-					'script'=>$script
-				);
-	
-				return view('layout', $data);
-		}//Fin de la funcion para mostrar el listado
-	}//Fin de la clase
-?>
+		return view('layout', $data);
+	} //Fin de la funcion para mostrar el listado
+}//Fin de la clase

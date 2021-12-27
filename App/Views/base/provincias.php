@@ -1,6 +1,14 @@
-<div class="card">
+<div class="card card-form">
     <div class="card-header">
-        <h3 class="card-title">Ubicacion</h3>
+        <h3 class="card-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Dirección
+        </h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Colapsar">
+                <i class="fas fa-minus"></i></button>
+        </div>
     </div>
 
     <div class="card-body">
@@ -12,7 +20,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select class="form-control inp provincia">
+                        <select onchange="obtener_cantones()" class="form-control inp provincia">
                             <option value="">Seleccionar</option>
                             <?php foreach ($provincias as $key => $provincia): ?>
                             <option value="<?=$provincia->cod_provincia?>">
@@ -30,7 +38,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select class="form-control inp canton" disabled>
+                        <select onchange="obtener_distritos()" class="form-control inp canton" disabled>
                             <option value="">Seleccionar</option>
                         </select>
                     </div>
@@ -44,7 +52,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select class="form-control inp distrito" disabled>
+                        <select onchange="obtener_barrios()" class="form-control inp distrito" disabled>
                             <option value="">Seleccionar</option>
                         </select>
                     </div>
@@ -72,7 +80,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <textarea class="form-control" name="otras_senias" id="otras_senias" cols="30"
+                        <textarea class="form-control inp" name="otras_senas" id="otras_senas" cols="30"
                             rows="3"></textarea>
                     </div>
                 </div>

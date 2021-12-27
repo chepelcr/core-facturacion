@@ -2,6 +2,7 @@
 
 use App\Librerias\Correo;
 use App\Models\ContraseniaModel;
+use App\Models\UsuariosModel;
 
 /** Validar si el usuario ha iniciado sesion */
     function is_login()
@@ -218,3 +219,61 @@ use App\Models\ContraseniaModel;
 		else
 			return 'Ha ocurrido un error.';
 	}//Fin del metodo para enviar una contrasenia temporal
+
+	function getPerfil()
+	{
+		if(is_login())
+		{
+			$usuariosModel = new UsuariosModel();
+			$perfil = $usuariosModel->getPerfil();
+
+			$datos_personales = array(
+				'nombre' => $perfil->nombre,
+				'identificacion' => $perfil->identificacion,
+				'id_tipo_identificacion' => $perfil->id_tipo_identificacion,
+				'cod_pais' => $perfil->cod_pais,
+				'identificaciones'=>array(
+					(object) array( 
+						'id_tipo_identificacion' => $perfil->id_tipo_identificacion, 
+						'tipo_identificacion' => $perfil->tipo_identificacion ),
+				),
+				'codigos'=>
+					array(
+						(object) array( 
+							'cod_pais' => $perfil->cod_pais,
+							'nombre' => $perfil->nombre_pais ),
+					),
+			);
+
+			$datos_contacto = array(
+				'telefono' => $perfil->telefono,
+				'correo' => $perfil->correo,
+			);
+
+			$datos_usuario = array(
+				'nombre_usuario' => $perfil->nombre_usuario,
+				'id_empresa' => $perfil->id_empresa,
+				'empresas' => array(
+					(object) array( 
+						'id_empresa' => $perfil->id_empresa, 
+						'nombre' => $perfil->nombre_empresa ),
+				),
+				'id_rol' => $perfil->id_rol,
+				'roles' => array(
+					(object) array( 
+						'id_rol' => $perfil->id_rol, 
+						'nombre_rol' => $perfil->nombre_rol ),
+				),
+			);
+
+			$arrayPerfil = array(
+				'datos_personales' => $datos_personales,
+				'datos_contacto' => $datos_contacto,
+				'datos_usuario' => $datos_usuario,
+			);
+
+			return $arrayPerfil;
+		}
+
+		return false;
+	}

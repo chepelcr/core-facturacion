@@ -2,9 +2,9 @@
 <footer class="main-footer">
     <!-- To the right -->
     <div class="float-right d-none d-sm-inline">
-        Ciclo II-2021 | Grupo 05
+        <strong>CORELLA ARTAVIA VILMA &copy;</strong>
     </div>
     <!-- Default to the left -->
-    <strong>UCR &copy; 2021 <a href="inicio/inicio">Analisis y diseño de sistemas</a></strong>
+    <strong><a href="<?=baseUrl()?>">Modas Laura | 2021</a></strong>
     
 </footer>

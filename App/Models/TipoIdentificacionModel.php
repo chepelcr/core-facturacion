@@ -12,5 +12,7 @@ class TipoIdentificacionModel extends Model
 	protected $camposTabla = [
 		'tipo_identificacion',
 	];
+
+	protected $dbGroup = 'seguridad';
 }//Fin de la clase
 ?>

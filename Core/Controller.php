@@ -57,7 +57,7 @@
             load_helpers($this->helpers, 'App');
         }//Fin del constructor
 
-        public function error($error = array())
+        public function error($error = array(), $type = 'card')
         {
             $nombreVista = 'base/error';            
 
@@ -70,7 +70,15 @@
                 'dataView'=>$dataView
             );
 
-            return view('layout', $data);
+            if($type == 'card')
+            {
+                return view($nombreVista, $dataView);
+            }
+            
+            else
+            {
+                return view('layout', $data);
+            }
         }//Fin de la funcion error
 
         /**Establecer un modelo en el controlador */

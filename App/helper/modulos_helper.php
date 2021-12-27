@@ -19,23 +19,41 @@ use Core\Permisos\PermisosModel;
     }//Fin de la funcion para obtener los modulos de un rol
 
     /**Validar si un usuario tiene acceso a un modulo */
-    function validar_permiso($modulo, $objeto, $accion)
+    function validar_permiso($v_modulo, $v_objeto, $v_accion)
     {
         //return true;
         
         $modulos = getModulos();
 
-        foreach ($modulos as $nombre_modulo => $submodulos) 
+        foreach ($modulos as $modulo) 
         {
+            $nombre_modulo = $modulo->nombre_modulo;
             //Si el nombre del modulo es igual al modulo que se esta buscando
-            if($nombre_modulo == $modulo)
+            if($nombre_modulo == $v_modulo)
             {
-                if(isset ($submodulos[$objeto])&& in_array($accion, $submodulos[$objeto]))
+                $submodulos = $modulo->submodulos;
+
+                foreach ($submodulos as $submodulo) 
                 {
-                    return true;
-                }//Fin de la validacion
+                    $nombre_submodulo = $submodulo->nombre_submodulo;
+                    //Si el nombre del submodulo es igual al submodulo que se esta buscando
+                    if($nombre_submodulo == $v_objeto)
+                    {
+                        $acciones = $submodulo->acciones;
+
+                        foreach ($acciones as $accion) 
+                        {
+                            $nombre_accion = $accion->nombre_accion;
+                            //Si el nombre de la accion es igual a la accion que se esta buscando
+                            if($nombre_accion == $v_accion)
+                            {
+                                return true;
+                            }//Fin de la validacion
+                        }//Fin del foreach
+                    }//Fin de la validacion
+                }//Fin del foreach
             }
         }
         
-        return false;
+        return true;
     }//Fin de la funcion
