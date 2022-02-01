@@ -39,6 +39,9 @@ function location($carpeta = '')
 
     if($ambiente == 'desarrollo')
     {
+        //Transformar todos los / en \\
+        $carpeta = str_replace('/', '\\', $carpeta);
+        
         return getEnt('app.location') . $carpeta;
     }
 

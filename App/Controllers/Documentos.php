@@ -1096,9 +1096,9 @@ class Documentos extends BaseController
                             }
 
                             $adjuntos = array(
-                                $clave . '.pdf' => location("archivos/pdf/" . $clave . ".pdf"),
-                                $clave . '.xml' => location("archivos/xml/firmados/" . $clave . "_f.xml"),
-                                $clave . '_respuesta_MH.xml' => location("archivos/xml/respuesta/" . $clave . ".xml"),
+                                $clave . '.pdf' => location("archivos\\pdf\\" . $clave . ".pdf"),
+                                $clave . '.xml' => location("archivos\\xml\\firmados/" . $clave . "_f.xml"),
+                                $clave . '_respuesta_MH.xml' => location("archivos\\xml\\respuesta\\" . $clave . ".xml"),
                             );
 
                             $data = array(

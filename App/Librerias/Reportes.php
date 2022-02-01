@@ -34,7 +34,7 @@ class Reportes
             $logoImg = base64_encode($logoImg);
 
             $dataPdf = array(
-                'nombre_archivo' => "pdf/" . $documento->clave . ".pdf",
+                'nombre_archivo' => "pdf\\" . $documento->clave . ".pdf",
                 'documento' => $documento,
                 'detalles' => $detalles,
                 "qrCodigo" => $qr->codigoQR($dataQR),
@@ -55,7 +55,7 @@ class Reportes
         $nombre_reporte = 'reporte_' . date('Y-m-d') . '.zip';
 
         //Ruta del archivo zip
-        $ruta_zip = location('archivos/reportes/' . $nombre_reporte);
+        $ruta_zip = location('archivos\\reportes\\' . $nombre_reporte);
 
         $documentosModel = model('documento');
 
@@ -69,7 +69,7 @@ class Reportes
             {
                 $claves_reporte[] = $documento->clave;
 
-                if (!file_exists(location('archivos/pdf/' . $documento->clave . '.pdf'))) 
+                if (!file_exists(location('archivos\\pdf\\' . $documento->clave . '.pdf'))) 
                 {
                     $this->generar_pdf($clave);
                 }//Fin de validacion de archivo pdf
@@ -80,7 +80,7 @@ class Reportes
         if ($zip->open($ruta_zip, ZipArchive::CREATE) === TRUE) {
             //Recorrer las claves
             foreach ($claves_reporte as $clave) {
-                $zip->addFile(location('archivos/pdf/' . $clave . '.pdf'), 'DOC_'.$clave . '.pdf');
+                $zip->addFile(location('archivos\\pdf\\' . $clave . '.pdf'), 'DOC_'.$clave . '.pdf');
             }
 
             //Cerrar el archivo zip
@@ -133,7 +133,7 @@ class Reportes
 
                         //Eliminar los archivos pdf
                         foreach ($claves_reporte as $clave) {
-                            unlink(location('archivos/pdf/' . $clave . '.pdf'));
+                            unlink(location('archivos\\pdf\\' . $clave . '.pdf'));
                         }
                         
                         return array('success' => 'Se envio el reporte correctamente');

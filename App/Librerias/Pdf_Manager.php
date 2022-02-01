@@ -63,11 +63,11 @@ class Pdf_Manager extends Dompdf
         $html = view($view,$data);
         $dompdf->loadHtml($html);
         $dompdf->render();
-        $folder = location("archivos");
+        $folder = "archivos\\";
         if(!is_dir($folder)) {
             mkdir($folder);
         }
-        $file = $folder."\\".$data['nombre_archivo'];
+        $file = location($folder.$data['nombre_archivo']);
         $output = $dompdf->output();
         file_put_contents($file, $output);
     }

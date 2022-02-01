@@ -493,6 +493,8 @@ class Seguridad extends BaseController
 								$model->where('identificacion', $identificacion);
 								if(!$model->fila())
 								{
+									$model = model('usuarios');
+									
 									$data = array(
 										'identificacion' => $identificacion,
 										'id_tipo_identificacion' => post('id_tipo_identificacion'),
