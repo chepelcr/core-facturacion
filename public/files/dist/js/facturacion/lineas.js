@@ -94,8 +94,8 @@ function agregar_linea_activa(producto, cantidad = 1, precio_final = 0) {
         //Restar el porcentaje de impuesto del precio
         precio_final = precio_final - impuesto;
 
-        //Poner el precio en dos decimales
-        precio_final = precio_final.toFixed(2);
+        //Poner el precio en entero
+        precio_final = parseInt(precio_final);
 
         //Agregar el precio final a la linea
         linea.find(".precio").val(precio_final);
@@ -228,37 +228,37 @@ function calcular(linea) {
     var descP = linea.find(".descP").val();
 
     //Calcular el valor neto de la linea
-    var neto = parseFloat(cantidad) * parseFloat(precio);
+    var neto = parseInt(cantidad) * parseInt(precio);
 
     //Calcular el valor de descuento de la linea
-    var descuento = parseFloat(neto) * parseFloat(descP) / 100;
+    var descuento = parseInt(neto) * parseInt(descP) / 100;
 
     //Calcular el valor de subtotal de la linea
-    var subtotal = parseFloat(neto) - parseFloat(descuento);
+    var subtotal = parseInt(neto) - parseInt(descuento);
 
     //Calcular el valor de impuesto de la linea
-    var impuesto = parseFloat(subtotal) * parseFloat(impP) / 100;
+    var impuesto = parseInt(subtotal) * parseInt(impP) / 100;
 
     //Calcular el valor total de la linea
-    var total = parseFloat(subtotal) + parseFloat(impuesto);
+    var total = parseInt(subtotal) + parseInt(impuesto);
 
-    //Colocar el valor a los campos
-    linea.find(".neto").val(parseFloat(neto).toFixed(2));
-    linea.find(".descM").val(parseFloat(descuento).toFixed(2));
-    linea.find(".subtotal").val(parseFloat(subtotal).toFixed(2));
-    linea.find(".impM").val(parseFloat(impuesto).toFixed(2));
-    linea.find(".totalL").val(parseFloat(total).toFixed(2));
+    //Colocar el valor a los campos en enteros redondeados hacia arriba
+    linea.find(".neto").val(parseInt(neto));
+    linea.find(".descM").val(parseInt(descuento));
+    linea.find(".subtotal").val(parseInt(subtotal));
+    linea.find(".impM").val(parseInt(impuesto));
+    linea.find(".totalL").val(parseInt(total));
 
     totales();
 }
 
 /**Calcular el valor total del documento activo */
 function totales() {
-    neto = 0;
-    descuentos = 0;
-    subtotal = 0;
-    IVA = 0;
-    total = 0;
+    var neto = 0;
+    var descuentos = 0;
+    var subtotal = 0;
+    var IVA = 0;
+    var total = 0;
 
     $('#' + factura_activa).find(".table tbody .linea").each(function (i, item) {
         neto += parseFloat($(item).find(".neto").val());
@@ -268,11 +268,11 @@ function totales() {
         total += parseFloat($(item).find(".totalL").val());
     });
 
-    $('#' + factura_activa).find(".lbl_neto").val(parseFloat(neto).toFixed(2));
-    $('#' + factura_activa).find(".lbl_descuentos").val(parseFloat(descuentos).toFixed(2));
-    $('#' + factura_activa).find(".lbl_subtotal").val(parseFloat(subtotal).toFixed(2));
-    $('#' + factura_activa).find(".lbl_iva").val(parseFloat(IVA).toFixed(2));
-    $('#' + factura_activa).find(".lbl_total").val(parseFloat(total).toFixed(2));
+    $('#' + factura_activa).find(".lbl_neto").val(parseInt(neto));
+    $('#' + factura_activa).find(".lbl_descuentos").val(parseInt(descuentos));
+    $('#' + factura_activa).find(".lbl_subtotal").val(parseInt(subtotal));
+    $('#' + factura_activa).find(".lbl_iva").val(parseInt(IVA));
+    $('#' + factura_activa).find(".lbl_total").val(parseInt(total));
 }
 
 $(document).ready(function () {

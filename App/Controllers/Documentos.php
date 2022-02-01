@@ -480,6 +480,14 @@ class Documentos extends BaseController
                 $receptor = $clientesModel->getByIdentificacion($id_cliente);
 
                 if ($id_tipo_documento == '01') {
+                    //Validar si el cliente existe en la tabla de clientes
+                    if (!$receptor) {
+                        return json_encode(array(
+                            'error' => 'Debe indicar un cliente valido',
+                            'estado' => 'error'
+                        ));
+                    }
+                    
                     /**Validar si el cliente de la  factura es walmart */
                     if ($receptor->nombre_comercial == 'Walmart') {
                         if (!post('numero_vendor') || !post('numero_orden') || !post('enviar_gnl')) {
@@ -488,14 +496,6 @@ class Documentos extends BaseController
                                 'estado' => 'error'
                             ));
                         }
-                    }
-
-                    //Validar si el cliente existe en la tabla de clientes
-                    if (!$receptor) {
-                        return json_encode(array(
-                            'error' => 'Debe indicar un cliente valido',
-                            'estado' => 'error'
-                        ));
                     }
                 }
             }
