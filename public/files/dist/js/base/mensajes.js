@@ -15,7 +15,7 @@ function mensajeAutomatico(titulo, mensaje, icono) {
         title: titulo,
         text: mensaje,
         icon: icono,
-        timer: 2000,
+        timer: 4000,
         showConfirmButton: false,
     })//Fin del mensaje
 }

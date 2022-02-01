@@ -7,12 +7,12 @@ use Core\Model;
 /** Modelo para la tabla de usuarios */
 class ClientesModel extends Model
 {
-	protected $nombreTabla = 'clientes';
+    protected $nombreTabla = 'clientes';
     protected $vistaTabla = 'clientes_view';
 
-	protected $pk_tabla = 'id_cliente';
+    protected $pk_tabla = 'id_cliente';
 
-	protected $camposTabla = [
+    protected $camposTabla = [
         'identificacion',
         'id_tipo_identificacion',
         'razon',
@@ -21,7 +21,11 @@ class ClientesModel extends Model
         'otras_senas',
         'telefono',
         'cod_pais',
+        'id_empresa',
         'correo',
+        'fecha_creacion',
+        'fecha_modificacion',
+        'fecha_eliminacion',
         'estado'
     ];
 
@@ -41,16 +45,46 @@ class ClientesModel extends Model
 
     protected $dbGroup = 'facturacion';
 
-	protected $autoIncrement = true;
+    protected $autoIncrement = true;
 
-	protected $auditorias = true;
+    protected $auditorias = true;
 
     /**Obtener un cliente por numero de identificacion */
-    public function getByIdentificacion($identificacion)
+    public function getByIdentificacion($identificacion = '')
     {
-        $this->where('identificacion', $identificacion);
+        if($identificacion != '' && $identificacion)
+        {
+            $this->where('identificacion', $identificacion);
 
-        return $this->fila();
+            return $this->fila();
+        }
+
+        return false;
+    }
+
+    public function obtener($id = 'all')
+    {
+        //var_dump($id);
+        switch ($id) {
+            case 'inactivos':
+                $this->vista('clientes_inactivos');
+                return $this->getAll();
+                break;
+
+            case 'activos':
+                $this->where('estado', 1);
+                return $this->getAll();
+                break;
+
+            case 'all':
+                $this->vista('clientes_view');
+                return $this->getAll();
+                break;
+
+            default:
+                return $this->getById($id);
+        }
+
+        return false;
     }
 }//Fin de la clase
-?>

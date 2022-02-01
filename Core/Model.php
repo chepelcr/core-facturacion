@@ -84,13 +84,16 @@ class Model
 
     /**Error generado en el modelo */
     protected $error = array();
+
+    private Model $model;
  
 	//constructor de la clase
-	function __construct()
+	function __construct($model_name = null)
     {
         //Intentar conexion a la base de datos
 		try
         {
+            //Obtener la conexion a la base de datos
             if($this->dbGroup!='')
                 $this->db = Conexion::getConnect($this->dbGroup);
 
@@ -165,7 +168,7 @@ class Model
 
             $this->setCamposUpdate($data);
             
-            if($id)
+            if(isset($id))
                 $this->where($this->pk_tabla, $id);
 
             $sql = $this->crearQuery('UPDATE');
@@ -176,7 +179,7 @@ class Model
                 $update->bindValue($campo, $valor);
             }
 
-            if($id)
+            if(isset($id))
                 $update->bindValue($this->pk_tabla, $id);
 
             $update->execute();
@@ -188,9 +191,15 @@ class Model
 
                 if(!$id_usuario)
                     $id_usuario = 0;
+
+                if(isset($id))
+                    $id_fila = $id;
+    
+                else
+                    $id_fila = 1;
                     
                 $data = array(
-                    'id_fila'=> $id,
+                    'id_fila'=> $id_fila,
                     'tabla'=>$this->nombreTabla,
                     'accion'=>'UPDATE',
                     'id_usuario'=>$id_usuario
@@ -199,7 +208,10 @@ class Model
                 $this->insertAuditoria($data);
             }
 
-            return $id;
+            if(isset($id))
+                return $id;
+            
+            return true;
         }//Fin del try
 
         catch (\Exception $ex) 
@@ -208,9 +220,9 @@ class Model
             {
                 $this->insertError($ex);
             }//Fin de validacion
-
-            return 0;
         }//Fin del catch
+
+        return false;
   }//Fin del método
 
     /**Seleccionar una columna especifica de la tabla */
@@ -558,13 +570,12 @@ class Model
 
                 $result = $select->fetch();
 
+                //var_dump($result);
+
                 if(!$result)
                 {
                     return false;
                 }//Fin del if
-
-                //Limpiar las variables del sql
-                $this->clean();
 
                 $data = array();
 
@@ -572,14 +583,13 @@ class Model
 
                 foreach ($camposTabla as $campoTabla) 
                 {
-                    $data[$campoTabla] = $result[$campoTabla];
+                    if(isset($result[$campoTabla]))
+                            $data[$campoTabla] = $result[$campoTabla];
                 }//Fin del ciclo
                 
-                $data = json_encode($data);
-
-                return json_decode($data);
+                return (object) $data;
             }//Fin del if
-        } 
+        }
         
         catch (\Exception $ex) 
         {
@@ -587,9 +597,11 @@ class Model
             {
                 $this->insertError($ex);
             }//Fin de validacion
+
+            return false;
         }//Fin del catch
 
-        return null;
+        return false;
     }//Fin de fila
 
     /** Determinar el tipo de objeto a retornar (array o json) */
@@ -821,6 +833,8 @@ class Model
             {
                 if(isset($this->vistaTabla))
                     $this->table($this->vistaTabla);
+
+                    //var_dump($this->nombreTabla);
                 
                 //Crear la sentencia de ejecucion
                 $sql = $this->crearQuery();
@@ -868,17 +882,15 @@ class Model
                 foreach ($result as $objeto) {
                     $data = [];
 
-                    //var_dump($camposTabla);
                     foreach ($camposTabla as $campoTabla) {
-                        $data[$campoTabla] = $objeto[$campoTabla];
+                        if(isset($objeto[$campoTabla]))
+                            $data[$campoTabla] = $objeto[$campoTabla];
                     }
                     
-                    $objetos[] = $data;
+                    $objetos[] = (object)  $data;
                 }
 
-                $objetos = json_encode($objetos);
-
-                return json_decode($objetos);
+                return (object) $objetos;
             }//Fin de la base de datos no nula
         }//Fin del intento
         
@@ -889,6 +901,8 @@ class Model
                 $this->insertError($ex);
             }//Fin de validacion
         }//Fin del catch
+
+        return false;
     }//Fin de buscar
 
     /**Utilizar una tabla personalizada */
@@ -927,6 +941,19 @@ class Model
             }//Fin de validacion
         }//Fin del catch
 	}//Fin de getByID
+
+    /**Obtener uno o varios objetos de la base de datos */
+    public function obtener($id)
+    {
+        if($id == 'all')
+		{
+			return $this->getAll();
+		}
+		else
+		{
+			return $this->getById($id);
+		}
+    }//Fin de la funcion obtener
 
     /**Eliminar un registro de la base de datos */
 	public function delete($id)

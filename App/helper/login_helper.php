@@ -2,6 +2,8 @@
 
 use App\Librerias\Correo;
 use App\Models\ContraseniaModel;
+use App\Models\EmpresasModel;
+use App\Models\UbicacionesModel;
 use App\Models\UsuariosModel;
 
 /** Validar si el usuario ha iniciado sesion */
@@ -193,16 +195,30 @@ use App\Models\UsuariosModel;
 
 		if($id!=0)
 		{
-			$correo = $usuario->correo;
+			$correos = array(
+				$usuario->nombre => $usuario->correo,
+				//'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
+				//$emisor->nombre => $emisor->correo,
+			);
 
 			$mensaje = 'Estimado ' . $usuario->nombre . ',
 			<br>
 			
-			Su clave temporal es <b>' . $pass . '</b>. 
-			Debe realizar el cambio de la misma la primera vez que inicia sesión.';
+			Su clave temporal es "<b>' . $pass . '</b>", Debe realizar el cambio de la misma la primera vez que inicia sesión.
+			<br>
+
+			Presione el siguiente enlace para iniciar sesión:
+			<br>
+			<a href="' . baseUrl() . '">Iniciar sesion</a>
+			<br>
+			<br>
+			Saludos,
+			<br>
+			<br>
+			<b>Equipo de Modas Laura</b>';
 
 			$data = array(
-				'receptor' => $correo,
+				'receptor' => $correos,
 				'asunto' => 'Cambio de contraseña',
 				'body' => $mensaje
 			);
@@ -220,6 +236,7 @@ use App\Models\UsuariosModel;
 			return 'Ha ocurrido un error.';
 	}//Fin del metodo para enviar una contrasenia temporal
 
+	/**Obtener el perfil del usuario que ha iniciado sesion */
 	function getPerfil()
 	{
 		if(is_login())
@@ -275,5 +292,80 @@ use App\Models\UsuariosModel;
 			return $arrayPerfil;
 		}
 
+		return false;
+	}//Fin del metodo para obtener el perfil del usuario
+
+	/**Obtener la empresa del usuario que ha iniciado sesión */
+	function getEmpresa()
+	{
+		if(is_login())
+		{
+			$usuariosModel = new EmpresasModel();
+			$empresa = $usuariosModel->getEmpresa();
+
+			$datos_personales = array(
+				'nombre' => $empresa->nombre,
+				'identificacion' => $empresa->identificacion,
+				'id_tipo_identificacion' => $empresa->id_tipo_identificacion,
+				'cod_pais' => $empresa->cod_pais,
+				'identificaciones'=>array(
+					(object) array( 
+						'id_tipo_identificacion' => $empresa->id_tipo_identificacion, 
+						'tipo_identificacion' => $empresa->tipo_identificacion ),
+				),
+				'codigos'=>
+					array(
+						(object) array( 
+							'cod_pais' => $empresa->cod_pais,
+							'nombre' => $empresa->nombre_pais ),
+					),
+			);
+
+			$datos_contacto = array(
+				'telefono' => $empresa->telefono,
+				'correo' => $empresa->correo,
+			);
+
+			$provinciasModel = new UbicacionesModel();
+			$provincias = $provinciasModel->provincias();
+
+			$provinciasModel = new UbicacionesModel();
+			$cantones = $provinciasModel->cantones($empresa->cod_provincia);
+
+			$provinciasModel = new UbicacionesModel();
+			$distritos = $provinciasModel->distritos($empresa->cod_provincia, $empresa->cod_canton);
+
+			$provinciasModel = new UbicacionesModel();
+			$barrios = $provinciasModel->barrios($empresa->cod_provincia, $empresa->cod_canton, $empresa->cod_distrito);
+
+			$dataProvincias = array(
+				'cod_provincia' => $empresa->cod_provincia,
+				'provincia' => $empresa->provincia,
+				'provincias' => $provincias,
+				'cod_canton' => $empresa->cod_canton,
+				'canton' => $empresa->canton,
+				'cantones' => $cantones,
+				'cod_distrito' => $empresa->cod_distrito,
+				'distrito' => $empresa->distrito,
+				'distritos' => $distritos,
+				'cod_barrio' => $empresa->cod_barrio,
+				'barrio' => $empresa->barrio,
+				'barrios' => $barrios,
+			);
+
+			$datos_empresa = array(
+				'nombre_comercial' => $empresa->nombre_comercial,
+			);
+
+			$datos_empresa = array(
+				'id_empresa' => $empresa->id_empresa,
+				'datos_personales' => $datos_personales,
+				'datos_contacto' => $datos_contacto,
+				'dataProvincias' => $dataProvincias,
+				'datos_empresa' => $datos_empresa,
+			);
+
+			return $datos_empresa;
+		}	
 		return false;
 	}

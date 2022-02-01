@@ -4,8 +4,8 @@
         <?= view('seguridad/auditoria/nav')?>
     </div>
 
-    <div class="card-body scroll_vertical" style="max-height: 300px;">
-        <table class="table table-bordered table-hover text-center" id="listado">
+    <div class="card-body scroll_vertical">
+        <table class="table table-bordered table-hover text-center" id="listado_seguridad_errores">
             <thead>
                 <tr>
                     <th>Fecha del error</th>

@@ -24,7 +24,6 @@
             'url',
             'fecha_crecion',
             'fecha_modificacion',
-            'fecha_eliminacion',
             'estado',
         ];
 
@@ -69,28 +68,24 @@
                 $submodulo->acciones = $acciones;
             }
 
-            return $submodulos;
+            return (object) $submodulos;
         }//Fin de la funcion
 
         public function acciones($id_rol, $id_modulo, $id_submodulo)
         {
-            $this->select('id_accion')->select('nombre_accion')->select('icono')->where('id_rol', $id_rol)->where('id_modulo', $id_modulo)->where('id_submodulo', $id_submodulo);
+            $this->select('id_permiso')->select('id_accion')->select('nombre_accion')->select('icono')->select('estado')->where('id_rol', $id_rol)->where('id_modulo', $id_modulo)->where('id_submodulo', $id_submodulo);
             $acciones = $this->getAll();
 
-            return $acciones;
+            return (object) $acciones;
         }//Fin de la funcion
 
-        /**Obtener una accion de un submodulo */
-        public function consultar_accion($id_rol, $nombre_modulo, $nombre_submodulo, $nombre_accion)
+        public function get_permiso($id_rol, $id_modulo, $id_submodulo, $id_accion)
         {
-            $this->where('id_rol', $id_rol)->where('nombre_modulo', $nombre_modulo)->where('nombre_submodulo', $nombre_submodulo)->where('nombre_accion', $nombre_accion);
-            
-            /**Si se encuentra la fila con el permiso */
-            $permiso = $this->fila();
-            
-            if($this->fila())
-                return true;
+            $this->vista('permisos_submodulos');
 
-            return false;
-        }//Fin del metodo para consultar una accion
+            $this->select('id_permiso')->where('id_rol', $id_rol)->where('id_modulo', $id_modulo)->where('id_submodulo', $id_submodulo)->where('id_accion', $id_accion);
+            $permiso = $this->fila();
+
+            return $permiso->id_permiso;
+        }//Fin de la funcion
     }//Fin de la clase

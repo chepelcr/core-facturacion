@@ -32,12 +32,12 @@ class Pdf_Manager extends Dompdf
 	    $dompdf->render();
 
         //Poner el header para descargar el archivo
-        header('Content-Type: application/pdf');
+        header('Content-Type: application/Force-Download');
         header('Content-Disposition: attachment; filename="'.$data['nombre_archivo'].'.pdf"');
 
 	    ob_end_clean();
         
-        $dompdf->stream($data["nombre_archivo"], array("Attachment"=>1));// en navegador
+        $dompdf->stream($data["nombre_archivo"], array("Attachment"=>1));// en 
     }
     
     public function temp_view($view, $data = array()) {
@@ -63,7 +63,7 @@ class Pdf_Manager extends Dompdf
         $html = view($view,$data);
         $dompdf->loadHtml($html);
         $dompdf->render();
-        $folder = "F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos";
+        $folder = location("archivos");
         if(!is_dir($folder)) {
             mkdir($folder);
         }

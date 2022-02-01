@@ -44,4 +44,17 @@ class EmpresasModel extends Model
 
     protected $auditorias = true;
     protected $autoIncrement = true;
+
+    /**Obtener un cliente por numero de identificacion */
+    public function getByIdentificacion($identificacion)
+    {
+        $this->where('identificacion', $identificacion);
+
+        return $this->fila();
+    }
+
+    function getEmpresa()
+    {
+        return $this->getById(getSession('id_empresa'));
+    }
 }//Fin de la clase

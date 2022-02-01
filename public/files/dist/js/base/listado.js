@@ -1,102 +1,411 @@
+var table = null;
+var fila_actual = null;
+
+var url_listado = '';
+
 /**Cargar el listado en el contenedor
  * @param {string} modulo Nombre del modulo
  * @param {string} submodulo Nombre del submodulo
  * @param {string} url Url del listado
  */
- function cargar_listado(modulo = '', submodulo = '', url = '') {
+function cargar_listado(modulo = '', submodulo = '', url = '') {
+    elemento_activo = '';
+    formato = false;
+    fila_actual = null;
+
+    url_listado = url;
+
+    desactivar_tooltips();
+
     if (modulo != '' && submodulo != '') {
         Pace.track(function () {
             //Solicitar el submodulo
             $.ajax({
-                url: url,
+                url: url_listado,
                 type: 'GET',
             }).done(function (respuesta) {
-                //Vaciar el contenedor
-                $('#contenedor').empty();
+                activar_tooltips();
+                //Mostrar la respuesta
+                if ((modulo == 'empresa' && submodulo == 'ordenes') || (modulo == 'seguridad' && (submodulo == 'errores' || submodulo == 'auditorias'))) {
+                    //Cerrar todos los modal
+                    $('.modal').modal('hide');
 
-                //Agregar el submodulo a la pagina
-                $('#contenedor').append(respuesta);
+                    //Vaciar el contenedor de la pagina
+                    $('#contenedor').empty();
 
-                crear_data_table('listado');
+                    //Agregar la respuesta
+                    $('#contenedor').append(respuesta);
 
-                cargar_modulo('contenedor');
+                    cargar_modulo('contenedor');
+                }
+
+                else {
+                    //Vaciar el contenedor del modal
+                    $('#modal-' + modulo + '-' + submodulo).find('.contenedor_submodulo').empty();
+
+                    //Agregar el contenido al contenedor del modal
+                    $('#modal-' + modulo + '-' + submodulo).find('.contenedor_submodulo').append(respuesta);
+
+                    //Collapse el card-form del modal
+                    $('#modal-' + modulo + '-' + submodulo).find('.card-frm').hide();
+
+                    if (modulo == 'empresa' && submodulo == 'productos') {
+                        //Esconder el card-cabys
+                        $('#modal-' + modulo + '-' + submodulo).find('.card-cabys').hide();
+                    }
+
+                    //Mostrar el card-table del modal
+                    $('#modal-' + modulo + '-' + submodulo).find('.card-table').show();
+
+                    if (elemento_activo != 'modal-' + modulo + '-' + submodulo) {
+                        elemento_activo = 'modal-' + modulo + '-' + submodulo;
+
+                        //Abrir modal-modulo-submodulo
+                        $('#modal-' + modulo + '-' + submodulo).modal('show');
+
+                        //Cerrar todos los modal menos el elemento activo
+                        $('.modal').not('#' + elemento_activo).modal('hide');
+                    }
+                }
 
                 activar_modulo_boton(modulo, submodulo);
 
                 //Mostrar el boton para agregar
-                $('.agregar_' + modulo + '_' + submodulo).show();
+                //$('.agregar_' + modulo + '_' + submodulo).show();
+
+                //console.log(modulo, submodulo);
 
                 poner_titulo(modulo, submodulo);
+
+                //Crear la data table
+                crear_data_table('listado_' + modulo + '_' + submodulo);
             });
         });
     }//Fin if
 }//Fin de cargar_listado
 
-/**Cambiar el titulo de la pagina y agregarla al historial */
-function poner_titulo(modulo, submodulo = 'inicio')
+function cargar_contenido(contenido)
 {
-    modulo_activo = modulo;
-    submodulo_activo = submodulo;
+    var modulo = modulo_activo;
+    var submodulo = submodulo_activo;
 
-    //modulo con primera letra en mayuscula
-    var modulo_mayuscula = modulo.charAt(0).toUpperCase() + modulo.slice(1);
+    //Mostrar la respuesta
+    if ((modulo == 'empresa' && submodulo == 'ordenes') || (modulo == 'seguridad' && (submodulo == 'errores' || submodulo == 'auditorias'))) {
+        //Cerrar todos los modal
+        $('.modal').modal('hide');
 
-    //Submodulo con primera letra en mayuscula
-    var submodulo_mayuscula = submodulo.charAt(0).toUpperCase() + submodulo.slice(1);
+        //Vaciar el contenedor de la pagina
+        $('#contenedor').empty();
 
-    //Eliminar guiones bajos de los nombres de los modulos en mayuscula
-    modulo_mayuscula = modulo_mayuscula.replace(/_/g, ' ');
+        //Agregar la respuesta
+        $('#contenedor').append(contenido);
 
-    //Eliminar guiones bajos de los nombres de los submodulos en mayuscula
-    submodulo_mayuscula = submodulo_mayuscula.replace(/_/g, ' ');
-
-    $('.modulo-pagina').text(modulo_mayuscula);
-
-    $('.submodulo-pagina').text(submodulo_mayuscula);
-
-    if(submodulo_mayuscula != 'Inicio')
-    {
-        titulo = 'Modas Laura | ' + modulo_mayuscula + ' | ' + submodulo_mayuscula;
-
-        //Agregar pagina al historial
-        history.pushState(null, null, base + modulo + '/' + submodulo);
+        cargar_modulo('contenedor');
     }
 
-    else
-    {
-        titulo = 'Modas Laura | ' + modulo_mayuscula;
+    else {
+        //Vaciar el contenedor del modal
+        $('#modal-' + modulo + '-' + submodulo).find('.contenedor_submodulo').empty();
 
-        //Agregar pagina al historial
-        history.pushState(null, null, base + modulo);
+        //Agregar el contenido al contenedor del modal
+        $('#modal-' + modulo + '-' + submodulo).find('.contenedor_submodulo').append(contenido);
+
+        //Collapse el card-form del modal
+        $('#modal-' + modulo + '-' + submodulo).find('.card-frm').hide();
+
+        if (modulo == 'empresa' && submodulo == 'productos') {
+            //Esconder el card-cabys
+            $('#modal-' + modulo + '-' + submodulo).find('.card-cabys').hide();
+        }
+
+        //Mostrar el card-table del modal
+        $('#modal-' + modulo + '-' + submodulo).find('.card-table').show();
+
+        if (elemento_activo != 'modal-' + modulo + '-' + submodulo) {
+            elemento_activo = 'modal-' + modulo + '-' + submodulo;
+
+            //Abrir modal-modulo-submodulo
+            $('#modal-' + modulo + '-' + submodulo).modal('show');
+
+            //Cerrar todos los modal menos el elemento activo
+            $('.modal').not('#' + elemento_activo).modal('hide');
+        }
     }
+}
 
-    //Cambiar el titulo del navegador web
-    $('title').text(titulo);
-}//Fin de poner_titulo
+/**Recargar el listado */
+function recargar_listado(id_estado = 'all') {
+    var url = url_listado;
+    var modulo = modulo_activo;
+    var submodulo = submodulo_activo;
+    fila_actual = null;
+
+    Pace.track(function () {
+
+        //Solicitar el submodulo
+        $.ajax({
+            url: url,
+            data: {
+                id_estado: id_estado
+            },
+            type: 'POST',
+        }).done(function (respuesta) {
+            cargar_contenido(respuesta);
+
+            activar_modulo_boton(modulo, submodulo);
+
+            //Mostrar el boton para agregar
+            //$('.agregar_' + modulo + '_' + submodulo).show();
+
+            //console.log(modulo, submodulo);
+
+            poner_titulo(modulo, submodulo);
+
+            //Crear la data table
+            crear_data_table('listado_' + modulo + '_' + submodulo);
+        });
+    });
+}//Fin de recargar_listado
+
+
 
 /**Transformar una tabla a datatable
  * @param {string} nombre_tabla Nombre de la tabla`
  */
-function crear_data_table(nombre_tabla)
-{
+function crear_data_table(nombre_tabla) {
     nombre_tabla = '#' + nombre_tabla;
 
     //Validar que el elemento exista y sea una tabla
-    if ($(nombre_tabla).length > 0 && $(nombre_tabla).is('table')) 
-    {
-        //Si ya existe la data table la elimina
-        if ($.fn.dataTable.isDataTable(nombre_tabla)) {
+    if ($(nombre_tabla).length > 0 && $(nombre_tabla).is('table')) {
+        //Si la tabla es DataTable
+        if ($(nombre_tabla).hasClass('dataTable')) {
+            desactivar_tooltips_tabla();
+            //Destruir la tabla
             $(nombre_tabla).DataTable().destroy();
+            
+            table = null;
         }
 
-        //Crea la data table
-        var table = $(nombre_tabla).DataTable( {
-            "paging":         true,
-            "info":           false,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json",
-            },
+        if (nombre_tabla != '#documentos') {
+            if (submodulo_activo == 'auditorias' || submodulo_activo == 'errores') {
+                //Crea la data table ordenando por el primer campo desc
+                table = $(nombre_tabla).DataTable({
+                    paging: true,
+                    //Solo se permiten 10 registros por pagina
+                    pageLength: 10,
+                    //No se puede cabiar el numero de registros por pagina
+                    lengthChange: false,
+                    info: false,
+                    searching: true,
+                    ordering: true,
+                    order: [[0, 'desc']],
+                    language: {
+                        url: "//cdn.datatables.net/plug-ins/1.11.4/i18n/es-mx.json",
+                    },
+                    select: {
+                        style: 'api'
+                    },
+                });
+            }
 
-        } );
+            else {
+                //Crea la data table ordenando por el segundo campo
+                table = $(nombre_tabla).DataTable({
+                    paging: true,
+                    //Solo se permiten 10 registros por pagina
+                    pageLength: 10,
+                    //No se puede cabiar el numero de registros por pagina
+                    lengthChange: false,
+                    info: false,
+                    searching: true,
+                    ordering: true,
+                    order: [[1, 'asc']],
+                    language: {
+                        url: "//cdn.datatables.net/plug-ins/1.11.4/i18n/es-mx.json",
+                    },
+                    select: {
+                        style: 'api'
+                    },
+                });
+            }
+        }
+
+        else {
+            //Crea la data table ordena por el tercer campo
+            table = $(nombre_tabla).DataTable({
+                paging: true,
+                //Solo se permiten 10 registros por pagina
+                pageLength: 10,
+                //No se puede cabiar el numero de registros por pagina
+                lengthChange: false,
+                info: false,
+                searching: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.11.4/i18n/es-mx.json",
+                },
+                select: {
+                    style: 'api'
+                },
+            });
+        }
+
+        activar_tooltip_tabla();
     }
 }//Fin de la funcion
+
+/**Enfocar la siguiente fila de la tabla que esta en la pantalla */
+function siguiente_elemento() {
+    var tabla = table;
+
+    if (tabla != null) {
+        //Obtener la fila actual
+        var fila = fila_actual;
+
+        if (fila != null) {
+            var fila_siguiente = fila + 1;
+
+            if (fila_siguiente < tabla.rows().count()) {
+                //Seleccionar la fila siguiente
+                tabla.row(fila_siguiente).select();
+
+                //Si la fila siguiente es un multiplo de 10, pasar a la siguiente pagina
+                if (fila_siguiente % 10 == 0) {
+                    tabla.page('next').draw(false);
+                }
+
+                fila_actual = tabla.row('.selected').index();
+
+                //Deseleccionar la fila actual
+                tabla.row(fila_actual).deselect();
+                
+                enfocar_fila_actual();
+            }
+        }
+
+        else {
+            tabla.row(0).select();
+            
+            fila_actual = tabla.row('.selected').index();
+
+            //Deseleccionar la fila actual
+            tabla.row(fila_actual).deselect();
+
+            enfocar_fila_actual();
+        }
+    }
+}
+
+//Elemento anterior
+function elemento_anterior() {
+    var tabla = table;
+
+    if (tabla != null) {
+        //Obtener la fila actual
+        var fila = fila_actual;
+
+        if (fila != null) {
+            var fila_anterior = fila - 1;
+
+            if (fila_anterior >= 0) {
+                //Enfocar la fila anterior
+                tabla.row(fila_anterior).select();
+
+                //Si la fila anterior es un multiplo de 10, pasar a la pagina anterior
+                if ((fila_anterior + 1) % 10 == 0) {
+                    tabla.page('previous').draw(false);
+                }
+
+                fila_actual = tabla.row('.selected').index();
+
+                //Deseleccionar la fila actual
+                tabla.row(fila_actual).deselect();
+
+                enfocar_fila_actual();
+            }
+        }
+
+        else {
+            tabla.row(0).select();
+
+            fila_actual = tabla.row('.selected').index();
+
+            //Deseleccionar la fila actual
+            tabla.row(fila_actual).deselect();
+            
+            enfocar_fila_actual();
+        }
+    }
+}
+
+/**Activar los tooltip de todas las filas de la tabla */
+function activar_tooltip_tabla() {
+    //Obtener la tabla
+    var tabla = table;
+
+    if (tabla != null) {
+        //Recorrer cada nodo de la tabla
+        tabla.rows().every(function (rowIdx, tableLoop, rowLoop) {
+            //Activar los tooltip que se encuentren en la fila
+            $(this.node()).find('[data-toggle="tooltip"]').tooltip();
+        });
+    }
+}
+
+/**Desactivar los tooltip de todas las filas */
+function desactivar_tooltips_tabla() {
+    //Obtener la tabla
+    var tabla = table;
+
+    if (tabla != null) {
+        //Recorrer cada nodo de la tabla
+        tabla.rows().every(function (rowIdx, tableLoop, rowLoop) {
+            //Desactivar los tooltip que se encuentren en la fila
+            $(this.node()).find('[data-toggle="tooltip"]').tooltip('dispose');
+        });
+    }
+}
+
+function enfocar_fila_actual() {
+    var fila = fila_actual;
+
+    //Eliminar color de fondo gris de todas las filas
+    $(table.rows().nodes()).removeClass('bg-gradient-gray').removeClass('text-white');
+
+    //Poner color de fondo gris claro a la fila actual
+    $(table.row(fila).node()).addClass('bg-gradient-gray').addClass('text-white');
+
+    if(submodulo_activo != 'auditorias' && submodulo_activo != 'errores') {
+        //Poner el foco en btn-ver de la fila
+        $(table.row(fila).node()).find('.btn-ver').focus();
+    }
+}
+
+//Cuando el mouse entra en una fila de la tabla
+$(document).on('mouseenter', '.dataTables_wrapper tbody tr', function () {
+    //Seleccionar la fila
+    table.row(this).select();
+
+    fila_actual = table.row(this).index();
+
+    //Deseleccionar la fila actual
+    table.row(fila_actual).deselect();
+
+    enfocar_fila_actual();
+});
+
+
+/**Encontrar elementos que coincidan en la tabla solicitada */
+function filtrar_tabla(id_tabla, filtro) {
+    if (filtro != '') {
+        $("#" + id_tabla + " tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(filtro) > -1)
+        });
+    }
+    else {
+        $("#" + id_tabla + " tr").show();
+
+        $("#" + id_tabla + " tr").each(function (index, value) {
+            $(this).show();
+        });
+    }
+}

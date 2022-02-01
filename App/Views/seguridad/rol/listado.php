@@ -1,9 +1,9 @@
 <!--Card-->
 <div class="card">
     <div class="card-body">
-        <table class="table table-bordered table-hover text-center" id="listado">
+        <table class="table table-bordered table-hover" id="listado">
             <thead>
-                <tr>
+                <tr class="text-center">
                     <th class="col-1">ID</th>
                     <th class="col-7">Nombre del rol</th>
                     <th class="col-2">Estado</th>
@@ -24,38 +24,7 @@
                                     echo '<span class="badge badge-danger">Inactivo</span>';
                             }?></td>
                     <td>
-                        <!-- Dropdown -->
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Opciones
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <!-- Ver informacion-->
-                                <button class="dropdown-item" id="ver" value="<?=$rol->id_rol?>" type="button">Ver
-                                    permisos</button>
-
-                                <?php
-
-                                            if(validar_permiso('seguridad', 'roles', 'modificar'))
-                                            {
-                                        ?>
-                                <!-- Modificar -->
-                                <button class="dropdown-item" id="modificar" value="<?=$rol->id_rol?>"
-                                    type="button">Modificar</button>
-
-                                <!-- Si el estado del usuario es 1 -->
-                                <?php 
-                                                if ($rol->estado == 1)
-                                                    echo '<button class="dropdown-item" id="desactivar" value="'.$rol->id_rol.'" type="button">Desactivar</button>';
-
-                                                else
-                                                    echo '<button class="dropdown-item" id="activar" value="'.$rol->id_rol.'" type="button">Activar</button>';
-
-                                            }//Fin de validacion de permisos
-                                        ?>
-                            </div>
-                        </div>
+                    <?= get_botones($rol->id_rol, 'rol', 'seguridad', 'roles',  $rol->estado)?>
                     </td>
                     <!--Fin de las opciones-->
                 </tr>

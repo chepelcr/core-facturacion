@@ -7,7 +7,7 @@
     <div class="col-md-8">
         <?php
             if(isset($datos_contacto))
-                echo view('base/persona/datos_contacto', $datos_contacto);
+                echo view('base/persona/contacto', $datos_contacto);
 
             else
                 echo view('base/persona/contacto');
@@ -26,7 +26,7 @@
     </div>
 
     <div class="col-md-12">
-        <?= view('base/provincias', $dataProvincias) ?>
+        <?= view('base/persona/ubicacion', $dataProvincias) ?>
     </div>
 
 </div>

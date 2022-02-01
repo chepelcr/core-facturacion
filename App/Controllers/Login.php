@@ -17,7 +17,7 @@ class Login extends BaseController
 				return view('seguridad/login/cambio_contrasenia');
 
 			//Cargar la pagina principal
-			return redirect(baseUrl('inicio'));
+			return redirect(baseUrl());
 		}//Fin de la funcion
 
 		/** Funcion para consultar si el usuario existe en la base de datos */
@@ -36,13 +36,15 @@ class Login extends BaseController
 
 				$usuariosModel = new UsuariosModel();
 
-				$usuariosModel->where('correo', $user)->where('estado', '1');
+				$usuariosModel->where('correo', $user);
 			
 				$usuario = $usuariosModel->fila();
 
-				if($usuario)
+				if($usuario && $usuario->estado != 0)
 				{
 					$estado_contrasenia = validar_contrasenia($usuario->id_usuario, $pswd);
+
+					//$estado_contrasenia = 1;
 
 					//Validar si la contrasenia es correcta
 					switch ($estado_contrasenia)
@@ -67,7 +69,6 @@ class Login extends BaseController
 								'nombre_usuario'=>$usuario->nombre_usuario,
 								'id_rol'=>$usuario->id_rol,
 								'id_empresa'=>$usuario->id_empresa,
-								'id_sucursal'=>$usuario->id_sucursal,
 								'contrasenia_expiro' => true,
 							);
 							
@@ -110,7 +111,7 @@ class Login extends BaseController
 				return view('seguridad/login/olvido');
 
 			else
-				return redirect(baseUrl('punto'));
+				return redirect(baseUrl());
 		}//Fin de la funcion
 
 		/**Recuperar la contrasenia de un usuario */
@@ -138,10 +139,10 @@ class Login extends BaseController
 					return json_encode(0);
 				}//Fin de la validacion
 
-				return redirect(baseUrl());
+				return json_encode(0);
 			}//Fin de la validacion de logueo
 
-			return redirect(baseUrl('punto'));
+			return redirect(baseUrl());
 		}//Fin del metodo para recuperar la contrasenia
 	}//Fin del controlador de login
 

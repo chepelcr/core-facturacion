@@ -1,6 +1,8 @@
 <?php
 namespace App\Librerias;
 
+use App\Models\ConsecutivosModel;
+use App\Models\EmpresasModel;
 use DOMDocument;
 
 /**libreria para el manejo de documentos electronicos con base en los requerimientos del MH */
@@ -36,16 +38,19 @@ class Hacienda
     /**Fimar un documento XML */
     public function firmarXml($clave)
     {
-        $p12 = getEnt('factura.p12');
+        $p12 = location(getEnt('factura.p12'));
         $pin = getEnt('factura.pin');
 
-        $input = "F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\p_firmar\\".$clave.".xml";
+        $input = location("archivos\\xml\\p_firmar\\".$clave.".xml");
 
-        $ruta = "F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\firmados\\".$clave."_f.xml";
+        $ruta = location("archivos\\xml\\firmados\\".$clave."_f.xml");
 
         $Firmador = new Firmador();
         //firma y devuelve el base64_encode();
         $xml64=  $Firmador->firmarXml($p12,$pin,$input,$Firmador::TO_XML_FILE,$ruta);
+
+        //Borrar el archivo p_firmar
+        unlink($input);
         return  $xml64;
     }//Fin del firmador del documento
 
@@ -55,19 +60,36 @@ class Hacienda
         $leer= json_encode(simplexml_load_string(base64_decode($xml64)));
         $json= json_decode($leer);
 
-        $data= json_encode(array(
-            "clave"=> $json->Clave,
-            "fecha" => date('c'),
-            "emisor"=>array(
-                "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
-                "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
-            ),
-            "receptor" =>array(
-                "tipoIdentificacion" => $json->Receptor->Identificacion->Tipo,
-                "numeroIdentificacion" => $json->Receptor->Identificacion->Numero,
-            ),
-            "comprobanteXml"=> $xml64
-        ));
+        /**Validar si el json tiene receptor */
+        if(isset($json->Receptor))
+        {
+            $data= json_encode(array(
+                "clave"=> $json->Clave,
+                "fecha" => date('c'),
+                "emisor"=>array(
+                    "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
+                    "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
+                ),
+                "receptor" =>array(
+                    "tipoIdentificacion" => $json->Receptor->Identificacion->Tipo,
+                    "numeroIdentificacion" => $json->Receptor->Identificacion->Numero,
+                ),
+                "comprobanteXml"=> $xml64
+            ));
+        }
+
+        else
+        {
+            $data = json_encode(array(
+                "clave"=> $json->Clave,
+                "fecha" => date('c'),
+                "emisor"=>array(
+                    "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
+                    "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
+                ),
+                "comprobanteXml"=> $xml64
+            ));
+        }
         //token
         $header= array(
             "Authorization: bearer ".$this->token(),
@@ -120,7 +142,7 @@ class Hacienda
             $respuesta_xml= $xml['respuesta-xml'];
             $stringXML= base64_decode($respuesta_xml);
 
-            $salida="F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\respuesta\\".$json->Clave.".xml";
+            $salida=location("archivos\\xml\\respuesta\\".$json->Clave.".xml");
             $doc = new DomDocument();
             $doc->preseveWhiteSpace = false;
             $doc->loadXml($stringXML);
@@ -132,11 +154,11 @@ class Hacienda
     }//Fin de validarXML
 
     public function validar($clave){
+        //token
         $header= array(
             "Authorization: bearer ".$this->token(),
             "Content-Type: application/json",
         );
-
 
         $curl = curl_init(getEnt('factura.urlRecepcion')."/".$clave);
         curl_setopt($curl, CURLOPT_HEADER, false);
@@ -146,20 +168,20 @@ class Hacienda
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
+
         //ejecutar el curl
         $response= curl_exec($curl);
         $status= curl_getinfo($curl,CURLINFO_HTTP_CODE);
         curl_close($curl);
         //obtener respuesta
-
         $xml= json_decode($response, true);
 
         if (isset($xml['respuesta-xml'])) {
             $respuesta_xml= $xml['respuesta-xml'];
             $stringXML= base64_decode($respuesta_xml);
 
-            $salida="F:\\server\\htdocs\\modas-laura\\Sitema-costos\\public\\archivos\\xml\\respuesta\\".$clave.".xml";
-            $doc = new DOMDocument();
+            $salida=location("archivos\\xml\\respuesta\\".$clave.".xml");
+            $doc = new DomDocument();
             $doc->preseveWhiteSpace = false;
             $doc->loadXml($stringXML);
             $doc->save($salida);

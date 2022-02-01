@@ -224,7 +224,7 @@ class Routes
         {
             $error = array(
                 'codigo'=>$this->estado,
-                'mensaje'=>$mensaje
+                'error'=>$mensaje
             );
 
             $data = json_encode($error);

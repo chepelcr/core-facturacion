@@ -17,7 +17,7 @@
                         <p>
                         <?php if(!is_null($error))
                         {
-                            echo $error->mensaje;
+                            echo $error->error;
                         }?>
                         </p>
                     </div>

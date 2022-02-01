@@ -42,4 +42,37 @@
         protected $autoIncrement = true;
 
         protected $auditorias = true;
+
+        public function obtener($id = 'all')
+        {
+            //var_dump($id);
+            switch ($id) {
+                case 'inactivos':
+                    $this->vista('productos_inactivos');
+                    return $this->getAll();
+                    break;
+
+                    case 'all':
+                    $this->vista('productos_view');
+                    return $this->getAll();
+                    break;
+
+                    case 'activos':
+                    $this->where('estado', '1');
+                    return $this->getAll();
+
+                default:
+                    return $this->getById($id);
+            }
+
+            return false;
+        }
+
+        /**Obtener un producto por GNL */
+        public function getByGnl($gnl)
+        {
+            $this->where('codigo_venta', $gnl);
+            
+            return $this->fila();
+        }
     }

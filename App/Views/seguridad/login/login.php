@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de costos | Login</title>
+    <title>Modas Laura | Login</title>
 
     <!-- Google Font : Source Sans Pro -->
     <link rel="stylesheet"
@@ -81,64 +81,8 @@
     </div>
     <!-- /.login-box -->
 
-    <!-- jQuery -->
-    <script src="<?= getFile('dist/plugins/jquery/jquery.min.js') ?>"></script>
-    <!-- Bootstrap 4 -->
-    <script src="<?= getFile('dist/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-    <!-- AdminLTE App -->
-    <script src="<?= getFile('dist/js/adminlte.min.js') ?>"></script>
-    <!-- SweetAlert -->
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Font-Awesome -->
-    <script src="https://kit.fontawesome.com/3e7bda16db.js" crossorigin="anonymous"></script>
-    <!-- Base -->
-    <script src="<?= getFile('dist/js/base/base.js') ?>"></script>
-    <!-- Pace -->
-    <script src="<?= getFile('dist/plugins/pace-progress/pace.min.js') ?>"></script>
-
-    <script type="text/javascript">
-    $("#frmLogin").on('submit', function(e) {
-        e.preventDefault();
-
-        $.ajax({
-            "url": base + "login/consultar",
-            "method": "post",
-            "data": $('#frmLogin').serialize(),
-            "dataType": "json"
-        }).done(function(response) {
-            switch (response.estado) {
-                case '1':
-                    location.reload();
-                break;
-
-                //Si la contrasenia ya expiro
-                case '2':
-                    //Envia mensaje de error al usuario
-                    Swal.fire({
-                        title: 'Atencion',
-                        text: response.error,
-                        icon: 'info',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then((result) => {
-                        //Redirecciona a la pagina de cambio de contraseña
-                        location.reload();
-                    });
-                break;
-
-                default:
-                    Swal.fire({
-                        title: 'Atencion',
-                        text: response.error,
-                        icon: 'warning',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                break;
-            } //Fin switch
-        }); //Fin del ajax
-    }); //Fin del submit
-    </script>
+    <!-- SCRIPTS -->
+    <?= view('base/script')?>
 </body>
 
 </html>

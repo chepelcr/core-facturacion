@@ -15,7 +15,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="nombre_empresa">Nombre de la Empresa</label>
-                    <input type="text" class="form-control inp" id="nombre_comercial" name="nombre_comercial">
+                    <input type="text" class="form-control inp nombre_comercial" id="nombre_comercial" name="nombre_comercial" placeholder="Nombre de la empresa" value="<?= $nombre_comercial ?? '' ?>">
                 </div>
             </div>
         </div>

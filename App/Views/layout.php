@@ -12,16 +12,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 </head>
 
-<body class="hold-transition layout-fixed layout-footer-fixed layout-top-nav layout-navbar-fixed">
+<body class="hold-transition layout-fixed layout-footer-fixed layout-top-nav">
     <div class="wrapper">
 
-        <?php
-            $modulos = getModulos();
+        <!-- Preloader -->
+        <!--<div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="<?=baseUrl('files/dist/img/logo.png')?>" alt="AdminLTELogo" height="60" width="60">
+        </div> -->
 
-            echo view('base/nav', array('modulos'=>$modulos));
-
-            //echo view('base/sidebar', array('modulos'=>$modulos));
-         ?>
+        <?= view('base/nav', array('modulos'=>$modulos))?>
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
@@ -45,11 +44,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                             <div class="contenedor" id="contenedor_<?=$nombre_modulo?>">
                                 <?php 
+                                //var_dump($nombre_modulo);
                                     if($modulo->nombre_modulo != 'documentos')
-                                        echo view('base/inicio_modulo', $modulo);
+                                    {
+                                        echo view('base/modal/modulo', $modulo);
+
+                                        //Recorrer submodulos
+                                        foreach($modulo->submodulos as $submodulo):
+                                            $submodulo->nombre_modulo = $modulo->nombre_modulo;
+
+                                            //var_dump($submodulo);
+
+                                            echo view('base/modal/submodulo', $submodulo);
+                                        endforeach;
+                                    }
 
                                     else
-                                        echo view('inicio/documentos');
+                                    {
+                                        echo view('inicio/'.$modulo->nombre_modulo, $modulo);
+                                    }
                                 ?>
                             </div>
 
@@ -67,6 +80,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </div>
         <!-- /.content-wrapper -->
 
+        <!-- Perfil del usuario que ha iniciado sesion -->
         <?= view('base/persona/perfil', array('perfil'=> getPerfil()))?>
 
         <!-- Main Footer -->

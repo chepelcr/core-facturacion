@@ -10,16 +10,15 @@ use Core\Model;
 
 class BaseController extends Controller
 {
-    protected $helpers = ['login', 'modulos'];
+    protected $helpers = ['login', 'modulos', 'facturacion'];
 
     public function inicio($data = array())
     {
         $data = (object) $data;
+
         if(is_login())
         {
-            $clientesModel = $this->model('clientes');
-            
-            $data->clientes = $clientesModel->getAll();
+            $data->modulos = getModulos();
 
             return view('layout', $data);
         }//Fin de la validacion
@@ -27,4 +26,9 @@ class BaseController extends Controller
         else
             header('Location: '.baseUrl('login'));
     }//Fin de la funcion index
+
+    protected function listado($data)
+    {
+        return view('base/listado', $data);
+    }
 }//Fin de la clase

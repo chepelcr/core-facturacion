@@ -13,3 +13,23 @@ function verificar_contraseña() {
         $(".btt-grd").attr("disabled", false);
     }//Fin de la validacion
 }//Fin de la funcion
+
+function cambiar_contrasenia()
+{
+    $.ajax({
+        "url": base + "seguridad/update/contrasenia",
+        "method": "post",
+        "data": $('#frm_contrasenia').serialize(),
+        "dataType": "json",
+    }).done(function(response) {
+        
+        if (!response.error) {
+            //Enviar mesaje de exito
+            mensajeAutomaticoRecargar('Atencion', 'Contraseña actualizada correctamente', 'success');
+            
+        } //Fin del if
+        else {
+            mensajeAutomatico('Atencion', response.error, 'error');
+        } //Fin del else
+    });
+}

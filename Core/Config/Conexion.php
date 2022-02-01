@@ -24,6 +24,9 @@
 				self::$instance[$dbGroup] = new PDO('mysql:host='.$host.';dbname='.$database, $user, $pswd, $pdo_options);
 			}//Fin de validacion de instancia de conexion
 
+			//Poner el conjunto de caracteres a utf8
+			self::$instance[$dbGroup]->exec("SET NAMES utf8");
+
 			//Retornar la instancia de conexion
 			return self::$instance[$dbGroup];
 		}//Fin de getConnect

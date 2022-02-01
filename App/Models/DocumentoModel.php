@@ -74,9 +74,158 @@ class DocumentoModel extends Model
 
     protected $auditorias = true;
 
-    public function getDocumento($clave)
+    public function obtener($id)
+	{
+        $documento = false;
+
+        switch($id)
+        {
+            case 'all':
+                return $this->getAll();
+                break;
+
+            case 'diarios':
+                return $this->diarios();
+
+            case 'semanal':
+                return $this->semanal();
+
+            case 'semana_anterior':
+                return $this->semana_anterior();
+                break;
+
+            case 'semana':
+                return $this->semana();
+                break;
+
+            case 'mes':
+                return $this->mes();
+                break;
+
+            case 'mes_anterior':
+                return $this->mes_anterior();
+                break;
+
+            default:
+                $documento = $this->getById($id);
+
+                if($documento)
+                {
+                    $detalles_model = model('documentoDetalles');
+                    $documento->detalles = (object) $detalles_model->where('id_documento', $id)->obtener('all');
+
+                    $referencias_model = model('documentoReferencias');
+                    $documento->referencias = (object) $referencias_model->where('id_documento', $id)->obtener('all');
+
+                    return $documento;
+                }
+                
+                break;
+        }
+
+        return $documento;
+	}
+
+    /**Establecer la empresa para obtener los documentos */
+    public function empresa($id_empresa, $id_sucursal = null, $id_caja = null)
+    {
+        $this->where('id_empresa', $id_empresa);
+
+        if($id_sucursal != null)
+        {
+            $this->where('id_sucursal', $id_sucursal);
+        }
+
+        if($id_caja != null)
+        {
+            $this->where('id_caja', $id_caja);
+        }
+
+        return $this;
+    }
+
+    public function clave($clave)
     {
         $this->where('clave', $clave);
+
         return $this->fila();
     }
+
+    /**Indicar el tipo de documento a buscar */
+    public function tipo_documento($tipo_documento)
+    {
+        if($tipo_documento != 'all' && $tipo_documento)
+        {
+            $this->where('tipo_documento', $tipo_documento);
+        }
+
+        return $this;
+    }
+
+    /**Buscar un documento en un rango de fechas */
+    public function busqueda($fecha_inicio, $fecha_fin)
+    {
+        $documentos = $this->getAll();
+
+        $documentos_busqueda = [];
+
+        foreach($documentos as $documento)
+        {
+            //Colocar fecha en formato y-m-d
+            $fecha_documento = date('Y-m-d', strtotime($documento->fecha));
+            
+            if($fecha_documento >= $fecha_inicio && $fecha_documento <= $fecha_fin)
+            {
+                $documentos_busqueda[] = $documento;
+            }
+
+            //var_dump($fecha_documento);
+        }
+
+        return $documentos_busqueda;
+    }
+
+    /**Obtener los documentos del dia */
+    private function diarios()
+    {
+        $this->vista('documentos_diarios');
+        return $this->getAll();
+    }
+
+    /**Obtener los documentos de los ultimos 7 dias */
+    private function semanal()
+    {
+        $this->vista('documentos_semanal');
+        return $this->getAll();
+    }
+
+    /**Obtener los documentos de la semana anterior */
+    private function semana_anterior()
+    {
+        $this->vista('documentos_semana_anterior');
+        return $this->getAll();
+    }
+
+    /**Obtener los documentos que se han obtenido este mes */
+    private function mes()
+    {
+        $this->vista('documentos_mes');
+        return $this->getAll();
+    }
+
+    /**Obtener los documentos del mes anterior */
+    private function mes_anterior()
+    {
+        $this->vista('documentos_mes_anterior');
+        return $this->getAll();
+    }
+
+    /**Obtener los documentos de la semana actual */
+    private function semana()
+    {
+        $this->vista('documentos_semana');
+        return $this->getAll();
+    }
+
+
 }

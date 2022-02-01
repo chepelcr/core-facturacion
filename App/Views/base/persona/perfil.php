@@ -31,23 +31,23 @@
                     <div class="col-md-12">
                         <div id="panel_guardar" class="d-flex justify-content-around">
                             <!-- Grupo de botones -->
-                            <button type="button" onclick="guardar_perfil()" class="btn btn-grd-prf btn-primary w-75">
+                            <button type="button" onclick="guardar_perfil()" disabled class="btn btn-grd-prf btn-primary w-75">
                                 </i> Guardar
                             </button>
 
                             <!-- Boton para Cancelar -->
-                            <button type="button" onclick="cancelar_perfil()" class="btn btn-cnl-prf btn-danger w-20">
+                            <button type="button" onclick="cancelar_perfil()" disabled class="btn btn-cnl-prf btn-danger w-20">
                                 <i class="fa fa-times"></i> Cancelar
                             </button>
                         </div>
 
                         <div id="panel_perfil" class="d-flex justify-content-around">
-                            <button class="btn btn-info w-25 btn-edt-prf" type="button">Editar perfil</button>
+                            <button class="btn btn-info w-25 btn-edt-prf" type="button" disabled>Editar perfil</button>
 
                             <!-- Cambiar foto de perfil -->
-                            <button class="btn btn-warning w-25" type="button" >Cambiar foto de perfil</button>
+                            <button class="btn btn-warning w-25" type="button" disabled>Cambiar foto de perfil</button>
 
-                            <button class="btn btn-danger w-25" type="button" data-toggle="modal"
+                            <button class="btn btn-danger w-25" type="button" disabled data-toggle="modal"
                                 data-target="#modalContrasenia">Cambiar
                                 contraseña</button>
                         </div>
