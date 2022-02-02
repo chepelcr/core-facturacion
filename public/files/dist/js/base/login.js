@@ -1,7 +1,7 @@
 /**Direccion web de la pagina */
 var base = "http://localhost/modas-laura/Sitema-costos/public/";
 //var base = "https://137.184.198.204/";
-//var base = "http://164.90.245.14/";
+//var base = "https://164.90.245.14/";
 
 //Cuando el documento este listo
 $(document).ready(function () {

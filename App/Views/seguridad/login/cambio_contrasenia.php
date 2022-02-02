@@ -75,7 +75,7 @@
     <!-- AdminLTE App -->
     <script src="<?= getFile('dist/js/adminlte.min.js') ?>"></script>
     <!-- SweetAlert -->
-    <script src="https//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Font-Awesome -->
     <script src="https://kit.fontawesome.com/3e7bda16db.js" crossorigin="anonymous"></script>
     <!-- Pace -->

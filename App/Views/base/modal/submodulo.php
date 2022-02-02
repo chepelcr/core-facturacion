@@ -102,13 +102,16 @@
                                         </button>
                                     </div>
 
+                                    <?php if(validar_permiso($nombre_modulo, $nombre_submodulo, 'insertar')):?>
                                     <div class="col-md-2 btt-grd">
                                         <button type="button" onclick="enviar_formulario()" class="btn btn-success btn-grd btn-block" data-toggle="tooltip"
                                             title="Guardar">
                                             <i class="fas fa-save"></i>
                                         </button>
                                     </div>
+                                    <?php endif;?>
 
+                                    <?php if(validar_permiso($nombre_modulo, $nombre_submodulo, 'modificar')):?>
                                     <div class="col-md-2 btt-mod">
                                         <button type="button" class="btn bg-gradient-orange btn-mdf btn-block"
                                             data-toggle="tooltip" title="Modificar" onclick="enviar_formulario()">
@@ -122,6 +125,7 @@
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </div>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>

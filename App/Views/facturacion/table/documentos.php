@@ -92,7 +92,7 @@
                                 </button>
 
                                 <?php
-                                if($documento->envio_atv != '1' || $documento->valido_atv == '3'){
+                                if($documento->envio_atv != '1' || $documento->valido_atv == '2'){
                             ?>
                                 <button type="button"
                                     class="btn btn-dark nav-opciones dropdown-toggle dropdown-toggle-split"
@@ -114,7 +114,7 @@
 
                                                 else
                                                 {
-                                                    if($documento->valido_atv != '1' && $documento->valido_atv != '2'){
+                                                    if($documento->valido_atv == '2'){
                                                         //Mostrar boton de validar
                                                         echo '<button onclick="validar_documento('.$documento->id_documento.');" type="button" data-toggle="tooltip" title="Validar documento" class="btn btn-warning btn-validar btn-block">
                                                             <i class="fas fa-check-circle"></i>

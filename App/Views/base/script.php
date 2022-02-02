@@ -14,7 +14,7 @@
 <script src="<?=getFile('dist/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js')?>"></script>
 
 <!-- SweetAlert -->
-<script src="http:////cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Font-Awesome -->
 <script src="https://kit.fontawesome.com/3e7bda16db.js" crossorigin="anonymous"></script>
