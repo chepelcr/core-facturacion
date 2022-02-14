@@ -48,111 +48,113 @@ $(document).ready(function () {
     activar_tooltips();
 
     $(document).keydown(function (e) {
-        if (modulo_activo == 'documentos' && e.ctrlKey) {
-            //Prevenir que se ejecute la accion por defecto
-            //Si el usuario presiona ctrlLeft+n en el modulo de documentos
-            if (e.which == 78) {
-                e.preventDefault();
-                //Agregar una venta rapida
-                agregar_documento('tiquete');
-            }
-
-            //Si el usuario presiona ctrlLeft+f en el modulo de documentos
-            if (e.which == 70) {
-                e.preventDefault();
-                //Agregar una factura
-                agregar_documento('factura');
-            }
-
-            //Si el usuario presiona un numero en el modulo de documentos
-            if (e.which >= 48 && e.which <= 57) {
-                e.preventDefault();
-                //Ver una factura
-                ver_factura(e.which - 48);
-            }
-
-            //Si el usuario presiona ctrlLeft+d en el modulo de documentos
-            if (e.which == 68) {
-                e.preventDefault();
-                cargar_documentos();
-            }
-
-            if (submodulo_activo == 'facturacion') {
-                //Si el usuario presiona ctrlLeft+c en el modulo de documentos
-                if (e.which == 67) {
+        //Si no hay ningun input enfocado
+        if (!$('input:focus').length) {
+            if (modulo_activo == 'documentos' && e.ctrlKey) {
+                //Si el usuario presiona ctrlLeft+n en el modulo de documentos
+                if (e.which == 78) {
                     e.preventDefault();
-                    //Cerrar el modal de cierre de factura
-                    $('#' + factura_activa).find('.modal-cierre').modal('hide');
-
-                    //Esperar un segundo a que se cierre el modal
-                    setTimeout(function () {
-                        //Cancelar una venta
-                        cancelar_documento();
-                    });
+                    //Agregar una venta rapida
+                    agregar_documento('tiquete');
                 }
 
-                //Si el usuario presiona ctrlLeft+s en el modulo de documentos
-                if (e.which == 83) {
+                //Si el usuario presiona ctrlLeft+f en el modulo de documentos
+                if (e.which == 70) {
                     e.preventDefault();
-                    //Guardar una venta
-                    finalizar_documento();
+                    //Agregar una factura
+                    agregar_documento('factura');
                 }
 
-                //Si el usuario preciona ctrlLeft+p
-                if (e.which == 80) {
+                //Si el usuario presiona un numero en el modulo de documentos
+                if (e.which >= 48 && e.which <= 57) {
                     e.preventDefault();
-                    buscar_productos();
-                }
-            }
-        }
-
-        if (modulo_activo != 'inicio' && e.ctrlKey && submodulo_activo != 'inicio') {
-            //Si el usuario presiona ctrlLeft+n en un modulo distinto al de inicio y documentos
-            if (e.which == 78 && form_activo == '') {
-                e.preventDefault();
-                agregar('Agregar ' + submodulo_activo)
-            }
-
-            //Si el usuario presiona ctrl+c
-            if (e.which == 67 && form_activo != '') {
-                e.preventDefault();
-                cancelar_accion();
-            }
-        }
-
-        if (modulo_activo != 'documentos' && e.ctrlKey) {
-            if (form_activo != '') {
-                //Si el usuario presiona ctrlLeft+e
-                e.preventDefault();
-                if (e.which == 69) {
-                    editar();
-                }
-            }
-
-            else
-            {
-                //Si el usuario presiona ctrlLeft+e
-                if (e.which == 69) {
-                    e.preventDefault();
-                    cargar_inicio_modulo('empresa');
+                    //Ver una factura
+                    ver_factura(e.which - 48);
                 }
 
-                //Si el usuario presiona ctrlLeft+s
-                if (e.which == 83) {
-                    e.preventDefault();
-                    cargar_inicio_modulo('seguridad');
-                }
-
-                //Si el usuario presiona ctrlLeft+d
+                //Si el usuario presiona ctrlLeft+d en el modulo de documentos
                 if (e.which == 68) {
                     e.preventDefault();
-                    cargar_inicio_modulo('documentos');
+                    cargar_documentos();
                 }
 
-                //Si el usuario presiona ctrlLeft+i
-                if (e.which == 73) {
+                if (submodulo_activo == 'facturacion') {
+                    //Si el usuario presiona ctrlLeft+c en el modulo de documentos
+                    if (e.which == 67) {
+                        e.preventDefault();
+                        //Cerrar el modal de cierre de factura
+                        $('#' + factura_activa).find('.modal-cierre').modal('hide');
+
+                        //Esperar un segundo a que se cierre el modal
+                        setTimeout(function () {
+                            //Cancelar una venta
+                            cancelar_documento();
+                        });
+                    }
+
+                    //Si el usuario presiona ctrlLeft+s en el modulo de documentos
+                    if (e.which == 83) {
+                        e.preventDefault();
+                        //Guardar una venta
+                        finalizar_documento();
+                    }
+
+                    //Si el usuario preciona ctrlLeft+p
+                    if (e.which == 80) {
+                        e.preventDefault();
+                        buscar_productos();
+                    }
+                }
+            }
+
+            if (modulo_activo != 'inicio' && e.ctrlKey && submodulo_activo != 'inicio') {
+                //Si el usuario presiona ctrlLeft+n en un modulo distinto al de inicio y documentos
+                if (e.which == 78 && form_activo == '') {
                     e.preventDefault();
-                    cargar_inicio();
+                    agregar('Agregar ' + submodulo_activo)
+                }
+
+                //Si el usuario presiona ctrl+c
+                if (e.which == 67 && form_activo != '') {
+                    e.preventDefault();
+                    cancelar_accion();
+                }
+            }
+
+            if (modulo_activo != 'documentos' && e.ctrlKey) {
+                if (form_activo != '') {
+                    //Si el usuario presiona ctrlLeft+e
+                    e.preventDefault();
+                    if (e.which == 69) {
+                        editar();
+                    }
+                }
+
+                else
+                {
+                    //Si el usuario presiona ctrlLeft+e
+                    if (e.which == 69) {
+                        e.preventDefault();
+                        cargar_inicio_modulo('empresa');
+                    }
+
+                    //Si el usuario presiona ctrlLeft+s
+                    if (e.which == 83) {
+                        e.preventDefault();
+                        cargar_inicio_modulo('seguridad');
+                    }
+
+                    //Si el usuario presiona ctrlLeft+d
+                    if (e.which == 68) {
+                        e.preventDefault();
+                        cargar_inicio_modulo('documentos');
+                    }
+
+                    //Si el usuario presiona ctrlLeft+i
+                    if (e.which == 73) {
+                        e.preventDefault();
+                        cargar_inicio();
+                    }
                 }
             }
         }
@@ -170,6 +172,7 @@ $(document).ready(function () {
                 elemento_anterior();
             }
         }
+
     });
 
     //Cuando el mouse entra a .nav-menu

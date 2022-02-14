@@ -23,9 +23,15 @@ function seleccionar_producto(id_producto, boton_producto = null) {
     });
 }
 
-function buscar_producto() {
-    //Obtener el .gnl de la linea activa
-    var gnl = linea_activa.find(".gnl").val();
+function buscar_producto(boton = null, gnl = '') {
+    if(boton) {
+        linea_activa = $(boton).parents(".linea");
+    }
+
+    if(gnl == '') {
+        //Obtener el .gnl de la linea activa
+        var gnl = linea_activa.find(".gnl").val();
+    }
     
     //Si el .gnl no esta vacio
     if (gnl != '') {
@@ -52,8 +58,9 @@ function buscar_producto() {
     }//Fin de if
 
     else {
-        buscar_productos();
-        return false;
+        if(boton) {
+            buscar_productos();
+        }
     }
 }
 
@@ -64,9 +71,14 @@ $(document).ready(function () {
         //Poner el foco en el input de busqueda
         $('#modalProductos').find('#q_productos').focus();
     });
+
+    //Cuando el usuario presiona enter en el input .gnl
+    $(document).on('keypress', '.gnl', function (e) {
+        if (e.which == 13) {
+            buscar_producto(null, $(this).val());
+        }
+    });
 });
-
-
 
 /**Buscar productos de la base de datos */
 function buscar_productos(gnl = '') {

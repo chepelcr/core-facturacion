@@ -12,13 +12,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 </head>
 
-<body class="hold-transition layout-fixed layout-footer-fixed layout-top-nav">
+<body class="hold-transition layout-fixed layout-footer-fixed layout-top-nav bg-gray-light">
     <div class="wrapper">
+        <div class="loader">
+            <div class="circle-small"></div>
+            <figure>
+                <img class="circle-inner-inner img-fluid" src="<?=baseUrl('files/dist/img/logo.png')?>" alt="Modas Laura">
 
-        <!-- Preloader -->
-        <!--<div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="<?=baseUrl('files/dist/img/logo.png')?>" alt="AdminLTELogo" height="60" width="60">
-        </div> -->
+                <!-- Colocar 'cargando' abajo de la imagen -->
+                <figcaption class="text-center p-5">
+                    <h1>Bienvendo a Modas Laura</h1>
+                </figcaption>
+            </figure>
+        </div>
 
         <?= view('base/nav', array('modulos'=>$modulos))?>
 

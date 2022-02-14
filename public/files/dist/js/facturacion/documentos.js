@@ -90,7 +90,7 @@ function reporte(tipo_reporte) {
         }
     });
 
-    //Enviar una solicitud ajax sin esperar respuesta
+    //Enviar una solicitud ajax
     Pace.track(function () {
         //Obtener el archivo zip
         $.ajax({
@@ -314,7 +314,12 @@ function guardar_documento() {
                     response.estado = 'warning';
                     mensaje = 'El documento esta siendo procesado por el Ministerio de Hacienda';
                 }
-                
+
+                if(response.validar_estado == 'error'){
+                    response.estado = 'error';
+                    mensaje = 'El documento no ha podido ser ' + response.validar_estado + ' por el Ministerio de Hacienda, debe intetarlo mas tarde';
+                }
+
                 Swal.fire({
                     title: 'Documento generado',
                     text: mensaje,
@@ -380,8 +385,9 @@ function validar_documento(id = '') {
                     title: 'Atencion',
                     text: mensaje,
                     icon: response.estado,
-                    showConfirmButton: false,
-                    timer: 2000,
+                    showConfirmButton: true,
+                    //Texto del boton de confirmacion
+                    confirmButtonText: 'Aceptar',
                 });
             });
         });
@@ -434,6 +440,29 @@ function agregar_referencias() {
     //Mostrar el modal de referencias de la factura activa
     $('#' + factura_activa).find('.modal-referencias').modal('show');
 }
+
+/**Validar los documentos que se encuentran en proceso */
+function validar_documentos() {
+    Pace.track(function () {
+        $.ajax({
+            "url": base + "documentos/validar_documentos",
+            "method": "get",
+            "dataType": "json",
+        }).done(function (response) {
+            if (response.error) {
+                Swal.fire({
+                    title: 'Atencion',
+                    text: response.error,
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then((result) => {
+                        salir();
+                });
+            }
+        });
+    });
+}//Fin de la funcion para validar los documentos
 
 //document ready
 $(document).ready(function () {

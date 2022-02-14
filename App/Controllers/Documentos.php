@@ -59,6 +59,174 @@ class Documentos extends BaseController
             header('Location: ' . baseUrl('login'));
     } //Fin de la funcion facturacion
 
+    public function validar_documentos()
+    {
+        if (!is_login()) {
+            return json_encode(array(
+                'error' => 'Se ha cerrado la sesión',
+                'status' => 'error'
+            ));
+        } //Fin de la validacion de login
+
+        $hacienda = new Hacienda();
+
+        $documentoModel = model('documento');
+        $documentos = $documentoModel->obtener('proceso');
+
+        $validados = true;
+
+        foreach ($documentos as $documento) {
+            $validar = json_decode($hacienda->validar($documento->clave), true);
+
+            if (isset($validar['xml']['ind-estado'])) {
+                $reporte = new Reportes();
+                $reporte->generar_pdf($documento->id_documento);
+
+                $fecha_gmt = date('Y-m-d\TH:i:s', strtotime('-6 hours'));
+
+                if ($validar['xml']['ind-estado'] != "procesando") {
+                    $json = json_decode(json_encode(simplexml_load_string(base64_decode($validar['xml']['respuesta-xml']))));
+
+                    $data_validado = array(
+                        'valido_atv' => $json->Mensaje,
+                        'fecha_valido' => $fecha_gmt,
+                    );
+
+                    $documentosModel = model('documento');
+                    $documentosModel->update($data_validado, $documento->id_documento);
+
+                    $CC = null;
+
+                    if ($json->Mensaje < 3) {
+                        if ($documento->tipo_documento != '04' && ($documento->receptor_cedula != '' || $documento->receptor_cedula != null)) {
+                            //enviar el correo
+                            $cuerpo = '<h1>Documento generado</h1>';
+                            $cuerpo .= "<p>Señores " . $documento->receptor_nombre . ",
+                                    <br>
+                                    <br>
+                                    Se ha generado el documento con la clave " . $documento->clave . ".
+                                    El documento ha sido aceptado por el Ministerio de Hacienda.
+                                    <br>
+                                    <br>
+                                    <b>Att " . $documento->emisor_nombre . "</b>";
+
+                            if (getEnt('factura.ambiente') != 'stag') {
+                                $correos = array(
+                                    $documento->receptor_nombre => $documento->receptor_correo,
+                                );
+
+                                $CC = array(
+                                    $documento->emisor_nombre => $documento->emisor_correo,
+                                    'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
+                                );
+                            } else {
+                                $correos = array(
+                                    'Receptor' => 'chepelcr@outlook.com',
+                                );
+
+                                $CC = array(
+                                    'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
+                                );
+                            }
+                        } else {
+                            //enviar el correo
+                            $cuerpo = '<h1>Documento generado</h1>';
+                            $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
+                                    <br>
+                                    <br>
+                                    Se ha generado el documento con la clave " . $documento->clave . ".
+                                    El documento ha sido aceptado por el Ministerio de Hacienda.
+                                    <br>
+                                    <br>
+                                    <b>Att " . $documento->emisor_nombre . "</b>";
+
+                            if (getEnt('factura.ambiente') != 'stag') {
+                                $correos = array(
+                                    $documento->emisor_nombre => $documento->emisor_correo,
+                                );
+
+                                $CC = array(
+                                    'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
+                                );
+                            } else {
+                                $correos = array(
+                                    'Receptor' => 'chepelcr@outlook.com'
+                                );
+
+                                $CC = array(
+                                    'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
+                                );
+                            }
+                        }
+                    } else {
+                        $cuerpo = '<h1>Error al validar factura</h1>';
+                        $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
+                                    <br>
+                                    <br>
+                                    Se ha generado el documento con la clave " . $documento->clave . ".
+                                    El documento ha sido rechazado por el Ministerio de Hacienda.
+                                    <br>
+                                    <br>";
+
+                        $cuerpo .= "Error hacienda: " . $json->DetalleMensaje;
+
+                        $cuerpo .= "<br>
+                                    <br>
+                                    <b>Att " . $documento->emisor_nombre . "</b>";
+
+                        if (getEnt('factura.ambiente') != 'stag') {
+                            $correos = array(
+                                $documento->emisor_nombre => $documento->emisor_correo,
+                            );
+                        } else {
+                            $correos = array(
+                                'Receptor' => 'chepelcr@outlook.com'
+                            );
+                        }
+                    }
+
+                    $adjuntos = array(
+                        $documento->clave . '.pdf' => location("archivos\\pdf\\" . $documento->clave . ".pdf"),
+                        $documento->clave . '.xml' => location("archivos\\xml\\firmados\\" . $documento->clave . "_f.xml"),
+                        $documento->clave . '_respuesta_MH.xml' => location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"),
+                    );
+
+                    $data = array(
+                        'receptor' => $correos,
+                        'asunto' => 'Documento electronico',
+                        'body' => $cuerpo,
+                        'adjuntos' => $adjuntos,
+                        'CC' => $CC,
+                    );
+
+                    $mail = new Correo();
+                    $mail->enviarCorreo($data);
+
+                    //Eliminar archivos
+                    unlink(location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"));
+                    unlink(location("archivos\\pdf\\" . $documento->clave . ".pdf"));
+                }
+
+                if ($validar['xml']['ind-estado'] == "procesando") {
+                    $validados = false;
+                }
+            } else
+                $validados = false;
+        } //Fin del ciclo de documentos
+
+        if ($validados) {
+            $data = array(
+                'status' => 'success',
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+            );
+        }
+
+        return json_encode($data);
+    }//Fin de la funcion validar_documentos
+
     /**Cargar los documentos de la empresa */
     public function cargar_documentos()
     {
@@ -66,11 +234,7 @@ class Documentos extends BaseController
             $model = new DocumentoModel();
             $model->empresa(getSession('id_empresa'));
 
-            $tipo_reporte = 'diarios';
-
             $id_tipo_documento = post('id_tipo_documento');
-
-            //var_dump($id_tipo_documento);
 
             $fecha_inicio = null;
             $fecha_fin = null;
@@ -87,6 +251,7 @@ class Documentos extends BaseController
                     $documentos = $model->obtener($tipo_reporte);
                 }
             } else {
+                $tipo_reporte = 'diarios';
                 $documentos = $model->obtener($tipo_reporte);
             }
 
@@ -104,10 +269,7 @@ class Documentos extends BaseController
             //var_dump($model->getAll());
 
             return view('facturacion/table/documentos', $dataView);
-        }
-
-        else
-        {
+        } else {
             $error = $this->object_error(505, 'No ha iniciado sesión');
             return $this->error($error);
         }
@@ -124,11 +286,14 @@ class Documentos extends BaseController
                 $documento = $model->obtener($id_documento);
 
                 if ($documento) {
+                    $reporte = new Reportes();
+                    $reporte->generar_pdf($id_documento);
+
                     $hacienda = new Hacienda();
                     $validar = json_decode($hacienda->validar($documento->clave), true);
 
                     if (isset($validar['xml']['ind-estado'])) {
-                            $fecha_gmt = date('Y-m-d\TH:i:s', strtotime('-6 hours'));
+                        $fecha_gmt = date('Y-m-d\TH:i:s', strtotime('-6 hours'));
 
                         if ($validar['xml']['ind-estado'] != "procesando") {
                             $json = json_decode(json_encode(simplexml_load_string(base64_decode($validar['xml']['respuesta-xml']))));
@@ -141,38 +306,109 @@ class Documentos extends BaseController
                             $documentosModel = model('documento');
                             $documentosModel->update($data_validado, $id_documento);
 
+                            $CC = null;
+                            
                             if ($json->Mensaje < 3) {
-                                if ($documento->tipo_documento != '04') {
+                                if ($documento->tipo_documento != '04' && ($documento->receptor_cedula != '' || $documento->receptor_cedula != null)) {
                                     //enviar el correo
-                                    $cuerpo = '<h1>Factura generada</h1>';
-                                    $cuerpo .= "<p>Señores " . $documento->receptor_nombre . ", <br> Se adjunta la respuesta del MH.</p>";
-                                    $cuerpo .= "<b>Att " . $documento->emisor_nombre . "</b>";
+                                    $cuerpo = '<h1>Documento generado</h1>';
+                                    $cuerpo .= "<p>Señores " . $documento->receptor_nombre . ",
+                                    <br>
+                                    <br>
+                                    Se ha generado el documento con la clave " . $documento->clave . ".
+                                    El documento ha sido aceptado por el Ministerio de Hacienda.
+                                    <br>
+                                    <br>
+                                    <b>Att " . $documento->emisor_nombre . "</b>";
 
-                                    $correos = array(
-                                        //$receptor->nombre => $receptor->correo,
-                                        'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
-                                        //$emisor->nombre => $emisor->correo,
-                                    );
+                                    if(getEnt('factura.ambiente') != 'stag')
+                                    {
+                                        $correos = array(
+                                            $documento->receptor_nombre => $documento->receptor_correo,
+                                        );
+                                        
+                                        $CC = array(
+                                            $documento->emisor_nombre => $documento->emisor_correo,
+                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
+                                        );
+                                    }
+
+                                    else
+                                    {
+                                        $correos = array(
+                                            'Receptor' => 'chepelcr@outlook.com'
+                                        );
+
+                                        $CC = array(
+                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
+                                        );
+                                    }
                                 } else {
                                     //enviar el correo
-                                    $cuerpo = '<h1>Factura generada</h1>';
-                                    $cuerpo .= "<b>Att " . $documento->emisor_nombre . "</b>";
+                                    $cuerpo = '<h1>Documento generado</h1>';
+                                    $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
+                                    <br>
+                                    <br>
+                                    Se ha generado el documento con la clave " . $documento->clave . ".
+                                    El documento ha sido aceptado por el Ministerio de Hacienda.
+                                    <br>
+                                    <br>
+                                    <b>Att " . $documento->emisor_nombre . "</b>";
 
-                                    $correos = array(
-                                        //$receptor->nombre => $documento->receptor_correo,
-                                        'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
-                                        //$emisor->nombre => $documento->emisor_correo,
-                                    );
+                                    if(getEnt('factura.ambiente') != 'stag')
+                                    {
+                                        $correos = array(
+                                            $documento->emisor_nombre => $documento->emisor_correo,
+                                        );
+
+                                        $CC = array(
+                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
+                                        );
+                                    }
+
+                                    else
+                                    {
+                                        $correos = array(
+                                            'Receptor' => 'chepelcr@outlook.com'
+                                        );
+
+                                        $CC = array(
+                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
+                                        );
+                                    }
                                 }
                             } else {
-                                $cuerpo = '<h1>Error al generar factura</h1>';
+                                $cuerpo = '<h1>Error al validar factura</h1>';
+                                $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
+                                <br>
+                                <br>
+                                Se ha generado el documento con la clave " . $documento->clave . ".
+                                El documento ha sido rechazado por el Ministerio de Hacienda.
+                                <br>
+                                <br>";
                                 $cuerpo .= "Error hacienda: " . $json->DetalleMensaje;
-                                $correos  = array(
-                                    'Jose Pablo Campos' => "proyectojpgrow@gmail.com",
-                                );
+                                $cuerpo .= "<br>
+                                <br>
+                                <b>Att " . $documento->emisor_nombre . "</b>";
+
+                                if(getEnt('factura.ambiente') != 'stag')
+                                {
+                                    $correos = array(
+                                        $documento->emisor_nombre => $documento->emisor_correo,
+                                    );
+                                }
+
+                                else
+                                {
+                                    $correos = array(
+                                        'Receptor' => 'chepelcr@outlook.com'
+                                    );
+                                }
                             }
 
                             $adjuntos = array(
+                                $documento->clave . '.pdf' => location("archivos\\pdf\\" . $documento->clave . ".pdf"),
+                                $documento->clave . '.xml' => location("archivos\\xml\\firmados\\" . $documento->clave . "_f.xml"),
                                 $documento->clave . '_respuesta_MH.xml' => location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"),
                             );
 
@@ -181,6 +417,7 @@ class Documentos extends BaseController
                                 'asunto' => 'Factura electronica',
                                 'body' => $cuerpo,
                                 'adjuntos' => $adjuntos,
+                                'CC' => $CC,
                             );
 
                             $mail = new Correo();
@@ -188,6 +425,7 @@ class Documentos extends BaseController
 
                             //Eliminar archivos
                             unlink(location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"));
+                            unlink(location("archivos\\pdf\\" . $documento->clave . ".pdf"));
 
                             return json_encode(array(
                                 'clave' => $id_documento,
@@ -209,8 +447,12 @@ class Documentos extends BaseController
                         }
                     } else {
                         return json_encode(array(
-                            'error' => 'Error al validar documento',
-                            'estado' => 'error',
+                            'clave' => $id_documento,
+                            "validar_estado" => 'procesando',
+                            "mensaje" => "2",
+                            "validar_mensaje" => "Procesando documento",
+                            'estado' => 'warning',
+                            'correo_enviado' => false,
                         ));
                     }
                 }
@@ -454,8 +696,8 @@ class Documentos extends BaseController
 
             $id_factura = $consecutivo->consecutivo;
             $factura = str_pad($id_factura, 10, "0", STR_PAD_LEFT);
-            $surcusal = "010";
-            $pv = "00001";
+            $surcusal = "001";
+            $pv = "00007";
 
             $tipoDocumento = $id_tipo_documento;
 
@@ -478,32 +720,43 @@ class Documentos extends BaseController
             if ($id_tipo_documento != '04') {
                 $clientesModel = new ClientesModel();
                 $receptor = $clientesModel->getByIdentificacion($id_cliente);
-
-                if ($id_tipo_documento == '01') {
-                    //Validar si el cliente existe en la tabla de clientes
-                    if (!$receptor) {
-                        return json_encode(array(
-                            'error' => 'Debe indicar un cliente valido',
-                            'estado' => 'error'
-                        ));
-                    }
-                    
-                    /**Validar si el cliente de la  factura es walmart */
-                    if ($receptor->nombre_comercial == 'Walmart') {
-                        if (!post('numero_vendor') || !post('numero_orden') || !post('enviar_gnl')) {
-                            return json_encode(array(
-                                'error' => 'Faltan datos para enviar a Walmart',
-                                'estado' => 'error'
-                            ));
-                        }
-                    }
-                }
             }
 
             //Validar el tipo de documento
             switch ($id_tipo_documento) {
                     /**Factura electronica */
                 case '01':
+                    //Validar si el cliente existe en la tabla de clientes
+                    if (!$receptor) {
+                        return json_encode(array(
+                            'error' => 'Debe indicar un cliente valido',
+                            'tipo' => 'receptor',
+                            'estado' => 'error'
+                        ));
+                    }
+
+                    /**Validar si el cliente de la factura es walmart */
+                    if ($receptor->nombre_comercial == 'Walmart') {
+                        if (!post('numero_vendor') || !post('numero_orden') || !post('enviar_gnl')) {
+                            return json_encode(array(
+                                'error' => 'Faltan datos para enviar a Walmart',
+                                'tipo' => 'walmart',
+                                'estado' => 'error'
+                            ));
+                        }
+
+                        //Si el numero de orden no tiene 10 caracteres
+                        if (strlen(post('numero_orden')) != 10)
+                            return json_encode(array(
+                                'error' => 'El numero de orden debe tener 10 caracteres',
+                                'campo' => 'numero_orden',
+                                'estado' => 'error'
+                            ));
+
+                        //Rellenar con 0 hasta 9 numero_vendor
+                        $numero_vendor = str_pad(post('numero_vendor'), 9, "0", STR_PAD_LEFT);
+                    } //Fin de la validacion de walmart
+
                     $stringXML = '<?xml version="1.0" encoding="utf-8"?>
                 <FacturaElectronica 
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -723,6 +976,7 @@ class Documentos extends BaseController
             if ($lineas == 0) {
                 return json_encode(array(
                     "error" => "No se puede emitir un comprobante sin detalle",
+                    'tipo' => 'detalles',
                     "estado" => "error"
                 ));
             }
@@ -903,9 +1157,9 @@ class Documentos extends BaseController
                     case '01':
                         if ($receptor->nombre_comercial == 'Walmart') {
                             $stringXML .= '<Otros>
-                                <OtroTexto codigo="WMNumeroVendedor">' . post('numero_vendor') . '</OtroTexto>
+                                <OtroTexto codigo="WMNumeroVendedor">' . $numero_vendor . '</OtroTexto>
                                 <OtroTexto codigo="WMNumeroOrden">' . post('numero_orden') . '</OtroTexto>
-                                <OtroTexto codigo="WMEnviarGNL">' . post('enviar_gnl') . '</OtroTexto>
+                                <OtroTexto codigo="WMEnviarGLN">' . post('enviar_gnl') . '</OtroTexto>
                             </Otros>';
                         }
                         $stringXML .= '</FacturaElectronica>';
@@ -1017,9 +1271,6 @@ class Documentos extends BaseController
                     $validar = json_decode($hacienda->validarXml($xml64), true);
 
                     if (isset($validar['xml']['ind-estado'])) {
-                        //Agregar el valido_atv
-                        $data_envio['valido_atv'] = $validar['xml']['ind-estado'];
-
                         if ($validar['xml']['ind-estado'] != "procesando") {
                             $json = json_decode(json_encode(simplexml_load_string(base64_decode($validar['xml']['respuesta-xml']))));
 
@@ -1031,73 +1282,99 @@ class Documentos extends BaseController
                             $documentosModel = model('documento');
                             $documentosModel->update($data_validado, $id_documento);
 
+                            $CC = null;
+
                             if ($json->Mensaje < 3) {
                                 if ($id_tipo_documento != '04' && $receptor) {
                                     //enviar el correo
                                     $cuerpo = '<h1>Nuevo documento electronico</h1>
-                                    Estimado, ' . $receptor->nombre . ',<br><br>
-                                    Se ha generado la factura electrónica con la clave: ' . $clave . '<br><br>';
+                                    Señores, ' . $receptor->nombre . ',<br><br>
+                                    Se ha generado el documento electrónico con la clave: ' . $clave . '<br><br>
+                                    El documento ha sido aceptado por el Ministerio de Hacienda.
+                                    <br><br>';
+
                                     $cuerpo .= "Atentamente: <b>" . $emisor->razon . "</b>";
 
-                                    if(getEnt('factura.ambiente') == 'stag')
-                                    {
+                                    if (getEnt('factura.ambiente') == 'stag') {
                                         $correos = array(
-                                            //$receptor->nombre => $receptor->correo,
                                             'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
-                                            //$emisor->nombre => $emisor->correo,
+                                        );
+
+                                        $CC = array(
+                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
                                         );
                                     }
 
-                                    if(getEnt('factura.ambiente') == 'prod')
-                                    {
+                                    if (getEnt('factura.ambiente') == 'prod') {
                                         $correos = array(
                                             $receptor->nombre => $receptor->correo,
+                                        );
+
+                                        $CC = array(
                                             $emisor->nombre => $emisor->correo,
+                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
                                         );
                                     }
                                 } else {
                                     //enviar el correo
                                     $cuerpo = '<h1>Nuevo documento electronico</h1>
-                                    Estimado, ' . $emisor->nombre . ',<br><br>
-                                    Se ha generado la factura electrónica con la clave: ' . $clave . '<br><br>';
+                                                Estimado, ' . $emisor->nombre . ',<br><br>
+                                                Se ha generado el documento electrónico con la clave: ' . $clave . '<br><br>
+                                                El documento ha sido aceptado por el Ministerio de Hacienda.
+                                                <br><br>';
+                                    
                                     $cuerpo .= "<b>Att " . $emisor->razon . "</b>";
 
-                                    if(getEnt('factura.ambiente') == 'stag')
-                                    {
+                                    if (getEnt('factura.ambiente') == 'stag') {
                                         $correos = array(
                                             'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
                                         );
-                                    }
 
-                                    else
-                                    {
+                                        $CC = array(
+                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
+                                        );
+                                    } else {
                                         $correos = array(
                                             $emisor->nombre => $emisor->correo,
+                                        );
+
+                                        $CC = array(
+                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
                                         );
                                     }
                                 }
                             } else {
-                                $cuerpo = '<h1>Error al generar factura</h1>';
+                                $cuerpo = '<h1>Error al validar factura</h1>';
+                                $cuerpo .= "<p>Señores " . $emisor->nombre . ",
+                                <br>
+                                <br>
+                                Se ha generado el documento con la clave " . $clave . ".
+                                El documento ha sido rechazado por el Ministerio de Hacienda.
+                                <br>
+                                <br>";
                                 $cuerpo .= "Error hacienda: " . $json->DetalleMensaje;
+                                $cuerpo .= "<br>
+                                <br>
+                                <b>Att " . $emisor->nombre . "</b>";
 
-                                if(getEnt('factura.ambiente') == 'stag')
+                                if(getEnt('factura.ambiente') != 'stag')
                                 {
                                     $correos = array(
-                                        'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
+                                        $emisor->nombre => $emisor->correo,
                                     );
                                 }
 
                                 else
                                 {
                                     $correos = array(
-                                        $emisor->nombre => $emisor->correo,
+                                        'Receptor' => 'chepelcr@outlook.com'
                                     );
                                 }
                             }
 
                             $adjuntos = array(
                                 $clave . '.pdf' => location("archivos\\pdf\\" . $clave . ".pdf"),
-                                $clave . '.xml' => location("archivos\\xml\\firmados/" . $clave . "_f.xml"),
+                                $clave . '.xml' => location("archivos\\xml\\firmados\\" . $clave . "_f.xml"),
                                 $clave . '_respuesta_MH.xml' => location("archivos\\xml\\respuesta\\" . $clave . ".xml"),
                             );
 
@@ -1106,6 +1383,7 @@ class Documentos extends BaseController
                                 'asunto' => 'Documento electronico',
                                 'body' => $cuerpo,
                                 'adjuntos' => $adjuntos,
+                                'CC' => $CC,
                             );
 
                             $mail = new Correo();
@@ -1114,7 +1392,7 @@ class Documentos extends BaseController
                             //Eliminar archivos
                             unlink(location("archivos\\pdf\\" . $clave . ".pdf"));
                             //unlink(location("archivos\\xml\\firmados\\" . $clave . "_f.xml"));
-                            //unlink(location("archivos\\xml\\respuesta\\" . $clave . ".xml"));
+                            unlink(location("archivos\\xml\\respuesta\\" . $clave . ".xml"));
 
                             return json_encode(array(
                                 'clave' => $id_documento,
@@ -1131,7 +1409,7 @@ class Documentos extends BaseController
                                 "enviar" => $enviar->status,
                                 "validar_estado" => $validar['xml']['ind-estado'],
                                 "mensaje" => "Procesando",
-                                "validar_mensaje" => "Procesando documento",
+                                "validar_mensaje" => "El documento se encuentra en proceso de validación",
                                 "correo_enviado" => false,
                                 'estado' => 'warning',
                             ));
@@ -1140,9 +1418,9 @@ class Documentos extends BaseController
                         return json_encode(array(
                             'clave' => $id_documento,
                             "enviar" => $enviar->status,
-                            "validar_estado" => $validar['xml']['ind-estado'],
-                            "mensaje" => "Error",
-                            "validar_mensaje" => 'Se ha generado un error al validar la factura',
+                            "validar_estado" => 'procesando',
+                            "mensaje" => "Procesando",
+                            "validar_mensaje" => 'El documento se encuentra en proceso de validación',
                             "correo_enviado" => false,
                             'estado' => 'error',
                         ));
@@ -1165,7 +1443,7 @@ class Documentos extends BaseController
                     'error' => 'Error al insertar el documento'
                 ));
             }
-        }//Fin de validacion de logueo
+        } //Fin de validacion de logueo
 
         else
             return json_encode(array(
@@ -1206,13 +1484,13 @@ class Documentos extends BaseController
 
                 $qrCodigo = $qr->codigoQR($dataQR);
 
-                $arrContextOptions=array(
-                    "ssl"=>array(
-                        "verify_peer"=>false,
-                        "verify_peer_name"=>false,
+                $arrContextOptions = array(
+                    "ssl" => array(
+                        "verify_peer" => false,
+                        "verify_peer_name" => false,
                     ),
-                ); 
-    
+                );
+
                 $logoImg = file_get_contents(getFile('dist/img/logo.png'), false, stream_context_create($arrContextOptions));
 
                 $logo = base64_encode($logoImg);
@@ -1260,7 +1538,7 @@ class Documentos extends BaseController
         }
 
         header('Location: ' . baseUrl());
-    }//Fin de la funcion  para descargar un archivo zip
+    } //Fin de la funcion  para descargar un archivo zip
 
     /** Ver un documento pdf en el navegador */
     public function pdf()
@@ -1283,12 +1561,12 @@ class Documentos extends BaseController
 
             $qrCodigo = $qr->codigoQR($dataQR);
 
-            $arrContextOptions=array(
-                "ssl"=>array(
-                    "verify_peer"=>false,
-                    "verify_peer_name"=>false,
+            $arrContextOptions = array(
+                "ssl" => array(
+                    "verify_peer" => false,
+                    "verify_peer_name" => false,
                 ),
-            ); 
+            );
 
             $logoImg = file_get_contents(location('files/dist/img/logo.png'), false, stream_context_create($arrContextOptions));
 
@@ -1345,7 +1623,7 @@ class Documentos extends BaseController
             return json_encode($reporte->generar_reporte_documentos($claves, getSegment(3)));
         } else
             return json_encode(array(
-                'error' => 'Debe iniciar sesión para continuar'
+                'error' => 'Debe iniciar sesión para continuar',
             ));
     } //Fin de la funcion descargar_reporte
 }//Fin de la clase

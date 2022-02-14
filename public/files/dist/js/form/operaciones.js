@@ -48,6 +48,12 @@ function agregar(titulo = '') {
                 switch (submodulo) {
                     case 'productos':
                         campos_cabys(true, form_activo);
+
+                        $('#' + form_activo).find('#valor_total').val(0);
+                        $('#' + form_activo).find('#impuesto').val(0);
+                        $('#' + form_activo).find('#valor_impuesto').val(0);
+                        $('#' + form_activo).find('#valor_unitario').val(0);
+
                         break;
                     case 'clientes':
                         activar_campos_contribuyente(true, form_activo);
@@ -390,7 +396,7 @@ function obtener(id, objeto, ver = false) {
 
             if (objeto == 'producto') {
                 campos_productos(true, form_activo);
-                //calcular_valor_producto(form_activo);
+                calcular_valor_producto(form_activo);
             }
 
             /**Si existe response.modulos */

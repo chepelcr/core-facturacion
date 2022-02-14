@@ -55,6 +55,9 @@ class Login extends BaseController
 								'nombre_usuario'=>$usuario->nombre_usuario,
 								'id_rol'=>$usuario->id_rol,
 								'id_empresa'=>$usuario->id_empresa,
+								'correo'=>$usuario->correo,
+								'identificacion'=>$usuario->identificacion,
+								'nombre'=>$usuario->nombre,
 							);
 							
 							setDataSession($data);
@@ -69,6 +72,9 @@ class Login extends BaseController
 								'nombre_usuario'=>$usuario->nombre_usuario,
 								'id_rol'=>$usuario->id_rol,
 								'id_empresa'=>$usuario->id_empresa,
+								'correo'=>$usuario->correo,
+								'identificacion'=>$usuario->identificacion,
+								'nombre'=>$usuario->nombre,
 								'contrasenia_expiro' => true,
 							);
 							

@@ -68,6 +68,12 @@ class Pdf_Manager extends Dompdf
             mkdir($folder);
         }
         $file = location($folder.$data['nombre_archivo']);
+
+        //Si el archivo existe, lo elimina
+        if(file_exists($file)) {
+            unlink($file);
+        }
+        
         $output = $dompdf->output();
         file_put_contents($file, $output);
     }

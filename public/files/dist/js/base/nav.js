@@ -1,7 +1,30 @@
 //Cuando el documento esta listo
 $(document).ready(function () {
-    cargar_inicio();
+    loading(cargar_inicio());
 });
+
+function loading(function_cargar = '') {
+    var num = 0;
+    $('.content-wrapper').hide();
+    $('.main-header').hide();
+    $('.main-footer').hide();
+
+    for (i = 0; i <= 100; i++) {
+        setTimeout(function () {
+            if (num == 100) {
+                $('.loader').hide();
+                $('.main-header').show();
+                $('.main-footer').show();
+                $('.content-wrapper').show();
+                if (function_cargar != '') {
+                    function_cargar;
+                }
+            }
+            num++;
+        }, i * 40);
+    };
+}
+
 
 /**Cargar el modulo de inicio de la aplicacion */
 function cargar_inicio() {

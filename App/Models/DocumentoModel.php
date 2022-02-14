@@ -106,6 +106,10 @@ class DocumentoModel extends Model
                 return $this->mes_anterior();
                 break;
 
+            case 'proceso':
+                return $this->proceso();
+                break;
+
             default:
                 $documento = $this->getById($id);
 
@@ -227,5 +231,11 @@ class DocumentoModel extends Model
         return $this->getAll();
     }
 
+    /**Obtener todos los documentos en proceso */
+    public function proceso()
+    {
+        $this->vista('documentos_proceso');
+        return $this->getAll();
+    }//Fin de la funcion para obtener los documentos en proceso
 
 }

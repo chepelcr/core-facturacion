@@ -174,6 +174,8 @@ function seleccionar_cabys(valor) {
 
     campos_cabys(true, form_activo);
 
+    calcular_valor_producto();
+
     //Expand el card-frm
     $('#' + elemento_activo).find('.card-frm').CardWidget('expand');
 }

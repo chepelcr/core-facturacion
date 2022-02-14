@@ -26,23 +26,23 @@
                             </div>
 
                             <div class="col-3">
-                                <form class="frm-producto">
-                                    <div class="input-group">
-                                        <!-- Codigo de barras -->
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                        </div>
-                                        
-                                        <input class="form-control inp-fct gnl" type="number" min="0" name="gnl[]" placeholder="Código">
-
-                                        <!-- Buscar articulo -->
-                                        <div class="input-group-append">
-                                            <button class="btn btn-buscar-prod" type="submit" data-toggle="tooltip" title="Buscar producto" onclick="buscar_producto()">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
+                                <div class="input-group">
+                                    <!-- Codigo de barras -->
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                                     </div>
-                                </form>
+
+                                    <input class="form-control inp-fct gnl" type="number" min="0" name="gnl[]"
+                                        placeholder="Código de barras">
+
+                                    <!-- Buscar articulo -->
+                                    <div class="input-group-append">
+                                        <button class="btn btn-buscar-prod" type="button" data-toggle="tooltip"
+                                            title="Buscar producto" onclick="buscar_producto(this)">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-4">
@@ -68,7 +68,7 @@
 
                             <div hidden>
                                 <input value="0" class="form-control precio calcular inp-fct" min="0" type="number"
-                                    name="precio_unidad[]" >
+                                    name="precio_unidad[]">
                             </div>
 
                             <div hidden>
@@ -90,7 +90,8 @@
                             </div>
 
                             <div hidden>
-                                <input value="0" class="form-control impM inp-fct" type="number" name="monto_impuesto[]">
+                                <input value="0" class="form-control impM inp-fct" type="number"
+                                    name="monto_impuesto[]">
                             </div>
 
                             <div class="col-1">
@@ -100,11 +101,13 @@
 
                             <div class="col-1 text-center">
                                 <button class="btn btn-primary descB" type="button" data-toggle="collapse"
-                                    aria-expanded="false" value="0" onclick="mostrar_descuentos(this.value)" aria-controls="descuento">
+                                    aria-expanded="false" value="0" onclick="mostrar_descuentos(this.value)"
+                                    aria-controls="descuento">
                                     <i class="fas fa-percent"></i>
                                 </button>
 
-                                <button type="button" value="0" class="btn btn-danger eliminarLinea" onclick="eliminar_linea(this)" hidden>
+                                <button type="button" value="0" class="btn btn-danger eliminarLinea"
+                                    onclick="eliminar_linea(this)" hidden>
                                     <i class="fas fa-times-circle"></i>
                                 </button>
                             </div>
@@ -125,8 +128,9 @@
                                                             <span class="input-group-text"><i
                                                                     class="fas fa-money-bill"></i></span>
                                                         </div>
-                                                        <input class=" mot form-control inp-fct" id="motivo_descuento" value="Descuento de sistema"
-                                                            name="motivo_descuento[]" placeholder="Motivo">
+                                                        <input class=" mot form-control inp-fct" id="motivo_descuento"
+                                                            value="Descuento de sistema" name="motivo_descuento[]"
+                                                            placeholder="Motivo">
                                                     </div>
                                                 </div>
                                             </div>
@@ -154,7 +158,7 @@
             </tbody>
 
             <tfoot class="table-sm sinBorde">
-            <tr>
+                <tr>
                     <td colspan="1" align="right">Neto</td>
                     <td colspan="1" align="right">
                         <input type="text" disabled readonly class="form-control form-control-sm lbl_neto">
@@ -186,7 +190,8 @@
                 <tr>
                     <td colspan="6">
                         <!-- Select con los tipos de documentos -->
-                        <select class="form-control form-control-sm tipo_documento inp-fct" disabled name="id_tipo_documento">
+                        <select class="form-control form-control-sm tipo_documento inp-fct" disabled
+                            name="id_tipo_documento">
                             <!-- Recorrer tipos de documentos -->
                             <?php foreach ($tipos_documentos as $tipo_documento): ?>
                             <option value="<?php echo $tipo_documento->id_tipo_documento; ?>"
@@ -212,6 +217,6 @@
     ?>
 
     <div class="contenedor-walmart">
-        
+
     </div>
 </form>

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Librerias;
 
 use App\Models\ConsecutivosModel;
@@ -19,7 +20,7 @@ class Hacienda
             'password' => getEnt('factura.userPass')
         );
 
-        $curl= curl_init(getEnt('factura.tokenURL'));
+        $curl = curl_init(getEnt('factura.tokenURL'));
         curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POST, true);
@@ -28,12 +29,12 @@ class Hacienda
         curl_setopt($curl, CURLOPT_HEADER, 'Content-Type: application/x-www-form-urlencoded');
         curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
 
-        $response= curl_exec($curl);
-        $respuesta= json_decode($response);
-        $status= curl_getinfo($curl);
+        $response = curl_exec($curl);
+        $respuesta = json_decode($response);
+        $status = curl_getinfo($curl);
         curl_close($curl);
         return $respuesta->access_token;
-    }//Fin de obtenerToken
+    } //Fin de obtenerToken
 
     /**Fimar un documento XML */
     public function firmarXml($clave)
@@ -41,58 +42,55 @@ class Hacienda
         $p12 = location(getEnt('factura.p12'));
         $pin = getEnt('factura.pin');
 
-        $input = location("archivos\\xml\\p_firmar\\".$clave.".xml");
+        $input = location("archivos\\xml\\p_firmar\\" . $clave . ".xml");
 
-        $ruta = location("archivos\\xml\\firmados\\".$clave."_f.xml");
+        $ruta = location("archivos\\xml\\firmados\\" . $clave . "_f.xml");
 
         $Firmador = new Firmador();
         //firma y devuelve el base64_encode();
-        $xml64=  $Firmador->firmarXml($p12,$pin,$input,$Firmador::TO_XML_FILE,$ruta);
+        $xml64 =  $Firmador->firmarXml($p12, $pin, $input, $Firmador::TO_XML_FILE, $ruta);
 
         //Borrar el archivo p_firmar
         unlink($input);
         return  $xml64;
-    }//Fin del firmador del documento
+    } //Fin del firmador del documento
 
     /**Enviar un XML al ministerio de hacienda */
-    public function enviarXml($xml64){
+    public function enviarXml($xml64)
+    {
 
-        $leer= json_encode(simplexml_load_string(base64_decode($xml64)));
-        $json= json_decode($leer);
+        $leer = json_encode(simplexml_load_string(base64_decode($xml64)));
+        $json = json_decode($leer);
 
         /**Validar si el json tiene receptor */
-        if(isset($json->Receptor))
-        {
-            $data= json_encode(array(
-                "clave"=> $json->Clave,
+        if (isset($json->Receptor)) {
+            $data = json_encode(array(
+                "clave" => $json->Clave,
                 "fecha" => date('c'),
-                "emisor"=>array(
+                "emisor" => array(
                     "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
                     "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
                 ),
-                "receptor" =>array(
+                "receptor" => array(
                     "tipoIdentificacion" => $json->Receptor->Identificacion->Tipo,
                     "numeroIdentificacion" => $json->Receptor->Identificacion->Numero,
                 ),
-                "comprobanteXml"=> $xml64
+                "comprobanteXml" => $xml64
             ));
-        }
-
-        else
-        {
+        } else {
             $data = json_encode(array(
-                "clave"=> $json->Clave,
+                "clave" => $json->Clave,
                 "fecha" => date('c'),
-                "emisor"=>array(
+                "emisor" => array(
                     "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
                     "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
                 ),
-                "comprobanteXml"=> $xml64
+                "comprobanteXml" => $xml64
             ));
         }
         //token
-        $header= array(
-            "Authorization: bearer ".$this->token(),
+        $header = array(
+            "Authorization: bearer " . $this->token(),
             "Content-Type: application/json",
         );
 
@@ -106,23 +104,24 @@ class Hacienda
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
         //ejecutar el curl
-        $respuesta= curl_exec($curl);
-        $status= curl_getinfo($curl,CURLINFO_HTTP_CODE);
+        $respuesta = curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         //obtener respuesta
-        return json_encode(array('respuesta' =>$respuesta, 'status'=>$status ));      //echo $status;
+        return json_encode(array('respuesta' => $respuesta, 'status' => $status));      //echo $status;
     }
 
-    public function validarXml($xml64){
-        $leer= json_encode(simplexml_load_string(base64_decode($xml64)));
-        $json= json_decode($leer);
+    public function validarXml($xml64)
+    {
+        $leer = json_encode(simplexml_load_string(base64_decode($xml64)));
+        $json = json_decode($leer);
         //token
-        $header= array(
-            "Authorization: bearer ".$this->token(),
+        $header = array(
+            "Authorization: bearer " . $this->token(),
             "Content-Type: application/json",
         );
 
-        $curl = curl_init(getEnt('factura.urlRecepcion')."/".$json->Clave);
+        $curl = curl_init(getEnt('factura.urlRecepcion') . "/" . $json->Clave);
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
@@ -132,35 +131,35 @@ class Hacienda
 
 
         //ejecutar el curl
-        $response= curl_exec($curl);
-        $status= curl_getinfo($curl,CURLINFO_HTTP_CODE);
+        $response = curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         //obtener respuesta
-        $xml= json_decode($response, true);
+        $xml = json_decode($response, true);
 
         if (isset($xml['respuesta-xml'])) {
-            $respuesta_xml= $xml['respuesta-xml'];
-            $stringXML= base64_decode($respuesta_xml);
+            $respuesta_xml = $xml['respuesta-xml'];
+            $stringXML = base64_decode($respuesta_xml);
 
-            $salida=location("archivos\\xml\\respuesta\\".$json->Clave.".xml");
+            $salida = location("archivos\\xml\\respuesta\\" . $json->Clave . ".xml");
             $doc = new DomDocument();
             $doc->preseveWhiteSpace = false;
             $doc->loadXml($stringXML);
             $doc->save($salida);
         }
 
-        return json_encode( array('response'=> $response , 'xml'=>$xml ));
+        return json_encode(array('response' => $response, 'xml' => $xml));
+    } //Fin de validarXML
 
-    }//Fin de validarXML
-
-    public function validar($clave){
+    public function validar($clave)
+    {
         //token
-        $header= array(
-            "Authorization: bearer ".$this->token(),
+        $header = array(
+            "Authorization: bearer " . $this->token(),
             "Content-Type: application/json",
         );
 
-        $curl = curl_init(getEnt('factura.urlRecepcion')."/".$clave);
+        $curl = curl_init(getEnt('factura.urlRecepcion') . "/" . $clave);
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
@@ -168,25 +167,24 @@ class Hacienda
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-
         //ejecutar el curl
-        $response= curl_exec($curl);
-        $status= curl_getinfo($curl,CURLINFO_HTTP_CODE);
+        $response = curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         //obtener respuesta
-        $xml= json_decode($response, true);
+        $xml = json_decode($response, true);
 
         if (isset($xml['respuesta-xml'])) {
-            $respuesta_xml= $xml['respuesta-xml'];
-            $stringXML= base64_decode($respuesta_xml);
+            $respuesta_xml = $xml['respuesta-xml'];
+            $stringXML = base64_decode($respuesta_xml);
 
-            $salida=location("archivos\\xml\\respuesta\\".$clave.".xml");
+            $salida = location("archivos\\xml\\respuesta\\" . $clave . ".xml");
             $doc = new DomDocument();
             $doc->preseveWhiteSpace = false;
             $doc->loadXml($stringXML);
             $doc->save($salida);
         }
 
-        return json_encode( array('response'=> $response , 'xml'=>$xml ));
+        return json_encode(array('response' => $response, 'xml' => $xml));
     }
 }//Fin de la clase

@@ -69,10 +69,7 @@ class Reportes
             {
                 $claves_reporte[] = $documento->clave;
 
-                if (!file_exists(location('archivos\\pdf\\' . $documento->clave . '.pdf'))) 
-                {
-                    $this->generar_pdf($clave);
-                }//Fin de validacion de archivo pdf
+                $this->generar_pdf($clave);
             }//Fin de validacion de documento
         }//Fin de ciclo claves
 
