@@ -37,5 +37,4 @@ class ConsecutivosModel extends Model
 
         return $this->update($data, $id_consecutivo);
     }//Fin de la función actualizar_consecutivo
-
 }//Fin de la clase

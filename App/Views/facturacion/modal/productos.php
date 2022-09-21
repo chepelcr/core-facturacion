@@ -44,8 +44,8 @@
             <!-- Pie -->
             <div class="modal-footer">
                 <!-- Buscar producto comun -->
-                <button type="button" class="btn btn-primary w-100" onclick="buscar_producto_comun()">
-                    Buscar producto comun
+                <button type="button" class="btn btn-primary w-100" onclick="agregar_producto()">
+                    Agregar producto
                 </button>
             </div>
         </div>

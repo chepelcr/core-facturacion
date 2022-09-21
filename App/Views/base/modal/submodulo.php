@@ -10,7 +10,7 @@
                     <i class="fa <?=$icono?>"></i>
                     <!-- Contenedor para cambiar el titulo: .titulo-submodulo -->
                     <span class="titulo-submodulo">
-                        <?=ucfirst(str_replace("_", " ", $nombre_submodulo))?>
+                        <?=ucfirst(str_replace('_', ' ', $nombre_submodulo))?>
                     </span>
                 </h5>
                 <button type="button" class="close text-white" onclick="cargar_inicio_modulo('<?=$nombre_modulo?>')"

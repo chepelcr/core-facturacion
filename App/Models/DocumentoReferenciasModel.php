@@ -26,6 +26,7 @@ class DocumentoReferenciasModel extends Model
 
     protected $auditorias = true;
 
+    /**Obtener las referencias para un documento */
     public function getDocumentoReferencias($id_documento)
     {
         $this->where('id_documento', $id_documento);

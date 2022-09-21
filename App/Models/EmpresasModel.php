@@ -22,6 +22,9 @@ class EmpresasModel extends Model
         'telefono',
         'cod_pais',
         'correo',
+        //'fecha_creacion',
+        //'fecha_modificacion',
+        //'fecha_eliminacion',
         'estado'
     ];
 
@@ -45,16 +48,35 @@ class EmpresasModel extends Model
     protected $auditorias = true;
     protected $autoIncrement = true;
 
-    /**Obtener un cliente por numero de identificacion */
+    /**Obtener una empresa por numero de identificacion */
     public function getByIdentificacion($identificacion)
     {
         $this->where('identificacion', $identificacion);
 
         return $this->fila();
-    }
+    }//Fin de la funcion para obtener una empresa por numero de identificacion
 
+    /**Obtener la empresa del usuario que ha iniciado sesión 
+     * @return object
+     * @return boolean
+     */
     function getEmpresa()
     {
-        return $this->getById(getSession('id_empresa'));
-    }
+        $empresa = $this->getById(getSession('id_empresa'));
+
+        if(!$empresa)
+        {
+            return false;
+        }
+
+        else
+        {
+            foreach($empresa as $key => $value)
+            {
+                setSession('empresa_' . $key, $value);
+            }
+        }
+
+        return $empresa;
+    }//Fin de la funcion para obtener la empresa del usuario que ha iniciado sesión
 }//Fin de la clase

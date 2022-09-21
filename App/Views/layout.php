@@ -30,6 +30,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
+            <?php if (getEnt('app.ambiente') != 'produccion') : ?>
+                <div class="ribbon-wrapper">
+                    <div class="ribbon bg-warning">
+                        <?=getEnt('app.ambiente')?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
             <?=view('base/header');?>
 
             <section class="content">
@@ -49,29 +57,37 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             ?>
 
                             <div class="contenedor" id="contenedor_<?=$nombre_modulo?>">
-                                <?php 
-                                //var_dump($nombre_modulo);
+                                <?php
                                     if($modulo->nombre_modulo != 'documentos')
                                     {
                                         echo view('base/modal/modulo', $modulo);
-
-                                        //Recorrer submodulos
-                                        foreach($modulo->submodulos as $submodulo):
-                                            $submodulo->nombre_modulo = $modulo->nombre_modulo;
-
-                                            //var_dump($submodulo);
-
-                                            echo view('base/modal/submodulo', $submodulo);
-                                        endforeach;
                                     }
 
                                     else
                                     {
-                                        echo view('inicio/'.$modulo->nombre_modulo, $modulo);
-                                    }
-                                ?>
-                            </div>
+                                        $facturacion->modulo = $modulo;
 
+                                        echo view('inicio/'.$modulo->nombre_modulo, $facturacion);
+                                    }
+                                        
+                                    //Recorrer submodulos
+                                    foreach($modulo->submodulos as $submodulo):
+                                        $submodulo->nombre_modulo = $modulo->nombre_modulo;
+                                        
+                                        if($modulo->nombre_modulo != 'documentos')
+                                        {
+                                            echo view('base/modal/submodulo', $submodulo);
+                                        }
+
+                                        else
+                                        {
+                                            if($submodulo->nombre_submodulo == 'importar')
+                                            {
+                                                echo view('facturacion/modal/importar');
+                                            }
+                                        }
+                                    endforeach;?>
+                            </div>
                             <?php } ?>
                         </div>
 
@@ -87,7 +103,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- /.content-wrapper -->
 
         <!-- Perfil del usuario que ha iniciado sesion -->
-        <?= view('base/persona/perfil', array('perfil'=> getPerfil()))?>
+        <?= view('base/modal/perfil', array('perfil'=> getPerfil()))?>
+
+        <?= view('base/modal/login')?>
 
         <!-- Main Footer -->
         <?php echo view('base/footer')?>

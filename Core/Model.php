@@ -70,8 +70,8 @@ class Model
     //Conexion a la base de datos
     private PDO $db;
 
-    /**Valor para la seleccion del valor maximo de un campo */
-    private $campoMax;
+    /**Variable para varios valores de maximo */
+    private $camposMax = array();
 
     /**Campos a actualizar en la base de datos */
     private $camposUpdate = array();
@@ -84,8 +84,6 @@ class Model
 
     /**Error generado en el modelo */
     protected $error = array();
-
-    private Model $model;
  
 	//constructor de la clase
 	function __construct($model_name = null)
@@ -130,27 +128,35 @@ class Model
     /**Insertar un registro en la tabla de errores */
     public function insertError($ex)
     {
-        $id_usuario = getSession('id_usuario');
+        try
+        {
+            $id_usuario = getSession('id_usuario');
                 
-        if(!$id_usuario)
-            $id_usuario = 0;
-                
-        $code = $ex->getCode();
-        $message = $ex->getMessage();
-        $file = $ex->getFile();
-        $line = $ex->getLine();
+            if(!$id_usuario)
+                $id_usuario = 0;
+                    
+            $code = $ex->getCode();
+            $message = $ex->getMessage();
+            $file = $ex->getFile();
+            $line = $ex->getLine();
 
-        $messagecomplet = "Error generado en el archivo $file, linea $line: [Codigo de error $code] $message";
+            $messagecomplet = "Error generado en el archivo $file, linea $line: [Codigo de error $code] $message";
 
-        $data = array(
-            'sentencia'=>$messagecomplet,
-            'controlador'=>$this->nombreTabla,
-            'id_usuario'=>$id_usuario
-        );
+            $data = array(
+                'sentencia'=>$messagecomplet,
+                'controlador'=>$this->nombreTabla,
+                'id_usuario'=>$id_usuario
+            );
 
-        $this->error = $data;
-        
-        insertError($data);
+            $this->error = $data;
+            
+            insertError($data);
+        }
+
+        catch(Throwable $th)
+        {
+            echo $th->getMessage();
+        }
     }//Fin de la funcion
 
     /**Obtener el error generado en el modelo */
@@ -246,23 +252,23 @@ class Model
         {
             $campos = $this->generarCampos();
         }//Fin de la validacion
-
-        if($campos[0]=='*')
-            return $campos[0];
         
         $select = "`";
 
         $select .= implode("`, `", $campos);
 
-        return $select."`";
-    }//Fin de la funcion
+        $select .= "`";
 
-    /**Asignar los campos para la sentencia del select */
-    private function setCampo($campo = array())
-    {
-        $this->campos = $campo;
-        return $this;
-    }//Fin de setCampo
+        if(!empty($this->camposMax))
+        {
+            foreach ($this->camposMax as $campoMax) 
+            {
+                $select .= ", MAX(`$campoMax`) AS `$campoMax`";
+            }
+        }
+        
+        return $select;
+    }//Fin de la funcion
 
     private function sentenciaLike()
     {
@@ -505,9 +511,26 @@ class Model
                 break;
 
             case 'MAX':
-                $nombreCampo = $this->campoMax;
+                $sql = 'SELECT ';
 
-                $sql = 'SELECT MAX('.$nombreCampo.') FROM '.$this->nombreTabla;
+                $camposMax = $this->camposMax;
+
+                $indice = 0;
+
+                foreach ($camposMax as $campo) {
+                    if($indice == 0)
+                    {
+                        $sql .= 'MAX(`'.$campo.'`) AS `'.$campo.'`';
+                        $indice= $indice + 1;
+                    }//Fin del if
+
+                    else
+                    {
+                        $sql .= ', MAX(`'.$campo.'`) AS `'.$campo.'`';
+                    }//Fin del else
+                }//Fin del ciclo
+
+                $sql .= " FROM ".$tabla;
 
                 if($where)
                 {
@@ -529,11 +552,33 @@ class Model
     /** Validar si la llave primaria debe ser autoincremental o no */
     private function insertPk(array $data)
     {
-        $pk = $this->pk_tabla;
-
         if($this->autoIncrement = true)
         {
-            $data[$this->pk_tabla] = $this->max($this->pk_tabla) + 1;
+            $db = $this->query();
+
+            try 
+            {
+                $this->setMax($this->pk_tabla);
+
+                $sql = $this->crearQuery('MAX');
+
+                $max = $db->prepare($sql);
+
+                $max -> execute();
+
+                $result = $max->fetch();
+
+                $data[$this->pk_tabla] = $result[0] + 1;
+            }
+            
+            catch (\Exception $ex) 
+            {
+                if($this->auditorias)
+                {
+                    $this->insertError($ex);
+                }//Fin de validacion
+            }//Fin del catch
+            
         }//Fin del if
 
         return $data;
@@ -611,45 +656,19 @@ class Model
         return $this;
     }//Fin del metodo
 
+    /**Obtener el valor maximo de un campo */
     public function max($nombreCampo)
     {
-        $db = $this->query();
-
-        try 
-        {
-            $this->setMax($nombreCampo);
-
-            $sql = $this->crearQuery('MAX');
-
-            $max = $db->prepare($sql);
-
-            $camposWhere = $this->camposWhere;
-
-            foreach ($camposWhere as $campo => $valor) {
-                $max->bindValue($campo, $valor);
-            }
-
-            $max -> execute();
-
-            $result = $max->fetch();
-
-            return $result[0];
-
-        } 
+        $this->setMax($nombreCampo);
         
-        catch (\Exception $ex) 
-        {
-            if($this->auditorias)
-            {
-                $this->insertError($ex);
-            }//Fin de validacion
-        }//Fin del catch
+        return $this;
     }//Fin de la funcion para seleccionar el valor maximo de una columna
 
     /**Agregar el campo para la seleccion del max */
     private function setMax($campoMax)
     {
-        $this->campoMax = $campoMax;
+        /**Añadir el valor al un campo del array camposMax */
+        $this->camposMax [] = $campoMax;
         return $this;
     }//Fin de la funcion
 
@@ -801,7 +820,11 @@ class Model
                         $this->insertAuditoria($audit);
                     }//Fin de la insercion de auditoria
 
-                    return $data[$this->pk_tabla];
+                    //Si hay un dato en el campo de la llave primaria
+                    if($this->pk_tabla)
+                        return $data[$this->pk_tabla];
+
+                    return true;
                 }//Fin de la ejecucion
                 
                 else
@@ -818,6 +841,8 @@ class Model
             {
                 $this->insertError($ex);
             }//Fin de validacion
+
+            return false;
         }//Fin del catch
     }//Fin de la funcion
     
@@ -896,6 +921,8 @@ class Model
         
         catch (\Exception $ex)
         {
+            //var_dump($ex);
+
             if($this->auditorias)
             {
                 $this->insertError($ex);
@@ -1014,15 +1041,9 @@ class Model
         }//Fin del catch
 	}//Fin de la funcion delete
 
-    public function query()
+    private function query()
     {
         return $this->db;
     }//Fin de la funcion
-
-    private function clean()
-    {
-        $this->setCampo();
-        $this->setCamposWhere(array());
-    }//Fin de clean
-}//Fin 
+}//Fin de la clase principal del modelo
 ?>

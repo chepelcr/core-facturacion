@@ -14,8 +14,8 @@
             <td>
                 <div class="btn-group">
                     <!-- Seleccionar -->
-                    <button data-toggle="tooltip" title="Seleccionar cliente"
-                        onclick="seleccionar_tienda('<?=$tienda->gnl?>', '<?=$tienda->nombre?>')" class="btn btn-secondary"
+                    <button data-toggle="tooltip" title="Seleccionar tienda"
+                        onclick="seleccionar_tienda('<?=$tienda->gln?>', '<?=$tienda->nombre?>')" class="btn btn-secondary"
                         type="button">
                         <i class="fas fa-check"></i>
                     </button>

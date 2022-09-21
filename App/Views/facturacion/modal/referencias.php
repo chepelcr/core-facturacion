@@ -36,7 +36,7 @@
                                             name="referencia_tipo_documento[]">
                                             <?php
                                                     foreach ($tipos_documentos as $tipo_documento) {
-                                                        echo "<option value='{$tipo_documento->id_tipo_documento}'>{$tipo_documento->tipo_documento}</option>";
+                                                        echo "<option value='{$tipo_documento->id_tipo_documento}'>{$tipo_documento->descripcion}</option>";
                                                     }
                                                 ?>
                                         </select>

@@ -11,7 +11,6 @@ class UsuariosModel extends Model
 	protected $vistaTabla = 'usuarios_view';
 
 	protected $pk_tabla = 'id_usuario';
-
 	protected $dbGroup = 'seguridad';
 
 	protected $camposTabla = [
@@ -39,9 +38,28 @@ class UsuariosModel extends Model
     ];
 
 	protected $autoIncrement = true;
-
 	protected $auditorias = true;
 
+	/**Obtener usuarios del sistema */
+	public function obtener($id)
+	{
+		switch($id)
+		{
+			case 'all':
+				return $this->getAll();
+				break;
+
+			case 'perfil':
+				return $this->getPerfil();
+				break;
+
+			default:
+				return $this->getById($id);
+				break;
+		}
+	}//Fin del método obtener
+
+	/**Obtener el perfil de un usuario */
 	public function getPerfil()
 	{
 		return $this->getById(getSession('id_usuario'));

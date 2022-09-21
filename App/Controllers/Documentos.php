@@ -17,12 +17,15 @@ use DOMDocument;
 
 class Documentos extends BaseController
 {
+    /**Cargar los documentos electronicos */
     public function index()
     {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
-                    cargar_inicio_modulo("documentos");
+                    setTimeout(function(){
+                        cargar_inicio_modulo("documentos");
+                    }, 5000);
                 });
             </script>';
 
@@ -37,14 +40,17 @@ class Documentos extends BaseController
             header('Location: ' . baseUrl('login'));
     } //Fin de la funcion index
 
+    /**Abrir el submodulo de ventas*/
     public function facturacion()
     {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
-                    cargar_inicio_modulo("documentos");
+                    setTimeout(function(){
+                        cargar_inicio_modulo("documentos");
 
-                    agregar_documento("tiquete");
+                        agregar_documento("factura");
+                    }, 5000);
                 });
             </script>';
 
@@ -59,12 +65,67 @@ class Documentos extends BaseController
             header('Location: ' . baseUrl('login'));
     } //Fin de la funcion facturacion
 
+    /**Cargar documentos emitidos */
+    public function emitidos()
+    {
+        if (is_login()) {
+            $script = '<script>
+                $(document).ready(function(){
+                    setTimeout(function(){
+                        cargar_inicio_modulo("documentos");
+                    }, 5000);
+                });
+            </script>';
+
+            $data = array(
+                'script' => $script,
+            );
+
+            return $this->inicio($data);
+        } //Fin de la validacion
+
+        else
+            header('Location: ' . baseUrl('login'));
+    } //Fin de la funcion emitidos
+
+    /**Abrir el submodulo de importar */
+    public function importar()
+    {
+        if (is_login()) {
+            if(getSegment(3) == 'form')
+            {
+                return view('facturacion/elementos/importar');
+            }
+
+            else
+            {
+                $script = '<script>
+                    $(document).ready(function(){
+                        setTimeout(function(){
+                            importar_documentos();
+                        }, 5000);
+                    });
+                </script>';
+
+                $data = array(
+                    'script' => $script,
+                );
+
+                return $this->inicio($data);
+            }
+        } //Fin de la validacion
+
+        else
+            header('Location: ' . baseUrl('login'));
+    } //Fin de la funcion importar
+
+    /**Validar el estado los documentos que se encuentran en proceso en el ministerio de hacienda */
     public function validar_documentos()
     {
         if (!is_login()) {
             return json_encode(array(
-                'error' => 'Se ha cerrado la sesión',
-                'status' => 'error'
+                'error' => 'login',
+                'status' => 'warning'
             ));
         } //Fin de la validacion de login
 
@@ -79,9 +140,6 @@ class Documentos extends BaseController
             $validar = json_decode($hacienda->validar($documento->clave), true);
 
             if (isset($validar['xml']['ind-estado'])) {
-                $reporte = new Reportes();
-                $reporte->generar_pdf($documento->id_documento);
-
                 $fecha_gmt = date('Y-m-d\TH:i:s', strtotime('-6 hours'));
 
                 if ($validar['xml']['ind-estado'] != "procesando") {
@@ -89,122 +147,16 @@ class Documentos extends BaseController
 
                     $data_validado = array(
                         'valido_atv' => $json->Mensaje,
+                        'detalle_atv' => $json->DetalleMensaje,
                         'fecha_valido' => $fecha_gmt,
                     );
 
                     $documentosModel = model('documento');
                     $documentosModel->update($data_validado, $documento->id_documento);
 
-                    $CC = null;
+                    $hacienda->enviar_documento($documento->id_documento);
 
-                    if ($json->Mensaje < 3) {
-                        if ($documento->tipo_documento != '04' && ($documento->receptor_cedula != '' || $documento->receptor_cedula != null)) {
-                            //enviar el correo
-                            $cuerpo = '<h1>Documento generado</h1>';
-                            $cuerpo .= "<p>Señores " . $documento->receptor_nombre . ",
-                                    <br>
-                                    <br>
-                                    Se ha generado el documento con la clave " . $documento->clave . ".
-                                    El documento ha sido aceptado por el Ministerio de Hacienda.
-                                    <br>
-                                    <br>
-                                    <b>Att " . $documento->emisor_nombre . "</b>";
-
-                            if (getEnt('factura.ambiente') != 'stag') {
-                                $correos = array(
-                                    $documento->receptor_nombre => $documento->receptor_correo,
-                                );
-
-                                $CC = array(
-                                    $documento->emisor_nombre => $documento->emisor_correo,
-                                    'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
-                                );
-                            } else {
-                                $correos = array(
-                                    'Receptor' => 'chepelcr@outlook.com',
-                                );
-
-                                $CC = array(
-                                    'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
-                                );
-                            }
-                        } else {
-                            //enviar el correo
-                            $cuerpo = '<h1>Documento generado</h1>';
-                            $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
-                                    <br>
-                                    <br>
-                                    Se ha generado el documento con la clave " . $documento->clave . ".
-                                    El documento ha sido aceptado por el Ministerio de Hacienda.
-                                    <br>
-                                    <br>
-                                    <b>Att " . $documento->emisor_nombre . "</b>";
-
-                            if (getEnt('factura.ambiente') != 'stag') {
-                                $correos = array(
-                                    $documento->emisor_nombre => $documento->emisor_correo,
-                                );
-
-                                $CC = array(
-                                    'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
-                                );
-                            } else {
-                                $correos = array(
-                                    'Receptor' => 'chepelcr@outlook.com'
-                                );
-
-                                $CC = array(
-                                    'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
-                                );
-                            }
-                        }
-                    } else {
-                        $cuerpo = '<h1>Error al validar factura</h1>';
-                        $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
-                                    <br>
-                                    <br>
-                                    Se ha generado el documento con la clave " . $documento->clave . ".
-                                    El documento ha sido rechazado por el Ministerio de Hacienda.
-                                    <br>
-                                    <br>";
-
-                        $cuerpo .= "Error hacienda: " . $json->DetalleMensaje;
-
-                        $cuerpo .= "<br>
-                                    <br>
-                                    <b>Att " . $documento->emisor_nombre . "</b>";
-
-                        if (getEnt('factura.ambiente') != 'stag') {
-                            $correos = array(
-                                $documento->emisor_nombre => $documento->emisor_correo,
-                            );
-                        } else {
-                            $correos = array(
-                                'Receptor' => 'chepelcr@outlook.com'
-                            );
-                        }
-                    }
-
-                    $adjuntos = array(
-                        $documento->clave . '.pdf' => location("archivos\\pdf\\" . $documento->clave . ".pdf"),
-                        $documento->clave . '.xml' => location("archivos\\xml\\firmados\\" . $documento->clave . "_f.xml"),
-                        $documento->clave . '_respuesta_MH.xml' => location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"),
-                    );
-
-                    $data = array(
-                        'receptor' => $correos,
-                        'asunto' => 'Documento electronico',
-                        'body' => $cuerpo,
-                        'adjuntos' => $adjuntos,
-                        'CC' => $CC,
-                    );
-
-                    $mail = new Correo();
-                    $mail->enviarCorreo($data);
-
-                    //Eliminar archivos
-                    unlink(location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"));
-                    unlink(location("archivos\\pdf\\" . $documento->clave . ".pdf"));
+                    $validados = true;
                 }
 
                 if ($validar['xml']['ind-estado'] == "procesando") {
@@ -227,6 +179,44 @@ class Documentos extends BaseController
         return json_encode($data);
     }//Fin de la funcion validar_documentos
 
+    /**Obtener los indicadores de compra y venta desde el banco central */
+    public function indicadores()
+    {
+        return json_encode(obtenerInidicadores(getSegment(3)));
+    }//Fin de la funcion indicadores
+
+    /**Enviar un documento por correo electronico */
+    public function enviar_documento()
+    {
+        if(is_login())
+        {
+            $data = array(
+                'status' => 'error',
+                'error' => 'No se pudo enviar el documento',
+            );
+
+            if(getSegment(3))
+            {
+                $id_documento = getSegment(3);
+
+                $hacienda = new Hacienda();
+
+                if($hacienda->enviar_documento($id_documento))
+                {
+                    $data = array(
+                        'status' => 'success',
+                        'mensaje' => 'Documento enviado correctamente',
+                    );
+                }
+            }
+
+            return json_encode($data);
+        }
+
+        return redirect(baseUrl());
+        
+    }
+
     /**Cargar los documentos de la empresa */
     public function cargar_documentos()
     {
@@ -241,8 +231,13 @@ class Documentos extends BaseController
 
             $model->tipo_documento($id_tipo_documento);
 
-            if (getSegment(3)) {
-                $tipo_reporte = getSegment(3);
+            //Validar si se estan consultando documentos emitidos o recibidos
+            $tipo_documento = getSegment(3);
+            
+            $model->documentos($tipo_documento);
+
+            if (getSegment(4)) {
+                $tipo_reporte = getSegment(4);
 
                 if ($tipo_reporte == 'busqueda') {
                     $documentos = $model->busqueda(post('fecha_inicio'), post('fecha_fin'));
@@ -260,13 +255,11 @@ class Documentos extends BaseController
             $dataView = array(
                 'documentos' => $documentos,
                 'tipo_reporte' => $tipo_reporte,
-                'tipos_documentos' => $model->getAll(),
+                'tipos_documentos' => $model->obtener('documentos'),
                 'fecha_inicio' => $fecha_inicio,
                 'fecha_fin' => $fecha_fin,
                 'id_tipo_documento' => $id_tipo_documento,
             );
-
-            //var_dump($model->getAll());
 
             return view('facturacion/table/documentos', $dataView);
         } else {
@@ -275,6 +268,7 @@ class Documentos extends BaseController
         }
     }
 
+    /**Validar el estado de un documento en el ministerio de hacienda */
     public function validar_documento()
     {
         if (is_login()) {
@@ -286,9 +280,6 @@ class Documentos extends BaseController
                 $documento = $model->obtener($id_documento);
 
                 if ($documento) {
-                    $reporte = new Reportes();
-                    $reporte->generar_pdf($id_documento);
-
                     $hacienda = new Hacienda();
                     $validar = json_decode($hacienda->validar($documento->clave), true);
 
@@ -300,132 +291,14 @@ class Documentos extends BaseController
 
                             $data_validado = array(
                                 'valido_atv' => $json->Mensaje,
+                                'detalle_atv' => $json->DetalleMensaje,
                                 'fecha_valido' => $fecha_gmt,
                             );
 
                             $documentosModel = model('documento');
                             $documentosModel->update($data_validado, $id_documento);
-
-                            $CC = null;
                             
-                            if ($json->Mensaje < 3) {
-                                if ($documento->tipo_documento != '04' && ($documento->receptor_cedula != '' || $documento->receptor_cedula != null)) {
-                                    //enviar el correo
-                                    $cuerpo = '<h1>Documento generado</h1>';
-                                    $cuerpo .= "<p>Señores " . $documento->receptor_nombre . ",
-                                    <br>
-                                    <br>
-                                    Se ha generado el documento con la clave " . $documento->clave . ".
-                                    El documento ha sido aceptado por el Ministerio de Hacienda.
-                                    <br>
-                                    <br>
-                                    <b>Att " . $documento->emisor_nombre . "</b>";
-
-                                    if(getEnt('factura.ambiente') != 'stag')
-                                    {
-                                        $correos = array(
-                                            $documento->receptor_nombre => $documento->receptor_correo,
-                                        );
-                                        
-                                        $CC = array(
-                                            $documento->emisor_nombre => $documento->emisor_correo,
-                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
-                                        );
-                                    }
-
-                                    else
-                                    {
-                                        $correos = array(
-                                            'Receptor' => 'chepelcr@outlook.com'
-                                        );
-
-                                        $CC = array(
-                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
-                                        );
-                                    }
-                                } else {
-                                    //enviar el correo
-                                    $cuerpo = '<h1>Documento generado</h1>';
-                                    $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
-                                    <br>
-                                    <br>
-                                    Se ha generado el documento con la clave " . $documento->clave . ".
-                                    El documento ha sido aceptado por el Ministerio de Hacienda.
-                                    <br>
-                                    <br>
-                                    <b>Att " . $documento->emisor_nombre . "</b>";
-
-                                    if(getEnt('factura.ambiente') != 'stag')
-                                    {
-                                        $correos = array(
-                                            $documento->emisor_nombre => $documento->emisor_correo,
-                                        );
-
-                                        $CC = array(
-                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
-                                        );
-                                    }
-
-                                    else
-                                    {
-                                        $correos = array(
-                                            'Receptor' => 'chepelcr@outlook.com'
-                                        );
-
-                                        $CC = array(
-                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
-                                        );
-                                    }
-                                }
-                            } else {
-                                $cuerpo = '<h1>Error al validar factura</h1>';
-                                $cuerpo .= "<p>Señores " . $documento->emisor_nombre . ",
-                                <br>
-                                <br>
-                                Se ha generado el documento con la clave " . $documento->clave . ".
-                                El documento ha sido rechazado por el Ministerio de Hacienda.
-                                <br>
-                                <br>";
-                                $cuerpo .= "Error hacienda: " . $json->DetalleMensaje;
-                                $cuerpo .= "<br>
-                                <br>
-                                <b>Att " . $documento->emisor_nombre . "</b>";
-
-                                if(getEnt('factura.ambiente') != 'stag')
-                                {
-                                    $correos = array(
-                                        $documento->emisor_nombre => $documento->emisor_correo,
-                                    );
-                                }
-
-                                else
-                                {
-                                    $correos = array(
-                                        'Receptor' => 'chepelcr@outlook.com'
-                                    );
-                                }
-                            }
-
-                            $adjuntos = array(
-                                $documento->clave . '.pdf' => location("archivos\\pdf\\" . $documento->clave . ".pdf"),
-                                $documento->clave . '.xml' => location("archivos\\xml\\firmados\\" . $documento->clave . "_f.xml"),
-                                $documento->clave . '_respuesta_MH.xml' => location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"),
-                            );
-
-                            $data = array(
-                                'receptor' => $correos,
-                                'asunto' => 'Factura electronica',
-                                'body' => $cuerpo,
-                                'adjuntos' => $adjuntos,
-                                'CC' => $CC,
-                            );
-
-                            $mail = new Correo();
-                            $correo_enviado = $mail->enviarCorreo($data);
-
-                            //Eliminar archivos
-                            unlink(location("archivos\\xml\\respuesta\\" . $documento->clave . ".xml"));
-                            unlink(location("archivos\\pdf\\" . $documento->clave . ".pdf"));
+                            $correo_enviado = $hacienda->enviar_documento($id_documento);
 
                             return json_encode(array(
                                 'clave' => $id_documento,
@@ -469,6 +342,36 @@ class Documentos extends BaseController
             'estado' => 'info',
         ));
     }
+
+    /**Enviar un documento al ministerio de hacienda */
+    public function enviar_hacienda()
+    {
+        if(!is_login())
+        {
+            return json_encode(array(
+                'status' => 'error',
+                'error' => 'login'
+            ));
+        }
+
+        $documentoModel = model('documento');
+        $documento = $documentoModel->obtener(getSegment(3));
+
+        if($documento)
+        {
+            $hacienda = new Hacienda();
+            $enviar = $hacienda->enviar_documento(getSegment(3));
+
+            if($enviar)
+            {
+                return json_encode(array(
+                    'status' => 'success',
+                    'mensaje' => 'Documento enviado correctamente',
+                ));
+            }
+        }
+
+    }//Fin de la function para enviar un documento al ministerio de hacienda
 
     /**Obtener todos los productos */
     public function get_productos()
@@ -543,6 +446,36 @@ class Documentos extends BaseController
             header('Location: ' . baseUrl());
     } //Fin de la funcion para emitir una factura electronica
 
+    /**Emitir una factura electronica de compra */
+    public function factura_compra()
+    {
+        if (is_login()) {
+
+            $numero_documento = getSegment(3);
+
+            $id_tipo_documento = '08';
+
+            return documento($id_tipo_documento, $numero_documento);
+        }//Fin de la validacion
+
+        else
+            header('Location: ' . baseUrl());
+    }//Fin de la funcion para emitir una factura electronica de compra
+
+    /** Emitir una factura de exportacion */
+    public function factura_exportacion()
+    {
+        if (is_login()) {
+            $numero_documento = getSegment(3);
+
+            $id_tipo_documento = '09';
+
+            return documento($id_tipo_documento, $numero_documento);
+        }
+        else
+            header('Location: ' . baseUrl());
+    }//Fin de la funcion para emitir una factura de exportacion
+
     /**Emitir una nota de credito (03) */
     public function nota_credito()
     {
@@ -596,6 +529,7 @@ class Documentos extends BaseController
         if (is_login()) {
             if (getSegment(3)) {
                 $identificacion = getSegment(3);
+                $identificacion = desformatear_cedula($identificacion);
 
                 $clientesModel = new ClientesModel();
                 $cliente = $clientesModel->getByIdentificacion($identificacion);
@@ -642,13 +576,44 @@ class Documentos extends BaseController
     public function guardar($objeto = null)
     {
         if (is_login()) {
-            $id_cliente = post('identificacion-cliente');
+            $cantidad_lineas = 0;
+
+            $lineas = post('linea');
+            //var_dump($lineas);
+
+            //return;
+
+            $numero_lineas = $lineas['numero_linea'];
+            $codigo_cabys = $lineas['codigo'];
+
+            foreach($numero_lineas as $linea)
+            {
+                $linea = (int) $linea -1;
+
+                //var_dump($linea);
+
+                $codigo = $codigo_cabys[$linea];
+                
+                //Si el codigo no esta vacio
+                if ($codigo != "") {
+                    $cantidad_lineas++;
+                }//Fin de validacion de codigo
+            }//Fin del ciclo para recorrer las lineas
+
+            /**Validar si el documento tiene detalles */
+            if ($cantidad_lineas == 0) {
+                return json_encode(array(
+                    "error" => "No se puede emitir un comprobante sin detalle",
+                    'tipo' => 'detalles',
+                    "estado" => "error"
+                ));
+            }//Fin de validacion de detalles
 
             $id_tipo_documento = post('id_tipo_documento');
 
             $moneda = post('moneda');
             $tipo_cambio = post('tipo_cambio');
-
+            
             //Efectivo
             $efectivo = post('efectivo');
 
@@ -696,12 +661,19 @@ class Documentos extends BaseController
 
             $id_factura = $consecutivo->consecutivo;
             $factura = str_pad($id_factura, 10, "0", STR_PAD_LEFT);
-            $surcusal = "001";
-            $pv = "00007";
+            
+            $sucursal = getent('factura.sucursal');
+            $pv = getent('factura.punto_venta');
+
+            //Rellenar con ceros 000 la sucursal
+            $sucursal = str_pad($sucursal, 3, "0", STR_PAD_LEFT);
+
+            //Rellenar con ceros 00000 el punto de venta
+            $pv = str_pad($pv, 5, "0", STR_PAD_LEFT);
 
             $tipoDocumento = $id_tipo_documento;
 
-            $consecutivo = $surcusal . $pv . $tipoDocumento . $factura;
+            $consecutivo = $sucursal . $pv . $tipoDocumento . $factura;
 
             $notas = post('notas');
 
@@ -717,6 +689,9 @@ class Documentos extends BaseController
 
             $clave = $cod . date('d') . date('m') . date('y') . $cedulaEmisor . $consecutivo . $situacion . $codigoSeguridad;
 
+            $id_cliente = post('identificacion-cliente');
+            $id_cliente = desformatear_cedula($id_cliente);
+
             if ($id_tipo_documento != '04') {
                 $clientesModel = new ClientesModel();
                 $receptor = $clientesModel->getByIdentificacion($id_cliente);
@@ -724,7 +699,7 @@ class Documentos extends BaseController
 
             //Validar el tipo de documento
             switch ($id_tipo_documento) {
-                    /**Factura electronica */
+                /**Factura electronica */
                 case '01':
                     //Validar si el cliente existe en la tabla de clientes
                     if (!$receptor) {
@@ -737,7 +712,11 @@ class Documentos extends BaseController
 
                     /**Validar si el cliente de la factura es walmart */
                     if ($receptor->nombre_comercial == 'Walmart') {
-                        if (!post('numero_vendor') || !post('numero_orden') || !post('enviar_gnl')) {
+                        $numero_orden = post('numero_orden');
+                        $numero_vendor = post('numero_vendor');
+                        $enviar_gln = post('enviar_gln');
+
+                        if (!$numero_orden || !$numero_vendor || !$enviar_gln) {
                             return json_encode(array(
                                 'error' => 'Faltan datos para enviar a Walmart',
                                 'tipo' => 'walmart',
@@ -764,7 +743,7 @@ class Documentos extends BaseController
                     xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica">';
                     break;
 
-                    /**Nota de debito electronica */
+                /**Nota de debito electronica */
                 case '02':
                     $cantidad_referencias = 0;
 
@@ -790,11 +769,9 @@ class Documentos extends BaseController
                     xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/notaDebitoElectronica">';
                     break;
 
-                    /**Nota de credito electronica */
+                /**Nota de credito electronica */
                 case '03':
                     $cantidad_referencias = 0;
-
-                    //var_dump(post());
 
                     if (isset($_POST['referencia_clave'])) {
                         foreach ($_POST['referencia_clave'] as $key => $value) {
@@ -818,13 +795,28 @@ class Documentos extends BaseController
                     xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/notaCreditoElectronica">';
                     break;
 
-                    /**Tiquete electronico */
+                /**Tiquete electronico */
                 case '04':
                     $stringXML = '<?xml version="1.0" encoding="utf-8"?>
                 <TiqueteElectronico
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                     xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/tiqueteElectronico">';
+
+                    break;
+
+                /**Factura de compras */
+                case '08':
+                    $stringXML = '<?xml version="1.0" encoding="utf-8"?>
+                <FacturaCompra
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaCompra">';
+
+                    $empresa = $emisor;
+
+                    $emisor = $receptor;
+                    $receptor = $empresa;
 
                     break;
 
@@ -885,10 +877,11 @@ class Documentos extends BaseController
             </Receptor>';
             }
 
-            $stringXML .= '<CondicionVenta>' . $condicion_venta . '</CondicionVenta>
-            <PlazoCredito>' . $dias . '</PlazoCredito>
-            <MedioPago>' . $medio_pago . '</MedioPago>
-            <DetalleServicio>';
+            $stringXML .= '
+                <CondicionVenta>' . $condicion_venta . '</CondicionVenta>
+                <PlazoCredito>' . $dias . '</PlazoCredito>
+                <MedioPago>' . $medio_pago . '</MedioPago>
+                <DetalleServicio>';
 
             $totalServGravados = 0;
             $totalServExentos = 0;
@@ -905,83 +898,359 @@ class Documentos extends BaseController
             $totalImpuesto = 0;
             $totalComprobante = 0;
 
-            $lineas = 0;
+            
 
-            foreach ($_POST['codigo'] as $key => $linea) {
+            $codigo_venta = $lineas['codigo_venta'];
 
-                $codigo = $_POST['codigo'][$key];
+            
+            $cantidad = $lineas['cantidad'];
 
+            //var_dump($cantidad);
+
+            $unidad = $lineas['unidad'];
+
+            //var_dump($unidad);
+
+            $detalle = $lineas['detalle'];
+
+            //var_dump($detalle);
+
+            $precio_unitario = $lineas['precio_unidad'];
+
+            //var_dump($precio_unitario);
+
+            $monto_total = $lineas['monto_total'];
+
+            //var_dump($monto_total);
+
+            $descuentos = post('descuento');
+
+            $subtotal = $lineas['sub_total'];
+
+            $montos_descuento = $descuentos['monto_descuento'];
+
+            //var_dump($montos_descuento);
+
+            $motivos_descuento = $descuentos['motivo_descuento'];
+
+            //var_dump($motivos_descuento);
+
+            $impuestos = post('impuesto');
+
+            $codigos_impuesto = $impuestos['codigo_impuesto']; 
+            $codigos_tarifa = $impuestos['codigo_tarifa'];
+            $tarifas = $impuestos['tarifa'];
+            $montos_impuesto = $impuestos['monto_impuesto'];
+            $tipos_exoneracion = $impuestos['exoneracion'];
+            $numeros_exoneracion = $impuestos['numero_exoneracion'];
+            $nombres_institucion = $impuestos['nombre_institucion'];
+            $fechas_exoneracion = $impuestos['fecha_exoneracion'];
+            $porcentajes_exoneracion = $impuestos['porcentaje_exoneracion'];
+            $montos_exoneracion = $impuestos['monto_exoneracion'];
+
+            $impuesto_neto = $lineas['impuesto_neto'];
+
+            //var_dump($impuesto_neto);
+
+            $total_linea = $lineas['total_linea'];
+
+            $lineas_detalle = array();
+
+            $numero_lineas_descuento = $descuentos['numero_linea'];
+            $numero_lineas_impuesto = $impuestos['numero_linea'];
+
+            foreach($numero_lineas as $linea)
+            {
+                $linea = (int) $linea -1;
+
+                //var_dump($linea);
+
+                $codigo = $codigo_cabys[$linea];
+                
+                //Si el codigo no esta vacio
                 if ($codigo != "") {
-                    $stringXML .= '<LineaDetalle>
-                        <NumeroLinea>' . ($key + 1) . '</NumeroLinea>
-                        <Codigo>' . $_POST['codigo'][$key] . '</Codigo>
-                        <Cantidad>' . $_POST['cantidad'][$key] . '</Cantidad>
-                        <UnidadMedida>' . $_POST['unidad'][$key] . '</UnidadMedida>
-                        <Detalle>' . $_POST['detalle'][$key] . '</Detalle>
-                        <PrecioUnitario>' . $_POST['precio_unidad'][$key] . '</PrecioUnitario>
-                        <MontoTotal>' . $_POST['monto_total'][$key] . '</MontoTotal>';
+                    $codigo_venta_linea = $codigo_venta[$linea];
+                    $cantidad_linea = $cantidad[$linea];
 
-                    //var_dump($stringXML);
+                    $unidad_linea = $unidad[$linea];
+                    $detalle_linea = $detalle[$linea];
 
-                    //break;
+                    $precio_unitario_linea = $precio_unitario[$linea];
+                    $monto_total_linea = $monto_total[$linea];
+                    $subtotal_linea = $subtotal[$linea];
+                    $impuesto_neto_linea = $impuesto_neto[$linea];
+                    $total_linea_linea = $total_linea[$linea];
 
-                    if ($_POST['monto_descuento'][$key] > 0) {
-                        $motivo = $_POST['motivo_descuento'][$key];
+                    $cantidad_lineas++;
 
-                        if ($motivo == "") {
-                            $motivo = "Descuento de sistema";
-                        }
+                    $dataLinea = array(
+                        'codigo' => $codigo,
+                        'codigo_venta' => $codigo_venta_linea,
+                        'cantidad' => $cantidad_linea,
+                        'unidad' => $unidad_linea,
+                        'detalle' => $detalle_linea,
+                        'precio_unidad' => $precio_unitario_linea,
+                        'monto_total' => $monto_total_linea,
+                        'subtotal' => $subtotal_linea,
+                        'linea' => $linea + 1,
+                        'descuentos' => array(),
+                        'impuestos' => array(),
+                        'impuesto_neto' => $impuesto_neto_linea,
+                        'total_linea' => $total_linea_linea,
+                        'exonerada' => false,
+                        'exenta' => false,
+                    );
 
-                        $stringXML .= '<Descuento>
+                    //Agregar informacion al string XML
+                    $stringXML .= '
+                        <LineaDetalle>
+                            <NumeroLinea>' . $linea + 1 . '</NumeroLinea>
+                            <Codigo>' . $codigo . '</Codigo>
+                            <CodigoComercial>
+                                <Tipo>01</Tipo>
+                                <Codigo>' . $codigo_venta_linea . '</Codigo>
+                            </CodigoComercial>
+                            <Cantidad>' . $cantidad_linea . '</Cantidad>
+                            <UnidadMedida>' . $unidad_linea . '</UnidadMedida>
+                            <Detalle>' . $detalle_linea . '</Detalle>
+                            <PrecioUnitario>' . $precio_unitario_linea . '</PrecioUnitario>
+                            <MontoTotal>' . $monto_total_linea . '</MontoTotal>';
+
+                        /*$stringXML .= '<Descuento>
                                 <MontoDescuento>' . $_POST['monto_descuento'][$key] . '</MontoDescuento>
                                 <NaturalezaDescuento>' . $_POST['motivo_descuento'][$key] . '</NaturalezaDescuento>
-                            </Descuento>';
-                    }
+                            </Descuento>';*/
 
-                    $stringXML .= '<SubTotal>' . $_POST['sub_total'][$key] . '</SubTotal>
-                        <Impuesto>
-                            <Codigo>01</Codigo>
-                            <CodigoTarifa>08</CodigoTarifa>
-                            <Tarifa>' . $_POST['tarifa'][$key] . '</Tarifa>
-                            <Monto>' . $_POST['monto_impuesto'][$key] . '</Monto>  
-                        </Impuesto>
-                        
-                        <ImpuestoNeto>' . $_POST['monto_impuesto'][$key] . '</ImpuestoNeto>
+                        //Recorrer los descuentos
+                        foreach($numero_lineas_descuento as $linea_descuento => $numero_linea)
+                        {
+                            $numero_linea = (int) $numero_linea -1;
+
+                            //Si el mumero de linea del descuento es igual al numero de linea del detalle
+                            if($numero_linea == $linea)
+                            {
+                                $descuento = $montos_descuento[$linea_descuento];
+                                $motivo = $motivos_descuento[$linea_descuento];
+
+                                //Si el descuento es mayor a cero
+                                if($descuento > 0)
+                                {
+                                    //Si el motivo esta vacio
+                                    if ($motivo == "") {
+                                        $motivo = "Descuento de sistema";
+                                    }//Fin de validacion del motivo
+
+                                    $dataLinea['descuentos'][] = array(
+                                        'monto' => $descuento,
+                                        'motivo' => $motivo
+                                    );
+
+                                    //Agregar el descuento al XML
+                                    $stringXML .= '<Descuento>
+                                        <MontoDescuento>' . $descuento . '</MontoDescuento>
+                                        <NaturalezaDescuento>' . $motivo . '</NaturalezaDescuento>
+                                    </Descuento>';
+
+                                    //Sumar el descuento al total de descuentos
+                                    $totalDescuentos += $descuento;
+                                }//Fin de validacion del descuento
+                            }//Fin de validacion
+                        }//Fin del ciclo para recorrer los descuentos
+
+                        $stringXML .= '
+                            <SubTotal>' . $subtotal_linea . '</SubTotal>';
+
+                        //Agregar el subtotal al dataLinea
+                        $dataLinea['subtotal'] = $subtotal_linea;
+
+                        //Recorrer los impuestos
+                        foreach($numero_lineas_impuesto as $linea_impuesto => $numero_linea)
+                        {
+                            $numero_linea = (int) $numero_linea - 1;
+
+                            //Si el numero de linea del impuesto es igual al numero de linea del detalle
+                            if($numero_linea == $linea)
+                            {
+                                $codigo_impuesto = $codigos_impuesto[$linea_impuesto];
+
+                                if($codigo_impuesto != "NA" && $codigo_impuesto != "")
+                                {
+                                    $monto_impuesto = $montos_impuesto[$linea_impuesto];
+                                    $codigo_tarifa = $codigos_tarifa[$linea_impuesto];
+
+                                    if($codigo_tarifa == "NA")
+                                    {
+                                        $codigo_tarifa = "";
+                                    }
+
+                                    $tarifa = $tarifas[$linea_impuesto];
+                                    $monto_impuesto = $montos_impuesto[$linea_impuesto];
+
+                                    //Agregar el impuesto al XML
+                                    $stringXML .= '
+                                    <Impuesto>
+                                        <Codigo>' . $codigo_impuesto . '</Codigo>
+                                        <CodigoTarifa>' . $codigo_tarifa . '</CodigoTarifa>
+                                        <Tarifa>' . $tarifa . '</Tarifa>
+                                        <Monto>' . $monto_impuesto . '</Monto>';
+
+                                    //Si la tarifa es 0
+                                    if($tarifa == 0)
+                                    {
+                                        $dataLinea['exenta'] = true;
+                                    }
+
+                                    $tipo_exoneracion = $tipos_exoneracion[$linea_impuesto];
+
+                                    //Si el monto de exoneracion es mayor a cero
+                                    if($tipo_exoneracion != 'NA')
+                                    {
+                                        $monto_exoneracion = $montos_exoneracion[$linea_impuesto];    
+                                        $numero_exoneracion = $numeros_exoneracion[$linea_impuesto];
+                                        $fecha_exoneracion = $fechas_exoneracion[$linea_impuesto];
+                                        $porcentaje_exoneracion = $porcentajes_exoneracion[$linea_impuesto];
+                                        $nombre_institucion = $nombres_institucion[$linea_impuesto];
+
+                                        $stringXML .= '
+                                        <Exoneracion>
+                                            <TipoDocumento>' . $tipo_exoneracion . '</TipoDocumento>
+                                            <NumeroDocumento>' . $numero_exoneracion . '</NumeroDocumento>
+                                            <NombreInstitucion>' . $nombre_institucion . '</NombreInstitucion>
+                                            <FechaEmision>' . date('Y-m-d', strtotime($fecha_exoneracion)) . 'T00:00:00-06:00' . '</FechaEmision>
+                                            <PorcentajeExoneracion>' . $porcentaje_exoneracion . '</PorcentajeExoneracion>
+                                            <MontoExoneracion>' . $monto_exoneracion . '</MontoExoneracion>
+                                        </Exoneracion>';
+                                        
+                                        //Agregar el impuesto a un array
+                                        $dataImpuesto = array(
+                                            'codigo' => $codigo_impuesto,
+                                            'monto' => $monto_impuesto,
+                                            'codigo_tarifa' => $codigo_tarifa,
+                                            'tarifa' => $tarifa,
+                                            'tipo_documento_exoneracion' => $tipo_exoneracion,
+                                            'numero_documento_exoneracion' => $numero_exoneracion,
+                                            'nombre_institucion_exoneracion' => $nombre_institucion,
+                                            'fecha_emision_exoneracion' => $fecha_exoneracion,
+                                            'porcentaje_exoneracion' => $porcentaje_exoneracion,
+                                            'monto_exoneracion' => $monto_exoneracion
+                                        );
+
+                                        $dataLinea['exonerada'] = true;
+                                            
+                                        /*
+                                                        <Impuesto>
+                                                <Codigo>01</Codigo>
+                                                <CodigoTarifa>08</CodigoTarifa>
+                                                <Tarifa>' . $_POST['tarifa'][$key] . '</Tarifa>
+                                                <Monto>' . $_POST['monto_impuesto'][$key] . '</Monto>  
+                                            </Impuesto>
+                                        **/
+                                    }//Fin de validacion del monto de exoneracion
+
+                                    else
+                                    {
+                                        //Agregar el impuesto a un array
+                                        $dataImpuesto = array(
+                                            'codigo' => $codigo_impuesto,
+                                            'monto' => $monto_impuesto,
+                                            'codigo_tarifa' => $codigo_tarifa,
+                                            'tarifa' => $tarifa
+                                        );
+                                    }//Fin de validacion del monto de exoneracion
+
+                                    $stringXML .= '
+                                    </Impuesto>';
+
+                                    //Agregar el impuesto al array
+                                    $dataLinea['impuestos'][] = $dataImpuesto;
+                                }
+                            }//Fin de validacion de numero de linea
+                        }//Fin del ciclo para recorrer los impuestos
+
+                        /*<ImpuestoNeto>' . $_POST['monto_impuesto'][$key] . '</ImpuestoNeto>
                         <MontoTotalLinea>' . $_POST['total_linea'][$key] . '</MontoTotalLinea>
+                    </LineaDetalle>' */
+
+                        //Agregar el total de la linea al XML
+                        $stringXML .= '
+                        <ImpuestoNeto>' . $impuesto_neto_linea . '</ImpuestoNeto>
+                        <MontoTotalLinea>' . $total_linea_linea . '</MontoTotalLinea>
                     </LineaDetalle>';
 
-                    //Calcular los totales con dos decimales
+                    //Sumar el impuesto al total de impuestos
+                    $totalImpuesto += $impuesto_neto_linea;
 
-                    //acumular
-                    if ($_POST['unidad'][$key] == "Sp" || $_POST['unidad'][$key] == "Spe" || $_POST['unidad'][$key] == "Cm") {
-                        //todos los servicios son gravados
-                        $totalServGravados += $_POST['monto_total'][$key];
-                    } else {
-                        //todas las mercancias son gravados
-                        $totalMercanciasGravadas += $_POST['monto_total'][$key];
+                    $linea_exonerada = $dataLinea['exonerada'];
+                    $linea_exenta = $dataLinea['exenta'];
+
+                    //Agregar la linea al array de linea
+                    $lineas_detalle[] = $dataLinea;
+
+                    //var_dump($dataLinea);
+
+                    //Si la linea no es exenta
+                    if(!$linea_exenta && !$linea_exonerada)
+                    {
+                        //Acumular en gravados
+                        if ($unidad_linea == "Sp" || $unidad_linea == "Spe" || $unidad_linea == "Cm") {
+                            //todos los servicios son gravados
+                            $totalServGravados += $monto_total_linea;
+                        } else {
+                            //todas las mercancias son gravados
+                            $totalMercanciasGravadas += $monto_total_linea;
+                        }
+
+                        //Agregar el total al total gravado
+                        $totalGravado += $monto_total_linea;
                     }
 
-                    //todas las mercancias y servicios son gravados y con dos decimales
-                    $totalGravado += $_POST['monto_total'][$key];
-                    $totalVenta += $_POST['monto_total'][$key];
-                    $totalDescuentos += $_POST['monto_descuento'][$key];
-                    $totalVentaNeta += $_POST['sub_total'][$key];
-                    $totalImpuesto += $_POST['monto_impuesto'][$key];
-                    $totalComprobante += $_POST['total_linea'][$key];
+                    else
+                    {
+                        //Si la linea no es exonerada
+                        if($linea_exonerada)
+                        {
+                            //Acumular en exentos
+                            if ($unidad_linea == "Sp" || $unidad_linea == "Spe" || $unidad_linea == "Cm") {
+                                //todos los servicios son exonerados
+                                $totalServExonerado += $monto_total_linea;
+                            } else {
+                                //todas las mercancias son exoneradas
+                                $totalMercExonerada += $monto_total_linea;
+                            }
 
-                    $lineas++;
-                }
-            }
+                            //Agregar el total al total exonerado
+                            $totalExonerado += $monto_total_linea;
+                        }
 
-            if ($lineas == 0) {
-                return json_encode(array(
-                    "error" => "No se puede emitir un comprobante sin detalle",
-                    'tipo' => 'detalles',
-                    "estado" => "error"
-                ));
-            }
+                        else
+                        {
+                            //Acumular en exentos
+                            if ($unidad_linea == "Sp" || $unidad_linea == "Spe" || $unidad_linea == "Cm") {
+                                //todos los servicios son exentos
+                                $totalServExentos += $monto_total_linea;
+                            } else {
+                                //todas las mercancias son exentos
+                                $totalMercanciasExentas += $monto_total_linea;
+                            }
 
-            /**Si el documento no es un tiquete electronico, agregar informacion del cliente */
+                            //Agregar el total al total exento
+                            $totalExento += $monto_total_linea;
+                        }
+                    }
+
+                    //Agregar el total al total general
+                    $totalVenta += $monto_total_linea;
+
+                    //Agregar el subtotal a la venta neta
+                    $totalVentaNeta += $subtotal_linea;
+
+                    //Agregar el total de la linea al total del comprobante
+                    $totalComprobante += $total_linea_linea;
+                }//Fin de validacion de codigo
+            }//Fin del ciclo para recorrer las lineas
+
+            /**Si el documento no es un tiquete electronico y hay un receptor asignado,
+             * agregar informacion del cliente en la factura */
             if ($id_tipo_documento != '04' && $receptor) {
                 $data_factura = array(
                     "consecutivo" => $consecutivo,
@@ -1034,9 +1303,8 @@ class Documentos extends BaseController
                     "notas" => $notas,
                     "envio_atv" => 0,
                     "valido_atv" => 0,
-                    //"fecha_envio" => "",
-                    //"fecha_valido" => "",
-                    "id_usuario" => getSession('id_usuario')
+                    "id_usuario" => getSession('id_usuario'),
+                    "id_empresa" => getSession('id_empresa'),
                 );
             } else {
                 $data_factura = array(
@@ -1078,11 +1346,10 @@ class Documentos extends BaseController
                     "notas" => $notas,
                     "envio_atv" => 0,
                     "valido_atv" => 0,
-                    //"fecha_envio" => "",
-                    //"fecha_valido" => "",
-                    "id_usuario" => getSession('id_usuario')
+                    "id_usuario" => getSession('id_usuario'),
+                    "id_empresa" => getSession('id_empresa'),
                 );
-            }
+            }//
 
             //var_dump($data_factura);
 
@@ -1091,40 +1358,96 @@ class Documentos extends BaseController
             $id_documento = $documentosModel->insert($data_factura);
 
             if ($id_documento) {
-                foreach ($_POST['codigo'] as $key => $linea) {
-                    //insertar cada detalle
-                    $documentosDetallesModel = model('documentoDetalles');
+                //Recorrer lineas de detalle
+                foreach ($lineas_detalle as $linea) {
+                    $linea = (object) $linea;
 
-                    $codigo = $_POST['codigo'][$key];
-                    $nombre = $_POST['detalle'][$key];
+                    $data_detalle = array(
+                        "id_documento" => $id_documento,
+                        "linea" => $linea->linea,
+                        "codigo" => $linea->codigo,
+                        "codigo_venta" => $linea->codigo_venta,
+                        "cantidad" => $linea->cantidad,
+                        "unidad_medida" => $linea->unidad,
+                        "detalle" => $linea->detalle,
+                        "precio_unidad" => $linea->precio_unidad,
+                        "monto_total" => $linea->monto_total,
+                        "sub_total" => $linea->subtotal,
+                        "impuesto_neto" => $linea->impuesto_neto,
+                        "total_linea" => $linea->total_linea,
+                    );
 
-                    if ($codigo != '') {
-                        $data_detalle = array(
-                            "id_documento"  => $id_documento,
-                            "linea"   => $key + 1,
-                            "codigo"  => $codigo,
-                            "cantidad"    => $_POST['cantidad'][$key],
-                            "unidad_medida"   => $_POST['unidad'][$key],
-                            "detalle" => $nombre,
-                            "precio_unidad"  => $_POST['precio_unidad'][$key],
-                            "monto_total" => $_POST['monto_total'][$key],
-                            "monto_descuento" => $_POST['monto_descuento'][$key],
-                            "motivo_descuento"   => $_POST['motivo_descuento'][$key],
-                            "sub_total" => $_POST['sub_total'][$key],
-                            "codigo_impuesto" => "01",
-                            "codigo_tarifa"  => "08",
-                            "tarifa"  => $_POST['tarifa'][$key],
-                            "monto_impuesto"  => $_POST['monto_impuesto'][$key],
-                            "impuesto_neto"   => $_POST['monto_impuesto'][$key],
-                            "total_linea" => $_POST['total_linea'][$key],
-                        );
+                    $detalleModel = model('documentoDetalles');
+                    $id_detalle = $detalleModel->insert($data_detalle);
 
-                        $documentosDetallesModel->insert($data_detalle);
-                    }
-                } //Fin del ciclo para insertar los detalles
+                    //Si no se pudo insertar el detalle, se elimina el documento
+                    if (!$id_detalle) {
+                        $documentosModel = model('documento');
+                        $documentosModel->delete($id_documento);
 
+                        return json_encode(array(
+                            'status' => 'error',
+                            'error' => 'Error al insertar el detalle de la factura',
+                        ));
+                    }//Fin de validacion de insertar detalle
 
-                $stringXML .= '</DetalleServicio>
+                    else
+                    {
+                        $impuestos_linea = $linea->impuestos;
+                        $descuentos_linea = $linea->descuentos;
+
+                        //Si hay impuestos en la linea
+                        if(count($impuestos_linea) > 0)
+                        {
+                            foreach ($impuestos_linea as $impuesto)
+                            {
+                                $impuesto["id_detalle"] = $id_detalle;
+
+                                //Insertar impuesto
+                                $impuestosModel = model('documentoImpuestos');
+                                if(!$impuestosModel->insert($impuesto))
+                                {
+                                    $documentosModel = model('documento');
+                                    $documentosModel->delete($id_documento);
+
+                                    return json_encode(array(
+                                        'status' => 'error',
+                                        'error' => 'Error al insertar el impuesto de la factura',
+                                    ));
+                                }
+                            }//Fin de foreach de impuestos
+                        }//Fin de validacion de impuestos
+
+                        //Si hay descuentos en la linea
+                        if(count($descuentos_linea) > 0)
+                        {
+                            foreach ($descuentos_linea as $descuento)
+                            {
+                                //Si el monto es mayor a 0, se inserta el descuento`
+                                if($descuento["monto"] > 0)
+                                {
+                                    $descuento["id_detalle"] = $id_detalle;
+
+                                    //Insertar descuento en la base de datos
+                                    $descuentosModel = model('documentoDescuentos');
+                                    if(!$descuentosModel->insert($descuento))
+                                    {
+                                        $documentosModel = model('documento');
+                                        $documentosModel->delete($id_documento);
+
+                                        return json_encode(array(
+                                            'status' => 'error',
+                                            'error' => 'Error al insertar el descuento de la factura',
+                                        ));
+                                    }
+                                }//Fin de validacion de monto
+                            }//Fin de foreach de descuentos
+                        }//Fin de validacion de descuentos
+                    }//Fin de caso de insercion de detalle
+                }//Fin de ciclo para insertar lineas de detalle
+
+                $stringXML .= '
+                </DetalleServicio>
                     <ResumenFactura>
                         <CodigoTipoMoneda>
                             <CodigoMoneda>' . $moneda . '</CodigoMoneda>';
@@ -1135,32 +1458,57 @@ class Documentos extends BaseController
                     $stringXML .= '<TipoCambio>1</TipoCambio>';
                 }
 
-                $stringXML .= '</CodigoTipoMoneda>
-                        <TotalServGravados>' . $totalServGravados . '</TotalServGravados>
-                        <TotalServExentos>' . $totalServExentos . '</TotalServExentos>
-                        <TotalServExonerado>' . $totalServExonerado . '</TotalServExonerado>
-                        <TotalMercanciasGravadas>' . $totalMercanciasGravadas . '</TotalMercanciasGravadas>
-                        <TotalMercanciasExentas>' . $totalMercanciasExentas . '</TotalMercanciasExentas>
-                        <TotalMercExonerada>' . $totalMercExonerada . '</TotalMercExonerada>
-                        <TotalGravado>' . $totalGravado . '</TotalGravado>
-                        <TotalExento>' . $totalExento . '</TotalExento>
-                        <TotalExonerado>' . $totalExonerado . '</TotalExonerado>
-                        <TotalVenta>' . $totalVenta . '</TotalVenta>
-                        <TotalDescuentos>' . $totalDescuentos . '</TotalDescuentos>
-                        <TotalVentaNeta>' . $totalVentaNeta . '</TotalVentaNeta>
-                        <TotalImpuesto>' . $totalImpuesto . '</TotalImpuesto>
-                        <TotalComprobante>' . $totalComprobante . '</TotalComprobante>
-                    </ResumenFactura>';
+                $stringXML .= '
+                    </CodigoTipoMoneda>
+                    <TotalServGravados>' . $totalServGravados . '</TotalServGravados>
+                    <TotalServExentos>' . $totalServExentos . '</TotalServExentos>
+                    <TotalServExonerado>' . $totalServExonerado . '</TotalServExonerado>
+                    <TotalMercanciasGravadas>' . $totalMercanciasGravadas . '</TotalMercanciasGravadas>
+                    <TotalMercanciasExentas>' . $totalMercanciasExentas . '</TotalMercanciasExentas>
+                    <TotalMercExonerada>' . $totalMercExonerada . '</TotalMercExonerada>
+                    <TotalGravado>' . $totalGravado . '</TotalGravado>
+                    <TotalExento>' . $totalExento . '</TotalExento>
+                    <TotalExonerado>' . $totalExonerado . '</TotalExonerado>
+                    <TotalVenta>' . $totalVenta . '</TotalVenta>
+                    <TotalDescuentos>' . $totalDescuentos . '</TotalDescuentos>
+                    <TotalVentaNeta>' . $totalVentaNeta . '</TotalVentaNeta>
+                    <TotalImpuesto>' . $totalImpuesto . '</TotalImpuesto>
+                    <TotalComprobante>' . $totalComprobante . '</TotalComprobante>
+                </ResumenFactura>';
 
                 //Validar el tipo de documento
                 switch ($id_tipo_documento) {
                     case '01':
                         if ($receptor->nombre_comercial == 'Walmart') {
-                            $stringXML .= '<Otros>
+                            $stringXML .= '
+                            <Otros>
                                 <OtroTexto codigo="WMNumeroVendedor">' . $numero_vendor . '</OtroTexto>
-                                <OtroTexto codigo="WMNumeroOrden">' . post('numero_orden') . '</OtroTexto>
-                                <OtroTexto codigo="WMEnviarGLN">' . post('enviar_gnl') . '</OtroTexto>
+                                <OtroTexto codigo="WMNumeroOrden">' . $numero_orden . '</OtroTexto>
+                                <OtroTexto codigo="WMEnviarGLN">' . $enviar_gln . '</OtroTexto>
                             </Otros>';
+
+                            $data_otros = array(
+                                array(
+                                    "id_documento" => $id_documento,
+                                    "codigo" => "WMNumeroVendedor",
+                                    "valor" => $numero_vendor
+                                ),
+                                array(
+                                    "id_documento" => $id_documento,
+                                    "codigo" => "WMNumeroOrden",
+                                    "valor" => $numero_orden
+                                ),
+                                array(
+                                    "id_documento" => $id_documento,
+                                    "codigo" => "WMEnviarGLN",
+                                    "valor" => $enviar_gln
+                                )
+                            );
+
+                            foreach ($data_otros as $key => $value) {
+                                $documentosOtrosModel = model('documentoOtros');
+                                $documentosOtrosModel->insert($value);
+                            }
                         }
                         $stringXML .= '</FacturaElectronica>';
                         break;
@@ -1175,16 +1523,14 @@ class Documentos extends BaseController
                                     $fecha = date('Y-m-d');
                                 }
 
-                                $stringXML .= '<InformacionReferencia>
+                                $stringXML .= '
+                                <InformacionReferencia>
                                     <TipoDoc>' . $_POST['referencia_tipo_documento'][$key] . '</TipoDoc>
                                     <Numero>' . $_POST['referencia_clave'][$key] . '</Numero>
                                     <FechaEmision>' . date("c", strtotime($fecha)) . '</FechaEmision>
                                     <Codigo>' . $_POST['referencia_codigo'][$key] . '</Codigo>
                                     <Razon>' . $_POST['referencia_razon'][$key] . '</Razon>
                                 </InformacionReferencia>';
-
-                                //Insertar el detalle de referencia
-                                $documentosReferenciasModel = model('documentoReferencias');
 
                                 $data_referencia = array(
                                     "id_documento"  => $id_documento,
@@ -1195,6 +1541,8 @@ class Documentos extends BaseController
                                     "referencia_razon"    => $_POST['referencia_razon'][$key],
                                 );
 
+                                //Insertar el detalle de referencia
+                                $documentosReferenciasModel = model('documentoReferencias');
                                 $documentosReferenciasModel->insert($data_referencia);
                             }
                         }
@@ -1207,7 +1555,8 @@ class Documentos extends BaseController
                             if ($_POST['referencia_clave'][$key] != '') {
                                 $fecha = $_POST['referencia_fecha'][$key];
 
-                                $stringXML .= '<InformacionReferencia>
+                                $stringXML .= '
+                                <InformacionReferencia>
                                     <TipoDoc>' . $_POST['referencia_tipo_documento'][$key] . '</TipoDoc>
                                     <Numero>' . $_POST['referencia_clave'][$key] . '</Numero>
                                     <FechaEmision>' . date("c", strtotime($fecha)) . '</FechaEmision>
@@ -1238,26 +1587,38 @@ class Documentos extends BaseController
                         break;
                 }
 
-                $salida = location("archivos\\xml\\p_firmar\\$clave.xml");
-                $doc = new DOMDocument();
-                $doc->preseveWhiteSpace = false;
-                $doc->loadXml($stringXML);
-                $doc->save($salida);
-                $doc->saveXML();
-
-                $reporte = new Reportes();
-                //generar PDF
-                $reporte->generar_pdf($id_documento);
-
                 $hacienda = new Hacienda();
 
-                $xml64 = $hacienda->firmarXml($clave);
+                $hacienda->setClave($clave);
 
-                $enviar = json_decode($hacienda->enviarXml($xml64));
+                if(!$hacienda->generarXML($stringXML)){
+                    $data = array(
+                        "estado" => "error",
+                        "error" => "Se ha generado un error al generar el archivo XML."
+                    );
+                    
+                    return json_encode($data);
+                }
+
+                if(!$hacienda->firmar())
+                {
+                    $data = array(
+                        "estado" => "error",
+                        "error" => "Se ha generado un error al firmar el archivo XML."
+                    );
+                    
+                    return json_encode($data);
+                }
+
+                $enviar = json_decode($hacienda->enviar());
+
+                var_dump($enviar);
+                return;
 
                 if ($enviar->status >= 200 && $enviar->status < 300) {
                     //Obtener la fecha en gmt-6
                     $fecha_gmt = date('Y-m-d\TH:i:s', strtotime('-6 hours'));
+
                     $data_envio = array(
                         'envio_atv' => 1,
                         'fecha_envio' => $fecha_gmt,
@@ -1268,7 +1629,9 @@ class Documentos extends BaseController
 
                     sleep(4);
 
-                    $validar = json_decode($hacienda->validarXml($xml64), true);
+                    $validar = json_decode($hacienda->validar(), true);
+
+                    var_dump($validar['xml']);
 
                     if (isset($validar['xml']['ind-estado'])) {
                         if ($validar['xml']['ind-estado'] != "procesando") {
@@ -1277,122 +1640,13 @@ class Documentos extends BaseController
                             $data_validado = array(
                                 'valido_atv' => $json->Mensaje,
                                 'fecha_valido' => $fecha_gmt,
+                                'detalle_atv' => $json->DetalleMensaje,
                             );
 
                             $documentosModel = model('documento');
                             $documentosModel->update($data_validado, $id_documento);
 
-                            $CC = null;
-
-                            if ($json->Mensaje < 3) {
-                                if ($id_tipo_documento != '04' && $receptor) {
-                                    //enviar el correo
-                                    $cuerpo = '<h1>Nuevo documento electronico</h1>
-                                    Señores, ' . $receptor->nombre . ',<br><br>
-                                    Se ha generado el documento electrónico con la clave: ' . $clave . '<br><br>
-                                    El documento ha sido aceptado por el Ministerio de Hacienda.
-                                    <br><br>';
-
-                                    $cuerpo .= "Atentamente: <b>" . $emisor->razon . "</b>";
-
-                                    if (getEnt('factura.ambiente') == 'stag') {
-                                        $correos = array(
-                                            'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
-                                        );
-
-                                        $CC = array(
-                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
-                                        );
-                                    }
-
-                                    if (getEnt('factura.ambiente') == 'prod') {
-                                        $correos = array(
-                                            $receptor->nombre => $receptor->correo,
-                                        );
-
-                                        $CC = array(
-                                            $emisor->nombre => $emisor->correo,
-                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
-                                        );
-                                    }
-                                } else {
-                                    //enviar el correo
-                                    $cuerpo = '<h1>Nuevo documento electronico</h1>
-                                                Estimado, ' . $emisor->nombre . ',<br><br>
-                                                Se ha generado el documento electrónico con la clave: ' . $clave . '<br><br>
-                                                El documento ha sido aceptado por el Ministerio de Hacienda.
-                                                <br><br>';
-                                    
-                                    $cuerpo .= "<b>Att " . $emisor->razon . "</b>";
-
-                                    if (getEnt('factura.ambiente') == 'stag') {
-                                        $correos = array(
-                                            'RECEPTOR DE PRUEBA' => 'chepelcr@outlook.com',
-                                        );
-
-                                        $CC = array(
-                                            'GOSOCKET DE PRUEBA' => 'chepelcr70@gmail.com',
-                                        );
-                                    } else {
-                                        $correos = array(
-                                            $emisor->nombre => $emisor->correo,
-                                        );
-
-                                        $CC = array(
-                                            'Gosocket' => 'dtecr.prod@einvoicing.signature-cloud.com',
-                                        );
-                                    }
-                                }
-                            } else {
-                                $cuerpo = '<h1>Error al validar factura</h1>';
-                                $cuerpo .= "<p>Señores " . $emisor->nombre . ",
-                                <br>
-                                <br>
-                                Se ha generado el documento con la clave " . $clave . ".
-                                El documento ha sido rechazado por el Ministerio de Hacienda.
-                                <br>
-                                <br>";
-                                $cuerpo .= "Error hacienda: " . $json->DetalleMensaje;
-                                $cuerpo .= "<br>
-                                <br>
-                                <b>Att " . $emisor->nombre . "</b>";
-
-                                if(getEnt('factura.ambiente') != 'stag')
-                                {
-                                    $correos = array(
-                                        $emisor->nombre => $emisor->correo,
-                                    );
-                                }
-
-                                else
-                                {
-                                    $correos = array(
-                                        'Receptor' => 'chepelcr@outlook.com'
-                                    );
-                                }
-                            }
-
-                            $adjuntos = array(
-                                $clave . '.pdf' => location("archivos\\pdf\\" . $clave . ".pdf"),
-                                $clave . '.xml' => location("archivos\\xml\\firmados\\" . $clave . "_f.xml"),
-                                $clave . '_respuesta_MH.xml' => location("archivos\\xml\\respuesta\\" . $clave . ".xml"),
-                            );
-
-                            $data = array(
-                                'receptor' => $correos,
-                                'asunto' => 'Documento electronico',
-                                'body' => $cuerpo,
-                                'adjuntos' => $adjuntos,
-                                'CC' => $CC,
-                            );
-
-                            $mail = new Correo();
-                            $correo_enviado = $mail->enviarCorreo($data);
-
-                            //Eliminar archivos
-                            unlink(location("archivos\\pdf\\" . $clave . ".pdf"));
-                            //unlink(location("archivos\\xml\\firmados\\" . $clave . "_f.xml"));
-                            unlink(location("archivos\\xml\\respuesta\\" . $clave . ".xml"));
+                            $correo_enviado = $hacienda->enviar_documento($id_documento);
 
                             return json_encode(array(
                                 'clave' => $id_documento,
@@ -1431,16 +1685,17 @@ class Documentos extends BaseController
                         "enviar" => $enviar->status,
                         "validar_estado" => "",
                         "mensaje" => "Error",
-                        "validar_mensaje" => 'Se ha generado un error al enviar la factura',
+                        "error" => 'Se ha generado un error al enviar la factura al Ministerio de Hacienda',
                         "correo_enviado" => false,
                         'estado' => 'error',
                     ));
                 }
-            } //Fin de validacion de insercion y envio de correo
+            }//Fin de validacion de insercion y envio de correo
 
             else {
                 return json_encode(array(
-                    'error' => 'Error al insertar el documento'
+                    'error' => 'Error al insertar el documento',
+                    'estado' => 'error',
                 ));
             }
         } //Fin de validacion de logueo

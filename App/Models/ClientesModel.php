@@ -62,6 +62,7 @@ class ClientesModel extends Model
         return false;
     }
 
+    /**Obtener todos los clientes */
     public function obtener($id = 'all')
     {
         //var_dump($id);
@@ -84,7 +85,5 @@ class ClientesModel extends Model
             default:
                 return $this->getById($id);
         }
-
-        return false;
     }
 }//Fin de la clase

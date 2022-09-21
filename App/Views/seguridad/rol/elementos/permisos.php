@@ -1,5 +1,5 @@
 <!--Panel para asignar los permisos de los modulos a un rol especifico -->
-<div class="card card-permisos">
+<div class="card card-permisos card-form">
     <div class="card-header">
         <h2 class="card-title">
             <i class="fas fa-user-lock"></i> 

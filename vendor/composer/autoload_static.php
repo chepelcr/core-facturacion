@@ -20,6 +20,7 @@ class ComposerStaticInita2346143d9b38f4bbee7a2ab53c119b0
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Svg\\' => 4,
+            'Sabberworm\\CSS\\' => 15,
         ),
         'R' => 
         array (
@@ -75,6 +76,10 @@ class ComposerStaticInita2346143d9b38f4bbee7a2ab53c119b0
         array (
             0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
         ),
+        'Sabberworm\\CSS\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
+        ),
         'RobRichards\\XMLSecLibs\\' => 
         array (
             0 => __DIR__ . '/..' . '/robrichards/xmlseclibs/src',
@@ -122,11 +127,11 @@ class ComposerStaticInita2346143d9b38f4bbee7a2ab53c119b0
     );
 
     public static $prefixesPsr0 = array (
-        'S' => 
+        'I' => 
         array (
-            'Sabberworm\\CSS' => 
+            'IndicadoresBccr' => 
             array (
-                0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/lib',
+                0 => __DIR__ . '/..' . '/arielcr/tipocambio-bccr/src',
             ),
         ),
     );
@@ -140,6 +145,7 @@ class ComposerStaticInita2346143d9b38f4bbee7a2ab53c119b0
         'HTML5_Parser' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Parser.php',
         'HTML5_Tokenizer' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Tokenizer.php',
         'HTML5_TreeBuilder' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/TreeBuilder.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',

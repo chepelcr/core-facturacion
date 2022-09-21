@@ -16,7 +16,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="nombre_usuario">Nombre de usuario</label>
-                    <input type="text" class="form-control inp perfil" id="nombre_usuario" name="nombre_usuario"
+                    <input type="text" class="form-control inp perfil nombre_usuario" name="nombre_usuario"
                         value="<?php if(isset($nombre_usuario)) echo $nombre_usuario?>" placeholder="Nombre de usuario">
                 </div>
             </div>
@@ -32,7 +32,7 @@
                             </span>
                         </div>
 
-                        <select required class="form-control inp" name="id_rol" id="id_rol">
+                        <select required class="form-control inp id_rol" name="id_rol">
                             <option value="">Seleccione</option>
                             <?php foreach($roles as $rol): ?>
                             <option value="<?php echo $rol->id_rol; ?>"
@@ -56,7 +56,7 @@
                             </span>
                         </div>
 
-                        <select required class="form-control inp" name="id_empresa" id="id_empresa">
+                        <select required class="form-control inp id_empresa" name="id_empresa">
                             <option value="">Seleccione</option>
                             <?php foreach($empresas as $empresa): ?>
                             <option value="<?php echo $empresa->id_empresa; ?>"

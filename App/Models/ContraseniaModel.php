@@ -27,4 +27,10 @@ class ContraseniaModel extends Model
         protected $autoIncrement = true;
 
         protected $auditorias = true;
+
+        /**Obtener la contraseña de un usuario */
+        public function contrasenia($id_usuario)
+        {
+            return $this->where('id_usuario', $id_usuario)->fila();
+        }//Fin de la función contrasenia
     }

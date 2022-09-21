@@ -22,6 +22,9 @@ class Routes
 	{
 		require_once '../vendor/autoload.php';
 		require_once '../Core/helper/load_helper.php';
+
+		//Colocar la zona horaria de la aplicacion
+		date_default_timezone_set('America/Costa_Rica');
 	}//Fin de la funcion
 
 	public function setDefault($controller, $action)

@@ -165,9 +165,7 @@ use App\Models\UsuariosModel;
 		$pass = generar_password_complejo(8);
 
 		$contraseniaModel = new ContraseniaModel();
-		$contraseniaModel->where('id_usuario', $usuario->id_usuario);
-
-		$contrasenia = $contraseniaModel->fila();
+		$contrasenia = $contraseniaModel->contrasenia($usuario->id_usuario);
 
 		if($contrasenia)
 		{
@@ -204,7 +202,7 @@ use App\Models\UsuariosModel;
 			$mensaje = 'Estimado ' . $usuario->nombre . ',
 			<br>
 			
-			Su clave temporal es "<b>' . $pass . '</b>", Debe realizar el cambio de la misma la primera vez que inicia sesión.
+			Su clave temporal es "<b>'. $pass .'</b>", debe cambiarla la proxima vez que inicie sesión.
 			<br>
 
 			Presione el siguiente enlace para iniciar sesión:
@@ -226,14 +224,17 @@ use App\Models\UsuariosModel;
 			$correo = new Correo();
 
 			if($correo->enviarCorreo($data))
-				return 1;
+				return array('estado' => 1,
+					'mensaje' => 'Se ha enviado un correo electronico con la nueva contraseña.');
 
 			else
-				return 'Indicar contrasenia manualmente: '.$pass;
-		}//Fin de validacion de id
-		
-		else
-			return 'Ha ocurrido un error.';
+				return array('estado' => 0,
+					'mensaje' => 'No se ha podido enviar el correo electronico con la nueva contraseña.');
+			}//Fin de validacion de id
+
+			else
+				return array('estado' => 0,
+					'mensaje' => 'No se ha podido actualizar la contraseña.');
 	}//Fin del metodo para enviar una contrasenia temporal
 
 	/**Obtener el perfil del usuario que ha iniciado sesion */
@@ -300,8 +301,8 @@ use App\Models\UsuariosModel;
 	{
 		if(is_login())
 		{
-			$usuariosModel = new EmpresasModel();
-			$empresa = $usuariosModel->getEmpresa();
+			$empresasModel = new EmpresasModel();
+			$empresa = $empresasModel->getEmpresa();
 
 			$datos_personales = array(
 				'nombre' => $empresa->nombre,
@@ -368,4 +369,4 @@ use App\Models\UsuariosModel;
 			return $datos_empresa;
 		}	
 		return false;
-	}
+	}//Fin de la funcion para obtener la empresa del usuario que ha iniciado sesión

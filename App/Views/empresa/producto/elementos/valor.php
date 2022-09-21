@@ -1,5 +1,5 @@
 <!-- Comercial (Valor unitario, impuesto y valor total) -->
-<div class="card">
+<div class="card card-form">
     <div class="card-header">
         <h4 class="card-title">
             <i class="fas fa-dollar-sign"></i> Valor comercial
@@ -16,19 +16,19 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="valor_unitario">Valor unitario</label>
-                    <input type="number" class="form-control inp valor-producto" id="valor_unitario" name="valor_unitario" placeholder="Valor unitario">
+                    <input type="number" class="form-control inp valor-producto valor_unitario" name="valor_unitario" placeholder="Valor unitario">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="impuesto">Impuesto</label>
-                    <input type="number" class="form-control valor" id="valor_impuesto" disabled readonly placeholder="Impuesto">
+                    <input type="number" class="form-control valor valor_impuesto" disabled readonly placeholder="Impuesto">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="valor_total">Valor total</label>
-                    <input type="text" class="form-control valor" id="valor_total" disabled readonly placeholder="Valor total">
+                    <input type="text" class="form-control valor valor_total" disabled readonly placeholder="Valor total">
                 </div>
             </div>
         </div>

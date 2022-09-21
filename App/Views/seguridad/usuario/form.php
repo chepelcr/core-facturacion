@@ -1,6 +1,6 @@
-<div class="row">
-    <input class="form-control form-control-lg inp" id="id_usuario" name="id_usuario" hidden type="text">
+<input class="form-control form-control-lg inp" id="id_usuario" name="id_usuario" hidden type="text">
 
+<div class="row">
     <!-- Informacion personal -->
     <div class="col-md-12">
         <?= view('base/persona/datos_personales', $datos_personales)?>

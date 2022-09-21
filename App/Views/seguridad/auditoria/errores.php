@@ -1,10 +1,10 @@
 <!--Card-->
 <div class="card">
-<div class="card-header">
+    <div class="card-header">
         <?= view('seguridad/auditoria/nav')?>
     </div>
 
-    <div class="card-body scroll_vertical">
+    <div class="card-body scroll_vertical" style="max-height: 350px;">
         <table class="table table-bordered table-hover text-center" id="listado_seguridad_errores">
             <thead>
                 <tr>

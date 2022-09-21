@@ -14,8 +14,10 @@ class TiendasModel extends Model
 		'nombre',
         'id_formato',
         'cod_pais',
-        'gnl',
+        'gln',
         'fecha_creacion',
+		'fecha_modificacion',
+		'fecha_eliminacion',
         'estado',
 	];
 
@@ -24,5 +26,29 @@ class TiendasModel extends Model
 	protected $autoIncrement = true;
 
 	protected $auditorias = true;
+
+    /**Obtener todas las tiendas o puntos de venta */
+	public function obtener($id = 'all')
+    {
+        //var_dump($id);
+        switch ($id) {
+            case 'inactivos':
+                $this->where('estado', 0);
+                return $this->getAll();
+                break;
+
+            case 'activos':
+                $this->where('estado', 1);
+                return $this->getAll();
+                break;
+
+            case 'all':
+                return $this->getAll();
+                break;
+
+            default:
+                return $this->getById($id);
+        }
+    }
 }//Fin de la clase
 ?>

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\EmpresasModel;
 use App\Models\UsuariosModel;
 
 /** Clase para iniciar sesion en la aplicacion */
@@ -11,40 +12,36 @@ class Login extends BaseController
 		public function index()
 		{
 			if(!is_login())
-				return view('seguridad/login/login');
+				return view('login');
 
-			elseif(getSession('contrasenia_expiro'))
-				return view('seguridad/login/cambio_contrasenia');
-
-			//Cargar la pagina principal
-			return redirect(baseUrl());
+			else
+				//Cargar la pagina principal
+				return redirect(baseUrl());
 		}//Fin de la funcion
 
 		/** Funcion para consultar si el usuario existe en la base de datos */
 		public function consultar()
 		{
-			$respuesta = array(
-				'estado' => 0,
-				'error' => 'Usuario o contraseña incorrectos.'
-			);
-
 			//Validar si el usuario ha iniciado sesion
 			if (!is_login())
 			{
+				$respuesta = array(
+					'estado' => 0,
+					'error' => 'Usuario o contraseña incorrectos.'
+				);
+
 				$user = post('usuario');
 				$pswd = post('contrasenia');
 
 				$usuariosModel = new UsuariosModel();
-
 				$usuariosModel->where('correo', $user);
 			
 				$usuario = $usuariosModel->fila();
 
 				if($usuario && $usuario->estado != 0)
 				{
+					//Obtener el estado de la contraseña del usuario
 					$estado_contrasenia = validar_contrasenia($usuario->id_usuario, $pswd);
-
-					//$estado_contrasenia = 1;
 
 					//Validar si la contrasenia es correcta
 					switch ($estado_contrasenia)
@@ -91,17 +88,28 @@ class Login extends BaseController
 								'error' => 'Debe esperar un momento para volver a intentar.');
 						break;
 					}//Fin del switch
+
+					//Si el estado es diferente de 3
+					if($estado_contrasenia != 3)
+					{
+						//var_dump($estado_contrasenia);
+
+						//Obtener la empresa del usuario
+						$empresasModel = new EmpresasModel();
+						$empresasModel->getEmpresa();
+					}//Fin del if
 				}//Fin del if
 
 				return json_encode($respuesta);
 			}//Fin de la validacion
 			
 			else
-				return $respuesta = array(
-					'estado' => '1',);
+				return json_encode(array(
+					'estado' => '1',));
 					
 		}//Fin de la funcion para consultar un usuario
 
+		/**Salir de la aplicacion */
 		public function salir()
 		{
 			destroy();
@@ -109,14 +117,14 @@ class Login extends BaseController
 			return json_encode(array(
 				'estado' => '1',
 			));
-		}//Fin de la funcion
-
+		}//Fin de la funcion para salir de la aplicacion
 
 		public function olvido(){
 			if(!is_login())
 				return view('seguridad/login/olvido');
 
 			else
+				//Cargar la pagina principal
 				return redirect(baseUrl());
 		}//Fin de la funcion
 
@@ -128,7 +136,6 @@ class Login extends BaseController
 				if(post('correo'))
 				{
 					$correo = post('correo');
-					$pass = generar_password_complejo(10);
 
 					$usuariosModel = new UsuariosModel();
 
@@ -139,16 +146,32 @@ class Login extends BaseController
 					//Si el usuario existe inserte la data
 					if($usuario)
 					{
-						return enviar_contrasenia_temporal($usuario, $pass);
+						return json_encode(enviar_contrasenia_temporal($usuario));
 					}//Fin de la validacion del usuario
 
-					return json_encode(0);
+					return json_encode(
+						array(
+							'estado' => '0',
+							'error' => 'El correo no existe.'
+						)
+					);
 				}//Fin de la validacion
 
-				return json_encode(0);
+				return json_encode(
+					array(
+						'estado' => '0',
+						'error' => 'No se ha ingresado el correo.'
+					)
+				);
 			}//Fin de la validacion de logueo
-
-			return redirect(baseUrl());
+			
+			else
+				return json_encode(
+					array(
+						'estado' => '0',
+						'error' => 'Ya ha iniciado sesión.'
+					)
+				);
 		}//Fin del metodo para recuperar la contrasenia
 	}//Fin del controlador de login
 

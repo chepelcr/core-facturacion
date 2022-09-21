@@ -9,10 +9,11 @@
     <table width="100%">
         <tr>
             <td>
-                <img src="data:image/png;base64,'<?=$logo?>'" width="15%">
+                <img src="data:image/png;base64,'<?=$logo?>'" width="50%">
             </td>
 
-            <td align="center">
+            <td align="center" width="45%">
+                <!-- Alinear texto al centro -->
                 <h1>
                     <?php
 						switch ($documento->tipo_documento) {
@@ -41,7 +42,7 @@
             </td>
 
             <td align="right">
-                <img src="data:image/png;base64,'<?=$qrCodigo?>'" width="15%">
+                <img src="data:image/png;base64,'<?=$qrCodigo?>'" width="40%">
             </td>
         </tr>
 
@@ -123,49 +124,87 @@
 
         <tfoot>
             <tr>
-                <td colspan="7" align="right"></td>
-                <td colspan="2" align="center">
+                <td colspan="7">
+                </td>
+                <td colspan="3" align="center">
                     <h3>Totales</h3>
                 </td>
             </tr>
 
             <tr>
-                <td colspan="8" align="right">Neto</td>
-                <td colspan="1" align="right">¢ <?= number_format($documento->total_venta,"2",",",".")?></td>
+                <td colspan="7" align="right">
+                    <!-- Tabla para agregar otros campos -->
+                    <table width="100%" align="right">
+                        <?php
+                            //Si las referencias del documento son mayor a cero, entonces se imprimen
+                            if(count((array)$documento->otros) > 0):
+                        ?>
+                        <tr>
+                            <th colspan="7" align="center">Otros Campos</th>
+                        </tr>
+
+                        <thead>
+                            <tr>
+                                <td colspan="6">Nombre</td>
+                                <td colspan="1" align="center">Valor</td>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php foreach ($documento->otros as $key => $campo): ?>
+                            <tr>
+                                <td colspan="6"><small><?=$campo->codigo?></small></td>
+                                <td colspan="1" align="center"><small><?=$campo->valor?></small></td>
+                            </tr>
+                            <?php endforeach ?>
+                        </tbody>
+                        <?php endif; ?>
+                    </table>
+                </td>
+                <td colspan="3" align="right">
+                    <table width="100%" align="right">
+                        <tr>
+                            <td colspan="2" align="right">Neto</td>
+                            <td colspan="1" align="right">¢ <?= number_format($documento->total_venta,"2",",",".")?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="right">Descuento</td>
+                            <td colspan="1" align="right">¢ <?= number_format($documento->total_descuentos,"2",",",".")?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="right">Subtotal</td>
+                            <td colspan="1" align="right">¢ <?= number_format($documento->total_venta_neta,"2",",",".")?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="right">IVA</td>
+                            <td colspan="1" align="right">¢ <?= number_format($documento->total_impuestos,"2",",",".")?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="right">Total</td>
+                            <td colspan="1" align="right">¢ <?= number_format($documento->total_comprobante,"2",",",".")?></td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
-            <tr>
-                <td colspan="8" align="right">Descuento</td>
-                <td colspan="1" align="right">¢ <?= number_format($documento->total_descuentos,"2",",",".")?></td>
-            </tr>
-            <tr>
-                <td colspan="8" align="right">Subtotal</td>
-                <td colspan="1" align="right">¢ <?= number_format($documento->total_venta_neta,"2",",",".")?></td>
-            </tr>
-            <tr>
-                <td colspan="8" align="right">IVA</td>
-                <td colspan="1" align="right">¢ <?= number_format($documento->total_impuestos,"2",",",".")?></td>
-            </tr>
-            <tr>
-                <td colspan="8" align="right">Total</td>
-                <td colspan="1" align="right">¢ <?= number_format($documento->total_comprobante,"2",",",".")?></td>
-            </tr>
+            
         </tfoot>
     </table>
 
+    <!-- Colocar tabla alineada a la izquierda-->
     <table width="100%">
         <?php
             //Si las referencias del documento son mayor a cero, entonces se imprimen
             if(count((array)$documento->referencias) > 0):
         ?>
         <tr>
-            <th colspan="9" align="center">Referencias</th>
+            <th colspan="10" align="center">Referencias</th>
         </tr>
 
         <thead>
             <tr>
-                <td colspan="6">Clave</td>
-                <td colspan="1" align="center">Fecha</td>
-                <td colspan="1" align="right">Razón</td>
+                <td colspan="5">Clave</td>
+                <td colspan="2" align="center">Fecha</td>
+                <td colspan="3" align="right">Razón</td>
 
             </tr>
         </thead>
@@ -177,9 +216,9 @@
             ?>
 
             <tr>
-                <td colspan="6"><small><?=$referencia->referencia_clave?></small></td>
-                <td colspan="1"><small><?=$fecha?></small></td>
-                <td colspan="1" align="right"><small><?=$referencia->referencia_razon?></small></td>
+                <td colspan="5"><small><?=$referencia->referencia_clave?></small></td>
+                <td colspan="2"><small><?=$fecha?></small></td>
+                <td colspan="3" align="right"><small><?=$referencia->referencia_razon?></small></td>
             </tr>
             <?php endforeach ?>
         </tbody>

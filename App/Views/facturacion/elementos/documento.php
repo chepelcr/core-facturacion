@@ -1,165 +1,116 @@
-<form class="card-factura" id="card-factura-<?=$numero_documento?>">
+<form class="card-factura" id="card-factura-<?=$numero_documento?>" style="max-height: 300px;">
     <div class="row table-responsive">
-        <table class="table table-hover table-bordered">
+        <table class="table table-hover table-bordered table-striped">
             <thead>
                 <tr class="text-center">
-                    <th class="col-3">Codigo</th>
+                    <th class="col-1">#</th>
+                    <th class="col-2">Codigo</th>
                     <th class="col-4">Descripcion</th>
                     <th class="col-3">Cantidad</th>
-                    <th hidden>Valor Unitario</th>
-                    <th hidden>Monto Neto</th>
-                    <th hidden>Monto Desc.</th>
-                    <th hidden>Imp %</th>
-                    <th hidden>Monto Imp.</th>
-                    <th hidden>Subtotal</th>
-                    <th class="col-1">Total Linea</th>
+                    <th class="col-2">Total</th>
                     <th class="col-1">Opciones</th>
                 </tr>
             </thead>
 
-            <tbody class="tblDetalles">
+            <tbody class="tblDetalles scroll_vertical">
                 <tr class="linea">
+                    <td class="col-1 text-center">
+                        <span class="numero_linea_lbl">1</span>
+                        <input type="hidden" class="form-control form-control-sm numero_linea" value="1" name="linea[numero_linea][]">
+                    </td>
+
                     <td colspan="6">
                         <div class="row">
-                            <div hidden>
-                                <input class="form-control codigo inp-fct" type="text" name="codigo[]">
-                            </div>
-
-                            <div class="col-3">
-                                <div class="input-group">
+                            <!-- Codigo de barrras -->
+                            <div class="col-2">
+                                <div class="input-group input-group-sm">
                                     <!-- Codigo de barras -->
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                                     </div>
 
-                                    <input class="form-control inp-fct gnl" type="number" min="0" name="gnl[]"
-                                        placeholder="Código de barras">
+                                    <input class="form-control form-control-sm inp-fct codigo_venta" type="number" min="0"  readonly
+                                        placeholder="Código de barras" disabled>
+                                    <input type="hidden" name="linea[codigo_venta][]" class="codigo_venta">
+                                    <input class="codigo" type="hidden" name="linea[codigo][]">
+                                </div>
+                            </div>
 
-                                    <!-- Buscar articulo -->
-                                    <div class="input-group-append">
-                                        <button class="btn btn-buscar-prod" type="button" data-toggle="tooltip"
-                                            title="Buscar producto" onclick="buscar_producto(this)">
-                                            <i class="fas fa-search"></i>
+                            <!-- Descripcion -->
+                            <div class="col-4">
+                                <div class="input-group input-group-sm">
+                                    <!-- Descripcion -->
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-align-justify"></i></span>
+                                    </div>
+
+                                    <input class="form-control form-control-sm inp-fct descripcion" type="text"
+                                        placeholder="Descripción" readonly disabled>
+                                    <input type="hidden" name="linea[detalle][]" class="descripcion">
+                                        
+                                </div>
+                            </div>
+
+                            <div class="col-1">
+                                <div class="input-group input-group-sm">
+                                    <input value="0" class="form-control form-control-sm cantidad calcular inp-fct" min="1" type="number"
+                                        name="linea[cantidad][]" required>
+                                    </div>
+                            </div>
+
+                            <!-- Unidad -->
+                            <div class="col-2">
+                                <div class="input-group input-group-sm">
+                                    <!-- Unidad -->
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-boxes"></i></span>
+                                    </div>
+                                    
+                                    <select class="form-control form-control-sm unidad inp-fct" disabled>
+                                        <option value="">Seleccionar</option>
+                                        <!-- Recorrer unidades de medida -->
+                                        <?php foreach ($unidades_medida as $unidad): ?>
+                                        <option value="<?= $unidad->simbolo ?>"
+                                            <?php if($unidad->id_unidad == 85 ) echo 'selected'?>>
+                                            <?= $unidad->descripcion ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+
+                                    <input type="hidden" name="linea[unidad][]" class="unidad">
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+                                <input value="0" class="form-control form-control-sm totalVL inp-fct" readonly disabled>
+                            </div>
+
+                            <div class="col-1 text-center">
+                                <div class="row d-flex justify-content-around">
+                                    <div class="col-md-6">
+                                        <button class="btn btn-primary descB btn-sm" type="button"
+                                            onclick="mostrar_detalles(this)">
+                                            <i class="fas fa-percent"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-6 eliminarLinea">
+                                        <button type="button" class="btn btn-danger btn-sm eliminarLinea"
+                                            onclick="eliminar_linea(this)" hidden>
+                                            <i class="fas fa-times-circle"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-4">
-                                <input class="form-control descripcion inp-fct" type="text" name="detalle[]" readonly
-                                    disabled required>
-                            </div>
-
-                            <div class="col-1">
-                                <input value="0" class="form-control cantidad calcular inp-fct" min="0" type="number"
-                                    name="cantidad[]" required>
-                            </div>
-
-                            <div class="col-2">
-                                <select name="unidad[]" class="unidad form-control inp-fct" disabled>
-                                    <!-- Recorrer unidades de medida -->
-                                    <?php foreach ($unidades_medida as $unidad): ?>
-                                    <option value="<?= $unidad->simbolo ?>"
-                                        <?php if($unidad->id_unidad == 85 ) echo 'selected'?>>
-                                        <?= $unidad->descripcion ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <div hidden>
-                                <input value="0" class="form-control precio calcular inp-fct" min="0" type="number"
-                                    name="precio_unidad[]">
-                            </div>
-
-                            <div hidden>
-                                <input value="0" class="form-control neto inp-fct" type="number" name="monto_total[]"
-                                    required>
-                            </div>
-
-                            <div hidden>
-                                <input value="0" class="form-control descM inp-fct" type="number"
-                                    name="monto_descuento[]">
-                            </div>
-
-                            <div hidden>
-                                <input value="0" class="form-control subtotal inp-fct" type="number" name="sub_total[]">
-                            </div>
-
-                            <div hidden>
-                                <input class="form-control impP inp-fct" type="number" name="tarifa[]">
-                            </div>
-
-                            <div hidden>
-                                <input value="0" class="form-control impM inp-fct" type="number"
-                                    name="monto_impuesto[]">
-                            </div>
-
-                            <div class="col-1">
-                                <input value="0" class="form-control totalL inp-fct" type="number" readonly disabled
-                                    name="total_linea[]" required>
-                            </div>
-
-                            <div class="col-1 text-center">
-                                <button class="btn btn-primary descB" type="button" data-toggle="collapse"
-                                    aria-expanded="false" value="0" onclick="mostrar_descuentos(this.value)"
-                                    aria-controls="descuento">
-                                    <i class="fas fa-percent"></i>
-                                </button>
-
-                                <button type="button" value="0" class="btn btn-danger eliminarLinea"
-                                    onclick="eliminar_linea(this)" hidden>
-                                    <i class="fas fa-times-circle"></i>
-                                </button>
-                            </div>
                         </div>
 
-                        <br>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="collapse l_desc" id="descuento0">
-                                    <div class="card card-body">
-                                        <div class="row">
-                                            <!-- Descuento-->
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i
-                                                                    class="fas fa-money-bill"></i></span>
-                                                        </div>
-                                                        <input class=" mot form-control inp-fct" id="motivo_descuento"
-                                                            value="Descuento de sistema" name="motivo_descuento[]"
-                                                            placeholder="Motivo">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">
-                                                                <i class="fas fa-hand-holding-usd"></i>
-                                                            </span>
-                                                        </div>
-
-                                                        <input class="form-control descP calcular inp-fct" max="15"
-                                                            min="0" type="number" max="100" value="0">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <?= view('facturacion/modal/detalle', $modalLinea) ?>
                     </td>
                 </tr>
             </tbody>
 
             <tfoot class="table-sm sinBorde">
                 <tr>
-                    <td colspan="1" align="right">Neto</td>
+                    <td colspan="2" align="right">Neto</td>
                     <td colspan="1" align="right">
                         <input type="text" disabled readonly class="form-control form-control-sm lbl_neto">
                     </td>
@@ -169,17 +120,17 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="1" align="right">Descuentos</td>
+                    <td colspan="2" align="right">Descuentos</td>
                     <td colspan="1" align="right">
                         <input type="text" disabled readonly class="form-control form-control-sm lbl_descuentos">
                     </td>
-                    <td colspan="1" align="right">IVA</td>
+                    <td colspan="1" align="right">I.V.A</td>
                     <td colspan="2" align="right">
                         <input type="text" disabled readonly class="form-control form-control-sm lbl_iva">
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2"><input type="text" name="notas" placeholder="Observaciones"
+                    <td colspan="3"><input type="text" name="notas" placeholder="Observaciones"
                             class="form-control bg-gray text-gray"></td>
                     <td colspan="1" align="right">Total</td>
                     <td colspan="2" align="right">
@@ -187,23 +138,11 @@
                     </td>
                 </tr>
 
-                <tr>
-                    <td colspan="6">
-                        <!-- Select con los tipos de documentos -->
-                        <select class="form-control form-control-sm tipo_documento inp-fct" disabled
-                            name="id_tipo_documento">
-                            <!-- Recorrer tipos de documentos -->
-                            <?php foreach ($tipos_documentos as $tipo_documento): ?>
-                            <option value="<?php echo $tipo_documento->id_tipo_documento; ?>"
-                                <?php if($tipo_documento->id_tipo_documento == $id_tipo_documento): ?> selected
-                                <?php endif; ?>>
-                                <?php echo $tipo_documento->tipo_documento; ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
+                <tr hidden>
+                    <td>
+                        <input type="hidden" class="tipo_documento inp-fct" name="id_tipo_documento" value="<?=$id_tipo_documento?>">
                     </td>
                 </tr>
-
             </tfoot>
         </table>
     </div>

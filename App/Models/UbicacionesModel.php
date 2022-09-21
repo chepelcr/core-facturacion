@@ -3,7 +3,7 @@
 
 use Core\Model;
 
-/**Modelo para puntos de venta */
+/**Modelo para tabla de ubicaciones */
 class UbicacionesModel extends Model
 {
     protected $nombreTabla = 'ubicaciones';
@@ -34,7 +34,7 @@ class UbicacionesModel extends Model
         return $this->getAll();
     }//Fin de la funcion
 
-    /**Obtener todos los cantones o para una provincia */
+    /**Obtener todos los cantones para una provincia */
     public function cantones($cod_provincia = null)
     {
         $this->table('cantones_view')->select('cod_canton')->select('canton');
@@ -47,7 +47,7 @@ class UbicacionesModel extends Model
         return $this->getAll();
     }//Fin de la funcion
 
-    /**Obtener todos los cantones o para una provincia */
+    /**Obtener todos los distritos para el canton de una provincia */
     public function distritos($cod_provincia = null, $cod_canton = null)
     {
         $this->table('distritos_view')->select('cod_canton')->select('cod_distrito')->select('distrito');
@@ -65,6 +65,7 @@ class UbicacionesModel extends Model
         return $this->getAll();
     }//Fin de la funcion
 
+    /**Obtener todos los barrios para el distrito de un canton en una provincia */
     public function barrios($cod_provincia = null, $cod_canton = null, $cod_distrito = null)
     {
         $this->select('cod_canton')->select('cod_distrito')->select('cod_barrio')->select('barrio');
@@ -86,5 +87,4 @@ class UbicacionesModel extends Model
 
         return $this->getAll();
     }//Fin de la funcion
-
 }//Fin de la clase

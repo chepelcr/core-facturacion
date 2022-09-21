@@ -15,10 +15,10 @@
 <link rel="stylesheet" href="<?=getFile('dist/css/adminlte.min.css')?>">
 
 <!-- overlayScrollbars -->
-<link rel="stylesheet" href="<?=getFile('dist/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')?>">
+<link rel="stylesheet" href="<?=getFile('dist/js/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')?>">
 
 <!-- Pace Style-->
-<link rel="stylesheet" href="<?=getFile('dist/plugins/pace-progress/themes/center-radar.css')?>">
+<link rel="stylesheet" href="<?=getFile('dist/js/plugins/pace-progress/themes/center-radar.css')?>">
 
 <!-- Selecc2-->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

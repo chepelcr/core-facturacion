@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card card-form">
     <div class="card-header">
         <h3 class="card-title">
             <i class="fas fa-text-width"></i> Datos generales
@@ -13,7 +13,7 @@
 
     <div class="card-body">
         <div class="row">
-            <input hidden disabled class="form-control inp" type="number" id="id_articulo" name="id_articulo">
+            <input hidden disabled class="form-control inp id_producto" type="number" name="id_producto">
             <!-- Nombre del articulo -->
             <div class="col-md-8">
                 <div class="form-group">
@@ -22,7 +22,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <input class="form-control inp" id="descripcion" name="descripcion" type="text" required
+                        <input class="form-control inp descripcion" name="descripcion" type="text" required
                             max="100">
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                                 <i class="fas fa-cart-plus"></i>
                             </span>
                         </div>
-                        <select class="form-control inp" name="id_categoria" required id="id_categoria">
+                        <select class="form-control inp id_categoria" name="id_categoria" required>
                             <?php foreach($categorias as $categoria): ?>
                             <option value="<?php echo $categoria->id_categoria; ?>">
                                 <?php echo $categoria->nombre_categoria; ?></option>
@@ -59,7 +59,7 @@
                                 <i class="fas fa-shopping-basket"></i>
                             </span>
                         </div>
-                        <select class="form-control inp" name="id_unidad" required id="id_unidad">
+                        <select class="form-control inp id_unidad" name="id_unidad" required>
                             <option value="">Seleccionar</option>
 
                             <?php foreach($unidades as $unidad): ?>
@@ -80,7 +80,7 @@
                                 <i class="fas fa-marker"></i>
                             </span>
                         </div>
-                        <input class="form-control inp" id="unidad_empaque" name="unidad_empaque" required type="number"
+                        <input class="form-control inp unidad_empaque" name="unidad_empaque" required type="number"
                             value="1" min="1">
                     </div>
                 </div>

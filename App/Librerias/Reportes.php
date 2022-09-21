@@ -19,7 +19,7 @@ class Reportes
             $detalles =  $documento->detalles;
 
             $dataQR = array(
-                'url' => baseUrl('/documentos/pdf/' . $clave),
+                'url' => baseUrl('documentos/pdf/' . $clave),
             );
 
             $arrContextOptions=array(

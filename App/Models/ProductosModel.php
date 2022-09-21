@@ -43,6 +43,7 @@
 
         protected $auditorias = true;
 
+        /**Obtener todos los productos segun la solicitud */
         public function obtener($id = 'all')
         {
             //var_dump($id);

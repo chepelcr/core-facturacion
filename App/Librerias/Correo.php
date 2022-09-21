@@ -26,13 +26,13 @@ class Correo
             $mail->isSMTP();                                            //Send using SMTP
             $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
             $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-            $mail->Username   = 'proyectojpgrow@gmail.com';                     //SMTP username
-            $mail->Password   = 'chpcr1997cr';                               //SMTP password
+            $mail->Username   = getEnt('app.CorreoElectronico');                     //SMTP username
+            $mail->Password   = getEnt('app.Contrasena');                               //SMTP password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
             $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
             //Recipients
-            $mail->setFrom('proyectojpgrow@gmail.com', 'Vilma Corella Artavia');
+            $mail->setFrom(getEnt('app.CorreoElectronico'), 'Vilma Corella Artavia');
 
             /**
              * Data para un receptor
@@ -126,13 +126,10 @@ class Correo
 
             if (!$id_usuario)
                 $id_usuario = 0;
+            
+            $message = "Su mensaje no se ha enviado: {$mail->ErrorInfo}";
 
-            $code = $ex->getCode();
-            $message = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-            $file = $ex->getFile();
-            $line = $ex->getLine();
-
-            $messagecomplet = "Error generado en el archivo $file, linea $line: [Codigo de error $code] $message";
+            $messagecomplet = $message;
 
             $data = array(
                 'sentencia' => $messagecomplet,

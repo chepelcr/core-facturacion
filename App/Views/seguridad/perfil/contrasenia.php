@@ -7,7 +7,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-unlock"></i></span>
                 </div>
-                <input class="form-control inp pass" id="contra_actual"
+                <input class="form-control pass" id="old_pass" placeholder="Contraseña actual"
                     name="contra_actual" type="password" max="100">
             </div>
         </div>
@@ -21,7 +21,8 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-unlock"></i></span>
                 </div>
-                <input class="form-control inp pass" id="nueva_contraseña" name="nueva_contraseña" type="password" max="100">
+                <input class="form-control pass" id="new_pass" name="nueva_contraseña" type="password" 
+                    max="100" placeholder="Contraseña nueva">
             </div>
         </div>
     </div>
@@ -34,7 +35,8 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-unlock"></i></span>
                 </div>
-                <input class="form-control inp pass" onblur="verificar_contraseña()" id="contra_nueva_conf" name="contra_nueva_conf" type="password" max="100">
+                <input class="form-control pass" onblur="verificar_contrasenia()" id="new_pass_conf" name="contra_nueva_conf" 
+                    type="password" max="100" placeholder="Confirmar contraseña">
             </div>
         </div>
     </div>

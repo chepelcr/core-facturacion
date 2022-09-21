@@ -1,5 +1,5 @@
 {
-    "name": "jp_grow/proyecto",
+    "name": "modas_laura/facturacion_electronica",
     "description": "Proyecto personal para el curso de multimedios",
     "type": "project",
     "authors": [
@@ -18,7 +18,8 @@
         "pendalff/phpqrcode": "^1.0",
         "phpbook/view": "^1.0",
         "robrichards/xmlseclibs": "^3.1",
-		"jrtec/xmlseclibs_hacienda": "^1.0"
+		"jrtec/xmlseclibs_hacienda": "^1.0",
+        "arielcr/tipocambio-bccr": "dev-master"
 
 	},
     "autoload": {
