@@ -1,5 +1,5 @@
 /**Direccion web de la pagina */
-var base = "http://localhost/core-facturacion/public/";
+var base = "http://localhost:41062/www/core-facturacion/public/";
 //var base = "https://137.184.198.204/";
 //var base = "https://164.90.245.14/";
 
