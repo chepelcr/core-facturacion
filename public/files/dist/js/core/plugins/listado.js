@@ -345,7 +345,9 @@ function enfocar_fila_actual() {
     }
 }
 
-/**Encontrar elementos que coincidan en la tabla solicitada */
+/**Encontrar elementos que coincidan en la tabla solicitada 
+ * @author jcampos
+*/
 function filtrar_tabla(id_tabla, filtro) {
     if (filtro != '') {
         $("#" + id_tabla + " tr").filter(function () {
