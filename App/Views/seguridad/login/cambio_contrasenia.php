@@ -17,8 +17,7 @@
                 <?php if(!getSession('contrasenia_expiro')): ?>
                 <div class="col-3 text-center">
                     <!-- Volver -->
-                    <button class="btn btn-secondary btn-block" data-toggle="tooltip" title="Volver" onclick="abrir_perfil()"
-                        type="button">
+                    <button class="btn btn-secondary btn-block" data-toggle="tooltip" title="Volver" type="button" onclick="volver_perfil()">
                         <i class="fas fa-arrow-left"></i>
                     </button>
                 </div>

@@ -105,6 +105,8 @@ function cargar_documentos(tipo_reporte = '') {
                 dataType: 'html',
                 data: $('#frm_filtro_documentos').serialize(),
                 success: function (respuesta) {
+                    desactivar_tooltips_documentos();
+
                     $('#listado_documentos').empty();
 
                     $('#listado_documentos').append(respuesta);
@@ -139,7 +141,7 @@ function cargar_documentos(tipo_reporte = '') {
                     contraer_reporte();
 
                     //Activar tooltips
-                    activar_tooltips();
+                    activar_tooltips_documentos();
 
                     //Mostrar el contenedor de documentos
                     $('#listado_documentos').show();
@@ -215,7 +217,7 @@ function importar_documentos() {
 /**Contraer o expandir el card de reporte */
 function contraer_reporte(estado = false) {
     //Si no hay ningun .chk-dct seleccionado
-    if ($('.chk-dct:checked').length == 0 || !estado) {
+    if ($('.chk-dct:checked').length == 0 || ! estado) {
         //Si no hay ningun .chk-dct seleccionado
         if ($('.chk-dct:checked').length == 0) {
             //Contraer el card-opciones-reporte
@@ -264,6 +266,38 @@ function check_documentos(boton) {
 
     contraer_reporte(boton.checked);
 }//Fin de la función check_documentos
+
+/**Desactivar los tooltip de cada linea de documentos */
+function desactivar_tooltips_documentos() {
+    //Recorrer todas las lineas de la tabla
+    var table = $('#documentos').DataTable();
+
+    //Si la tabla existe y tiene filas
+    if (table.rows().count() > 0) {    
+        //Recorrer las filas que se han filtrado
+        table.rows({
+            search: 'applied'
+        }).every(function () {
+            //Desactivar los tooltips data-toggle="tooltip"
+            $(this.node()).find('[data-toggle="tooltip"]').tooltip('dispose');
+        });
+    }
+}//Fin de la función desactivar_tooltips
+
+/**Activar los tooltip de cada linea de documentos */
+function activar_tooltips_documentos() {
+    //Recorrer todas las lineas de la tabla
+    var table = $('#documentos').DataTable();
+
+    //Recorrer las filas que se han filtrado
+    table.rows({
+        search: 'applied'
+    }).every(function () {
+        //Activar los tooltips data-toggle="tooltip"
+        $(this.node()).find('[data-toggle="tooltip"]').tooltip();
+    });
+}//Fin de la función activar_tooltips
+
 
 function asignar_fecha(campo) {
     //Obtener el valor del campo

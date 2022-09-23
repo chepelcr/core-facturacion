@@ -8,8 +8,14 @@ let empresa = 'Modas Laura';
 var cambio_compra = 0;
 var cambio_venta = 0;
 
-var modulo_activo = 'login';
-var submodulo_activo = 'login';
+/**Modulo activo de la aplicacion */
+var modulo_activo = '';
+
+/**Submodulo activo de la aplicacion */
+var submodulo_activo = '';
+
+/**Elemento grafico activo en la aplicacion */
+var elemento_activo = '';
 
 /**Abrir el modal login */
 function abrir_login(modo = "login") {

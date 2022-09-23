@@ -10,6 +10,18 @@ function cambio_contrasenia() {
     abrir_login("contrasenia");
 }//Fin de la funcion
 
+/**Volver al perfil del usuario */
+function volver_perfil() {
+    //Si el modulo activo es login
+    if(modulo_activo == 'login_perfil'){
+        //Ocultar el modal de login
+        $('#modal_login').modal('hide');
+    }//Fin del if
+
+    //Mostrar el perfil
+    abrir_perfil();
+}//Fin de la funcion
+
 /**Validar la contrasenia que esta ingresando el usuario */
 function verificar_contrasenia() {
     var nueva_contraseña = $('#new_pass').val();

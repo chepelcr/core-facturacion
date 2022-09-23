@@ -293,7 +293,7 @@ class Seguridad extends BaseController
 
 									return json_encode(array(
 										'estado' => 1,
-										'sucsses' => 'Se ha actualizado el perfil correctamente'
+										'success' => 'Se ha actualizado el perfil correctamente'
 									));
 								} //Fin de validacion de operacion
 
