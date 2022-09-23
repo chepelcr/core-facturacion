@@ -65,8 +65,11 @@ function obtener_tipo_cambio(indicador = '') {
                 //Colocar el tipo de cambio en los campos tipo_compra y tipo_venta
                 $('#tipo_compra').val(cambio_compra);
                 $('#tipo_venta').val(cambio_venta);
+                
+                notificacion("Se ha actualizado el tipo de cambio","", "success");
 
-                setCambio = true;
+                //Desactivar el boton de actualizar
+                $('#btn_cambio').attr('disabled', true);
             });
         });
     }

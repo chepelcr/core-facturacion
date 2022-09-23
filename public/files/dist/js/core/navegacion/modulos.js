@@ -1,11 +1,4 @@
-/**Modulo activo de la aplicacion */
-var modulo_activo = '';
 
-/**Submodulo activo de la aplicacion */
-var submodulo_activo = '';
-
-/**Elemento grafico activo en la aplicacion */
-var elemento_activo = '';
 
 /**Activar tooltips */
 function activar_tooltips() {
