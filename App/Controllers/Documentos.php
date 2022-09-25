@@ -579,9 +579,6 @@ class Documentos extends BaseController
             $cantidad_lineas = 0;
 
             $lineas = post('linea');
-            //var_dump($lineas);
-
-            //return;
 
             $numero_lineas = $lineas['numero_linea'];
             $codigo_cabys = $lineas['codigo'];
@@ -1110,7 +1107,7 @@ class Documentos extends BaseController
                                         $fecha_exoneracion = $fechas_exoneracion[$linea_impuesto];
                                         $porcentaje_exoneracion = $porcentajes_exoneracion[$linea_impuesto];
                                         $nombre_institucion = $nombres_institucion[$linea_impuesto];
-
+                                        
                                         $stringXML .= '
                                         <Exoneracion>
                                             <TipoDocumento>' . $tipo_exoneracion . '</TipoDocumento>
@@ -1136,15 +1133,6 @@ class Documentos extends BaseController
                                         );
 
                                         $dataLinea['exonerada'] = true;
-                                            
-                                        /*
-                                                        <Impuesto>
-                                                <Codigo>01</Codigo>
-                                                <CodigoTarifa>08</CodigoTarifa>
-                                                <Tarifa>' . $_POST['tarifa'][$key] . '</Tarifa>
-                                                <Monto>' . $_POST['monto_impuesto'][$key] . '</Monto>  
-                                            </Impuesto>
-                                        **/
                                     }//Fin de validacion del monto de exoneracion
 
                                     else
@@ -1612,9 +1600,6 @@ class Documentos extends BaseController
 
                 $enviar = json_decode($hacienda->enviar());
 
-                var_dump($enviar);
-                return;
-
                 if ($enviar->status >= 200 && $enviar->status < 300) {
                     //Obtener la fecha en gmt-6
                     $fecha_gmt = date('Y-m-d\TH:i:s', strtotime('-6 hours'));
@@ -1630,8 +1615,6 @@ class Documentos extends BaseController
                     sleep(4);
 
                     $validar = json_decode($hacienda->validar(), true);
-
-                    var_dump($validar['xml']);
 
                     if (isset($validar['xml']['ind-estado'])) {
                         if ($validar['xml']['ind-estado'] != "procesando") {

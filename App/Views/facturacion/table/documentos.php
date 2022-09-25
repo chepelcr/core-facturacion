@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-body scroll_vertical" style="max-height: 350px;">
+    <div class="card-body scroll_vertical" style="max-height: 450px; overflow-y: auto;">
         <table class="table table-bordered table-hover text-center" id="documentos">
             <thead class="bg-gray-dark">
                 <tr>

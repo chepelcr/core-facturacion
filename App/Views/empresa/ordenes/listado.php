@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-body scroll_vertical" style="max-height: 450px;">
+    <div class="card-body scroll_vertical">
         <object width="100%" height="450px"
             data="https://www.edi.co.cr/ticket/Default.aspx?U=7449029700004&P=Y29yZWxsYTIwMTg%3d&T=F"
             type="text/html"></object>

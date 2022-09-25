@@ -1,4 +1,4 @@
-<form class="card-factura" id="card-factura-<?=$numero_documento?>" style="max-height: 300px;">
+<form class="card-factura" id="card-factura-<?=$numero_documento?>">
     <div class="row table-responsive">
         <table class="table table-hover table-bordered table-striped">
             <thead>

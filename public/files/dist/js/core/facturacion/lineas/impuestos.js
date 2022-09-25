@@ -205,49 +205,52 @@ function calcular_impuesto(linea_impuesto = null, subtotal = 0) {
     }//Fin de validacion de linea_impuesto
 }//Fin del calculo de la linea de impuesto
 
-/**Buscar un numero de exoneracion en el ministerio de hacienda */
+/**Buscar un numero de exoneracion en el ministerio de hacienda 
+ * Formato: AL-00000000-20
+*/
 function buscar_exoneracion(exoneracion = "", linea_impuesto = null)
 {
-    //Obtener el tipo de exoneracion
-    var tipo_exoneracion = linea_impuesto.find(".tp_exoneracion").val();
-
-    //Si el tipo de exoneracion es por ley especial (03)
-    if (tipo_exoneracion == "03" && exoneracion != "") {
-        //Colocar 0 a la izquierda de la exoneracion hasta que tenga 8 digitos
-        exoneracion = exoneracion.padStart(8, "0");
-
-        url = "https://api.hacienda.go.cr/fe/ex?autorizacion=al-" + exoneracion + "-20";
-
-        Pace.track(function () {
-                
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-            }).done(function (data) {
-                //Colocar la fechaEmision en formato yyyy-MM-dd (2020-03-30T00:00:00)
-                var fechaEmision = data.fechaEmision.split("T")[0];
-
-                //Colocar los datos en los campos correspondientes
-                linea_impuesto.find(".fecha_exoneracion").val(fechaEmision);
-
-                linea_impuesto.find(".nombre_institucion").val(data.nombreInstitucion);
-                linea_impuesto.find(".porcentaje_exoneracion").val(data.porcentajeExoneracion);
-
-                campos_exoneracion(linea_impuesto);
-            }).fail(function (xhr, textStatus, errorThrown) {
-                //Activar los campos
-                campos_exoneracion(linea_impuesto, false);
-
-                //Mostrar la respuesta
-                notificacion("No se ha encontrado la autorizacion solicitada", '', 'warning');
-            });
-        });
-    }
-
-    else
+    if(exoneracion != '')
     {
-        //Activar los campos
+        //La exoneracion debe tener el formato ^[aA]{1}[lL]{1}-\d{8}-\d{2}$
+        var patron = /^[aA]{1}[lL]{1}-\d{8}-\d{2}$/;
+
+        if(patron.test(exoneracion))
+        {
+            url = "https://api.hacienda.go.cr/fe/ex?autorizacion=" + exoneracion;
+
+            Pace.track(function () {
+                    
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                }).done(function (data) {
+                    //Colocar la fechaEmision en formato yyyy-MM-dd (2020-03-30T00:00:00)
+                    var fechaEmision = data.fechaEmision.split("T")[0];
+
+                    //Colocar los datos en los campos correspondientes
+                    linea_impuesto.find(".fecha_exoneracion").val(fechaEmision);
+
+                    linea_impuesto.find(".nombre_institucion").val(data.nombreInstitucion);
+                    linea_impuesto.find(".porcentaje_exoneracion").val(data.porcentajeExoneracion);
+
+                    campos_exoneracion(linea_impuesto);
+                    
+                    return;
+                }).fail(function (xhr, textStatus, errorThrown) {
+                    //Mostrar la respuesta
+                    notificacion("No se ha encontrado la autorizacion solicitada", '', 'warning');
+                });
+            });
+        }
+
+        else
+        {
+            notificacion("Debe colocar la exoneracion con el formato AL-00000000-20", '', 'info');
+        }
+
+        //Habilitar los campos
         campos_exoneracion(linea_impuesto, false);
     }
 }
@@ -260,13 +263,13 @@ function campos_exoneracion(linea_impuesto = null, estado = true)
         linea_impuesto = $(linea_impuesto);
 
         //Activar los campos
-        linea_impuesto.find(".fecha_exoneracion").attr("readonly", estado);
-        linea_impuesto.find(".nombre_institucion").attr("readonly", estado);
-        linea_impuesto.find(".porcentaje_exoneracion").attr("readonly", estado);
+        linea_impuesto.find(".fec_ex_VL").attr("readonly", estado);
+        linea_impuesto.find(".nom_ins_vL").attr("readonly", estado);
+        linea_impuesto.find(".p_Ex_VL").attr("readonly", estado);
 
-        linea_impuesto.find(".fecha_exoneracion").attr("disabled", estado);
-        linea_impuesto.find(".nombre_institucion").attr("disabled", estado);
-        linea_impuesto.find(".porcentaje_exoneracion").attr("disabled", estado);
+        linea_impuesto.find(".fec_ex_VL").attr("disabled", estado);
+        linea_impuesto.find(".nom_ins_vL").attr("disabled", estado);
+        linea_impuesto.find(".p_Ex_VL").attr("disabled", estado);
 
         //Si el estado es falso
         if (estado == false) {
@@ -274,6 +277,10 @@ function campos_exoneracion(linea_impuesto = null, estado = true)
             linea_impuesto.find(".fecha_exoneracion").val("");
             linea_impuesto.find(".nombre_institucion").val("");
             linea_impuesto.find(".porcentaje_exoneracion").val(0);
+
+            linea_impuesto.find(".fec_ex_VL").val("");
+            linea_impuesto.find(".nom_ins_vL").val("");
+            linea_impuesto.find(".p_Ex_VL").val(0);
 
             linea_impuesto.find(".montEx").val(0);
             linea_impuesto.find(".montExVL").val(formato_moneda(0));
@@ -292,10 +299,32 @@ function campos_exoneracion(linea_impuesto = null, estado = true)
     }
 }
 
+
 //Document Ready
 $(document).ready(function () {
     //Cuando sale del campo .num_exoneracion
     $(document).on("blur", ".num_exoneracion", function () {
         buscar_exoneracion($(this).val(), $(this).parents(".linea_impuesto"));
+    });
+
+    //Cuando cambia el campo .fec_ex_VL
+    $(document).on("change", ".fec_ex_VL", function () {
+        //Colocar la fecha en el campo .fecha_exoneracion
+        $(this).parents(".linea_impuesto").find(".fecha_exoneracion").val($(this).val());
+    });
+
+    //Cuando cambia el campo .nom_ins_vL
+    $(document).on("change keyup", ".nom_ins_vL", function () {
+        //Colocar la fecha en el campo .nombre_institucion
+        $(this).parents(".linea_impuesto").find(".nombre_institucion").val($(this).val());
+    });
+
+    //Cuando cambia el campo .p_Ex_VL
+    $(document).on("change keyup", ".p_Ex_VL", function () {
+        //Colocar la fecha en el campo .porcentaje_exoneracion
+        $(this).parents(".linea_impuesto").find(".porcentaje_exoneracion").val($(this).val());
+
+        //Calcular la linea activa
+        calcular($(this).parents(".linea"));
     });
 });

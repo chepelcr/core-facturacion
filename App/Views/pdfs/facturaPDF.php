@@ -66,7 +66,7 @@
             <td><u>Emisor</u></td>
         </tr>
         <tr>
-            <td><b>Cedula</b>: <?=$documento->emisor_cedula;?></td>
+            <td><b>Cedula</b>: <?=formatear_cedula($documento->emisor_cedula, $documento->emisor_tipo);?></td>
             <td><b>Nombre</b>: <?=$documento->emisor_nombre;?></td>
             <td><b>Telefono</b>: <?=$documento->emisor_telefono;?></td>
         </tr>
@@ -81,7 +81,7 @@
             <td><u>Receptor</u></td>
         </tr>
         <tr>
-            <td><b>Cedula</b>: <?=$documento->receptor_cedula;?></td>
+            <td><b>Cedula</b>: <?=formatear_cedula($documento->receptor_cedula, $documento->receptor_tipo);?></td>
             <td><b>Nombre</b>: <?=$documento->receptor_nombre;?></td>
             <td><b>Telefono</b>: <?=$documento->receptor_telefono;?></td>
         </tr>
