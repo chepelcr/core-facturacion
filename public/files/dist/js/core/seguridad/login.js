@@ -1,7 +1,7 @@
 /**Direccion web de la pagina */
-var base = "http://localhost/core-facturacion/public/";
-//var base = "https://137.184.198.204/";
-//var base = "https://164.90.245.14/";
+//var base = "http://localhost/core-facturacion/public/";
+var base = "https://stag.modaslaura.works/";
+//var base = "https://facturacion.modaslaura.works/";
 
 let empresa = 'Modas Laura';
 
