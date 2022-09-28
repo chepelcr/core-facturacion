@@ -106,8 +106,11 @@
                             <div class="col-1">
                                 <div class="form-group">
                                     <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-percent"></i></span>
+                                        </div>
                                         <input class="form-control form-control-sm impP imp_P inp-fct calcular"
-                                            type="text" name="impuesto[tarifa][]" placeholder="%">
+                                            type="text" name="impuesto[tarifa][]" placeholder="13%">
 
                                     </div>
                                 </div>
@@ -198,7 +201,7 @@
 
                                             <input placeholder="Numero de exoneración"
                                                 class="form-control form-control-sm inp-fct impuesto_txt num_exoneracion"
-                                                type="text" name="impuesto[numero_exoneracion][]">
+                                                name="impuesto[numero_exoneracion][]" type="text">
                                         </div>
                                     </div>
 
@@ -211,8 +214,10 @@
                                             </div>
 
                                             <input placeholder="Institución"
-                                                class="form-control form-control-sm inp-fct impuesto_txt nombre_institucion"
-                                                type="text" name="impuesto[nombre_institucion][]">
+                                                class="form-control form-control-sm impuesto_txt nombre_institucion nom_ins_vL inp-fct"
+                                                type="text">
+                                            <input type="hidden" name="impuesto[nombre_institucion][]"
+                                                class="nombre_institucion impuesto_txt">
                                         </div>
                                     </div>
 
@@ -226,8 +231,10 @@
                                             </div>
 
                                             <input
-                                                class="form-control form-control-sm inp-fct impuesto_txt fecha_exoneracion"
-                                                type="date" name="impuesto[fecha_exoneracion][]">
+                                                class="form-control form-control-sm inp-fct impuesto_txt fecha_exoneracion fec_ex_VL"
+                                                type="date">
+                                            <input type="hidden" name="impuesto[fecha_exoneracion][]"
+                                                class="impuesto_txt fecha_exoneracion">
                                         </div>
                                     </div>
 
@@ -235,10 +242,14 @@
                                     <div class="col-md-1">
                                         <div class="input-group input-group-sm" data-toggle="tooltip"
                                             title="Porcentaje de exoneración">
-                                            <input placeholder="%"
-                                                class="form-control form-control-sm inp-fct imp_P porcentaje_exoneracion"
-                                                type="number" name="impuesto[porcentaje_exoneracion][]" min="0"
-                                                max="13">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-percent"></i></span>
+                                            </div>
+                                            <input placeholder="13%"
+                                                class="form-control form-control-sm inp-fct calcular imp_P porcentaje_exoneracion p_Ex_VL"
+                                                type="text">
+                                            <input type="text" name="impuesto[porcentaje_exoneracion][]"
+                                                class="imp_P porcentaje_exoneracion">
                                         </div>
                                     </div>
 
@@ -252,7 +263,7 @@
 
                                             <input class="form-control form-control-sm inp-fct VL montExVL" readonly
                                                 disabled type="text">
-                                            <input class=" montEx hide_num" class="montEx" type="hidden"
+                                            <input class=" montEx hide_num" type="hidden"
                                                 name="impuesto[monto_exoneracion][]" value="0">
                                         </div>
                                     </div>

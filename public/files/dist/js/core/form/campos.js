@@ -1,4 +1,4 @@
-/**Activar o desactivar campos codigo_venta  y cabys */
+ /**Activar o desactivar campos codigo_venta  y cabys */
 function campos_productos(estado = false, elemento = '') {
     activar_campo_clase('codigo_venta', estado, elemento);
 
@@ -111,8 +111,8 @@ function activar_campos_cedula(estado, nombre_elemento = '')
 
 /**Activar o desactivar campos del codigo cabys */
 function campos_cabys(estado, elemento = '') {
-    activar_campo_id('codigo_cabys', estado, elemento);
-    activar_campo_id('impuesto', estado, elemento);
+    activar_campo_clase('codigo_cabys', estado, elemento);
+    activar_campo_clase('impuesto', estado, elemento);
 }
 
 /**Activar o desactivar campos de un contribuyente */

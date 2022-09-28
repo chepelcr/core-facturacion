@@ -2,11 +2,11 @@
 
 <div class="row">
     <!-- Modulos del usuario -->
-    <div class="col-md-4">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between">
-                    <h3 class="card-title">Modulos</h3>
+                    <h3 class="card-title">Modulos de sistema</h3>
                     
                     <!-- Icono de modulo -->
                     <i class="fas fa-th"></i>
@@ -17,7 +17,7 @@
                 <div class="row">
                     <!-- Recorrer los modulos -->
                     <?php foreach($modulos as $modulo):?>
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between">
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Reporte de ventas -->
-    <div class="col-md-8">
+    <div class="col-md-8" hidden>
         <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between">

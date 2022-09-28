@@ -5,9 +5,6 @@ function abrir_perfil() {
         //Ocultar el modal de login
         $('#modal_login').modal('hide');
     }//Fin del if
-
-    //Collapse todos los card
-    $('#perfil').find('.card').CardWidget('collapse');
     
     //Desactivar los campos de perfil
     campos_perfil(false);
@@ -24,10 +21,7 @@ function abrir_perfil() {
 /**Editar el perfil del usuario que ha iniciado sesión */
 function editar_perfil(){
     //Si el elemento activo no es el perfil
-    if(modulo_activo != 'perfil'){
-        //Abrir el perfil
-        abrir_perfil();
-    }//Fin de la validacion
+    abrir_perfil();
 
     form_activo = 'frm_perfil';
     ruta_accion = 'seguridad/update/perfil';
@@ -75,6 +69,9 @@ function campos_perfil(activar = false){
 /**Cancelar la edicion del perfil */
 function cancelar_perfil()
 {
+    //Collapse todos los card
+    $('#perfil').find('.card').CardWidget('collapse');
+
     //Ocultar el panel_guardar del perfil
     $('#perfil').find('.panel-guardar').hide();
 

@@ -1,15 +1,21 @@
 /**Direccion web de la pagina */
-var base = "http://localhost:41062/www/core-facturacion/public/";
-//var base = "https://137.184.198.204/";
-//var base = "https://164.90.245.14/";
+//var base = "http://localhost/core-facturacion/public/";
+var base = "https://stag.modaslaura.works/";
+//var base = "https://facturacion.modaslaura.works/";
 
 let empresa = 'Modas Laura';
 
 var cambio_compra = 0;
 var cambio_venta = 0;
 
-var modulo_activo = 'login';
-var submodulo_activo = 'login';
+/**Modulo activo de la aplicacion */
+var modulo_activo = '';
+
+/**Submodulo activo de la aplicacion */
+var submodulo_activo = '';
+
+/**Elemento grafico activo en la aplicacion */
+var elemento_activo = '';
 
 /**Abrir el modal login */
 function abrir_login(modo = "login") {

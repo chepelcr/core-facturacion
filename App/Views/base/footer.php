@@ -8,7 +8,7 @@
     <!-- Default to the left -->
     <div class="row">
         <div class="col-1" data-toggle="tooltip" title="Tipo de cambio">
-            <button type="button" class="btn btn-dark btn-block btn-sm float-right" onclick="obtener_tipo_cambio()">
+            <button type="button" class="btn btn-dark btn-block btn-sm float-right" onclick="obtener_tipo_cambio()" id="btn_cambio">
                 <i class="fas fa-dollar-sign"></i>
             </button>
         </div>

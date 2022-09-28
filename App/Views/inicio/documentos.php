@@ -12,7 +12,7 @@
 
                     <div class="col-md-12 contenedor_facturas">
                         <div class="card">
-                            <div class="card-body scroll_vertical" id="contenedor_facturas" style="max-height: 350px;">
+                            <div class="card-body scroll_vertical" id="contenedor_facturas" style="max-height: 450px; overflow-y: auto;">
 
                             </div>
 
