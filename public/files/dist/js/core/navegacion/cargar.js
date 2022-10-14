@@ -1,26 +1,22 @@
 /**Cargar el modulo de inicio de un modulo */
-function cargar_inicio_modulo(nombre_modulo) {
-    poner_titulo(nombre_modulo);
+function cargar_inicio_modulo(nombre_modulo, vista_modulo = '') {
+    modulo_activo = nombre_modulo;
+    submodulo_activo = '';
+
+    poner_titulo(vista_modulo);
+
     desactivar_tooltips();
 
     if (nombre_modulo == 'documentos') {
         cargar_modulo('contenedor_' + nombre_modulo);
         
         cargar_documentos('emitidos');
-
-        elemento_activo = 'contenedor_' + nombre_modulo;
     }
 
     else {
         activar_modulo_boton(nombre_modulo);
 
-        //Cerrar todos los modal
-        $('.modal').modal('hide');
-
-        //Abrir el modal-nombre_modulo
-        $('#modal-' + nombre_modulo).modal('show');
-
-        elemento_activo = 'modal-' + nombre_modulo;
+        cargar_modal('modal-' + nombre_modulo);
     }
 
     activar_tooltips();
@@ -57,7 +53,13 @@ function loading(function_cargar = function () { }) {
 
 /**Cargar el modulo de inicio de la aplicacion */
 function cargar_inicio() {
-    poner_titulo('inicio');
+    elemento_activo = 'inicio';
+    form_activo = '';
+
+    modulo_activo = 'inicio';
+    submodulo_activo = '';
+
+    poner_titulo('Inicio');
     desactivar_tooltips();
 
     //Cargar el modulo de inicio
@@ -65,9 +67,6 @@ function cargar_inicio() {
 
     //Activar el boton de inicio
     activar_modulo_boton('inicio');
-
-    elemento_activo = '';
-    form_activo = '';
 
     activar_tooltips();
 }

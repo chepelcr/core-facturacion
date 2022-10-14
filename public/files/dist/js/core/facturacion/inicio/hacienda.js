@@ -1,3 +1,4 @@
+/**Enviar documento por correo electronico */
 function enviar_documento(id_documento = null) {
     if (id_documento != null) {
         Pace.track(function () {
@@ -16,7 +17,28 @@ function enviar_documento(id_documento = null) {
             });
         });
     }
-}
+}//Fin de la funcion para enviar el documento por correo electronico
+
+/**Enviar documento al ministerio de hacienda */
+function enviar_hacienda(id_documento = null) {
+    if (id_documento != null) {
+        Pace.track(function () {
+            $.ajax({
+                "url": base + "documentos/enviar_hacienda/" + id_documento,
+                "method": "POST",
+                "dataType": "json"
+            }).done(function (response) {
+                if (!response.error) {
+                    mensajeAutomatico('Atencion', response.mensaje, 'success');
+                }
+
+                else {
+                    mensajeAutomatico('Atencion', response.error, 'error');
+                }
+            });
+        });
+    }
+}//Fin de la funcion para enviar el documento al ministerio de hacienda
 
 /**Validar el estado de un documento enviado al ministerio de hacienda */
 function validar_documento(id = '') {

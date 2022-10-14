@@ -1,19 +1,43 @@
-var table = null;
+/**
+ * Tabla de datos de la vista
+ */
+let table = null;
+
+/**
+ * Fila actual de la tabla
+ */
 var fila_actual = null;
 
+/**
+ * URL del listado
+ */
 var url_listado = '';
+
+/**
+ * Nombre de la vista del modulo
+ */
+let nombre_vista_modulo = '';
+
+/**
+ * Nombre de la vista del submodulo
+ * */
+let nombre_vista_submodulo = '';
 
 /**Cargar el listado en el contenedor
  * @param {string} modulo Nombre del modulo
  * @param {string} submodulo Nombre del submodulo
+ * @param {string} vista Nombre del submodulo
  * @param {string} url Url del listado
  */
-function cargar_listado(modulo = '', submodulo = '', url = '') {
+function cargar_listado(modulo = '', submodulo = '', vista_modulo ="", vista_submodulo ="", url = '') {
     elemento_activo = '';
     formato = false;
     fila_actual = null;
 
     url_listado = url;
+
+    nombre_vista_modulo = vista_modulo;
+    nombre_vista_submodulo = vista_submodulo;
 
     desactivar_tooltips();
 
@@ -28,7 +52,7 @@ function cargar_listado(modulo = '', submodulo = '', url = '') {
                 type: 'GET',
             }).done(function (respuesta) {
                 if (!respuesta.error) {
-                    cargar_contenido(respuesta, modulo, submodulo);
+                    cargar_contenido(respuesta);
                 }
     
                 else {
@@ -43,10 +67,17 @@ function cargar_listado(modulo = '', submodulo = '', url = '') {
     }//Fin if
 }//Fin de cargar_listado
 
-/**Cargar contenido en un contenedor o modal */
+/**Cargar contenido en un contenedor o modal 
+ * @param {string} contenido Contenido a cargar
+*/
 function cargar_contenido(contenido) {
     var modulo = modulo_activo;
     var submodulo = submodulo_activo;
+
+    var vista_modulo = nombre_vista_modulo;
+    var vista_submodulo = nombre_vista_submodulo;
+
+    var elemento = 'modal-' + modulo + '-' + submodulo;
     
     //Mostrar la respuesta
     if ((modulo == 'empresa' && submodulo == 'ordenes') || (modulo == 'seguridad' && (submodulo == 'errores' || submodulo == 'auditorias'))) {
@@ -64,36 +95,30 @@ function cargar_contenido(contenido) {
 
     else {
         //Vaciar el contenedor del modal
-        $('#modal-' + modulo + '-' + submodulo).find('.contenedor_submodulo').empty();
+        $('#' + elemento).find('.contenedor_submodulo').empty();
 
         //Agregar el contenido al contenedor del modal
-        $('#modal-' + modulo + '-' + submodulo).find('.contenedor_submodulo').append(contenido);
+        $('#' + elemento).find('.contenedor_submodulo').append(contenido);
 
         //Collapse el card-form del modal
-        $('#modal-' + modulo + '-' + submodulo).find('.card-frm').hide();
+        $('#' + elemento).find('.card-frm').hide();
 
         if (modulo == 'empresa' && submodulo == 'productos') {
             //Esconder el card-cabys
-            $('#modal-' + modulo + '-' + submodulo).find('.card-cabys').hide();
+            $('#' + elemento).find('.card-cabys').hide();
         }
 
         //Mostrar el card-table del modal
-        $('#modal-' + modulo + '-' + submodulo).find('.card-table').show();
+        $('#' + elemento).find('.card-table').show();
 
-        if (elemento_activo != 'modal-' + modulo + '-' + submodulo) {
-            elemento_activo = 'modal-' + modulo + '-' + submodulo;
-
-            //Abrir modal-modulo-submodulo
-            $('#modal-' + modulo + '-' + submodulo).modal('show');
-
-            //Cerrar todos los modal menos el elemento activo
-            $('.modal').not('#' + elemento_activo).modal('hide');
+        if (elemento_activo != elemento) {
+            cargar_modal(elemento);
         }
     }
 
     activar_modulo_boton(modulo, submodulo);
 
-    poner_titulo(modulo, submodulo);
+    poner_titulo(vista_modulo, vista_submodulo);
 
     //Activar los tooltip
     activar_tooltips();

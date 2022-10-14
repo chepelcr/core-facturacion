@@ -105,7 +105,7 @@ function cancelar_accion()
     $('#' + elemento_activo).find('.card-table').CardWidget('expand');
 
     //Poner el nombre del submodulo en el titulo con la primera letra en mayuscula
-    $('#' + elemento_activo).find(".titulo-submodulo").html(submodulo_activo.charAt(0).toUpperCase() + submodulo_activo.slice(1));
+    $('#' + elemento_activo).find(".titulo-submodulo").html(nombre_vista_submodulo);
 }
 
 function enviar_frm(formulario = '', nombre_elemento = '') {

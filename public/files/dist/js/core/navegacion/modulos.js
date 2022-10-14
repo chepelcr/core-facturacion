@@ -32,7 +32,10 @@ function ocultar_contenedores() {
     $('.agregar').hide();
 }//Fin de ocultar_contenedores
 
-/**Mostrar un modulo grafico de la aplicacion */
+/**
+ * Mostrar un modulo grafico de la aplicacion 
+ * @param {string} nombre_modulo Nombre del modulo
+*/
 function cargar_modulo(nombre_modulo) {
     ocultar_contenedores();
 
@@ -43,55 +46,54 @@ function cargar_modulo(nombre_modulo) {
     $('#' + nombre_modulo).show();
 }
 
-/**Cambiar el titulo de la pagina y agregarla al historial */
-function poner_titulo(modulo, submodulo = 'inicio') {
-    modulo_activo = modulo;
-    submodulo_activo = submodulo;
+/**
+ * Cargar un modal de la aplicacion
+ * @param {string} nombre_modal Nombre del modal
+ */
+ function cargar_modal(nombre_modal)
+ {
+    elemento_activo = nombre_modal;
 
-    //modulo con primera letra en mayuscula
-    var modulo_mayuscula = modulo.charAt(0).toUpperCase() + modulo.slice(1);
+     //Cerrar todos los modal
+     $('.modal').modal('hide');
+ 
+     //Abrir el modal-nombre_modulo
+     $('#' + nombre_modal).modal('show');
+ }
+ 
 
-    //Submodulo con primera letra en mayuscula
-    var submodulo_mayuscula = submodulo.charAt(0).toUpperCase() + submodulo.slice(1);
+/**Cambiar el titulo de la pagina y agregarla al historial 
+ * @param {string} modulo Nombre del modulo
+ * @param {string} submodulo Nombre del submodulo
+*/
+function poner_titulo(modulo, submodulo = 'Inicio') {
+    $('.modulo-pagina').text(modulo);
 
-    //Eliminar guiones bajos de los nombres de los modulos en mayuscula
-    modulo_mayuscula = modulo_mayuscula.replace(/_/g, ' ');
+    $('.submodulo-pagina').text(submodulo);
 
-    //Eliminar guiones bajos de los nombres de los submodulos en mayuscula
-    submodulo_mayuscula = submodulo_mayuscula.replace(/_/g, ' ');
-
-    $('.modulo-pagina').text(modulo_mayuscula);
-
-    $('.submodulo-pagina').text(submodulo_mayuscula);
-
-    if (submodulo_mayuscula != 'Inicio') {
-        titulo = empresa + ' | ' + modulo_mayuscula + ' | ' + submodulo_mayuscula;
+    if (submodulo != 'Inicio') {
+        titulo = empresa + ' | ' + modulo + ' | ' + submodulo;
 
         //Agregar pagina al historial
-        history.pushState(null, null, base + modulo + '/' + submodulo);
+        history.pushState(null, null, base + modulo_activo + '/' + submodulo_activo);
     }
 
     else {
-        titulo = empresa + ' | ' + modulo_mayuscula;
+        titulo = empresa + ' | ' + modulo;
 
         //Agregar pagina al historial
-        history.pushState(null, null, base + modulo);
+        history.pushState(null, null, base + modulo_activo);
     }
 
     //Cambiar el titulo del navegador web
     $('title').text(titulo);
 }//Fin de poner_titulo
 
-/**Poner el titulo a un elemento */
-function poner_titulo_elemento(padre, clase, titulo) {
-    //Cambiar el titulo del elemento
-    $('#' + padre).find('.' + clase).attr('title', titulo);
 
-    //Activar tooltips
-    activar_tooltips();
-}
-
-/**Activar el boton para un modulo y su submodulo */
+/**Activar el boton para un modulo y su submodulo 
+ * @param {string} nombre_modulo Nombre del modulo
+ * @param {string} nombre_submodulo Nombre del submodulo
+*/
 function activar_modulo_boton(nombre_modulo, nombre_submodulo = '') {
     $('.nav-button').each(function (i, e) {
         //Desactivar todos los botones

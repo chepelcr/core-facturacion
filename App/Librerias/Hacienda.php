@@ -123,46 +123,67 @@ class Hacienda
 
         catch(Exception $e)
         {
+            //Eliminar el archivo p_firmar
+            unlink(location("archivos\\xml\\p_firmar\\" . $clave . ".xml"));
+            
             return false;
-        }
+        }//Fin del catch
     } //Fin del firmador del documento
 
     /**Enviar un XML al ministerio de hacienda */
-    public function enviar()
+    public function enviar($callback = false)
     {
         $xml64 = $this->xml64;
+        $clave = $this->clave;
 
-        $leer = json_encode(simplexml_load_string(base64_decode($xml64)));
-        $json = json_decode($leer);
+        //Si el xml64 ES NULO
+        if($xml64)
+        {
+            $leer = json_encode(simplexml_load_string(base64_decode($xml64)));
+            $json = json_decode($leer);
+            
+        }
+
+        else
+        {
+            $ruta = location("archivos\\xml\\firmados\\" . $clave . "_f.xml");
+            $leer = json_encode(simplexml_load_file($ruta));
+            $json = json_decode($leer);
+
+            $xml64 = base64_encode(file_get_contents($ruta));
+        }
+
+        $data = json_encode(array(
+            "clave" => $json->Clave,
+            "fecha" => date('c'),
+            "emisor" => array(
+                "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
+                "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
+            ),
+            "comprobanteXml" => $xml64
+        ));
 
         /**Validar si el json tiene receptor */
         if (isset($json->Receptor)) {
-            $data = json_encode(array(
-                "clave" => $json->Clave,
-                "fecha" => date('c'),
-                "emisor" => array(
-                    "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
-                    "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
-                ),
-                "receptor" => array(
-                    "tipoIdentificacion" => $json->Receptor->Identificacion->Tipo,
-                    "numeroIdentificacion" => $json->Receptor->Identificacion->Numero,
-                ),
-                "comprobanteXml" => $xml64
-            ));
-        } else {
-            $data = json_encode(array(
-                "clave" => $json->Clave,
-                "fecha" => date('c'),
-                "emisor" => array(
-                    "tipoIdentificacion" => $json->Emisor->Identificacion->Tipo,
-                    "numeroIdentificacion" => $json->Emisor->Identificacion->Numero,
-                ),
-                "comprobanteXml" => $xml64
-            ));
+            //Agregar "receptor" al json
+            $data = json_decode($data, true);
+            $data->receptor = array(
+                "tipoIdentificacion" => $json->Receptor->Identificacion->Tipo,
+                "numeroIdentificacion" => $json->Receptor->Identificacion->Numero,
+            );
+            $data = json_encode($data);
         }
 
-        //token
+        if($callback)
+        {
+            //Agregar el campo "callbackUrl" => baseUrl("documentos/respuesta"),
+
+            $data = json_decode($data);
+            $data->callbackUrl = baseUrl("documentos/respuesta");
+            $data = json_encode($data);
+        }
+
+        //Agregar el token
         $header = array(
             "Authorization: bearer " . $this->token(),
             "Content-Type: application/json",
@@ -181,6 +202,12 @@ class Hacienda
         //ejecutar el curl
         $respuesta = curl_exec($curl);
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        //Si el status es 400, y la respuesta tiene un campo x-errror-clause que dice "El comprobante [$clave] ya fue recibido anteriormente."
+        if($status == 400 && strpos($respuesta, "El comprobante [$clave] ya fue recibido anteriormente.") !== false)
+        {
+            $status = 200;
+        }
         
         curl_close($curl);
         //obtener respuesta
@@ -373,4 +400,22 @@ class Hacienda
 
         return false;
     }//Fin de la funcion para enviar un documento por correo electronico
+
+    public function validar_respuesta($respuesta, $clave)
+    {
+        $xml = json_decode($respuesta, true);
+
+        if (isset($respuesta['respuesta-xml'])) {
+            $respuesta_xml = $respuesta['respuesta-xml'];
+            $stringXML = base64_decode($respuesta_xml);
+
+            $salida = location("archivos\\xml\\respuesta\\" . $clave . ".xml");
+            $doc = new DomDocument();
+            $doc->preseveWhiteSpace = false;
+            $doc->loadXml($stringXML);
+            $doc->save($salida);
+        }
+
+        return json_encode(array('response' => $respuesta, 'xml' => $xml));
+    }
 }//Fin de la clase

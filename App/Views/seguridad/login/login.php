@@ -32,14 +32,14 @@
     </div>
     <!-- /.card-body -->
 
-    <div class="card card-footer bg-gradient-blue">
+    <div class="card-footer bg-gradient-blue">
         <div class="row">
             <div class="col-12">
-                <!-- Abrir en una nueva pestaña -->
-                <a href="<?= baseUrl('login/olvido') ?>" target="_blank"
-                    class="btn btn-block btn-danger">
-                    <i class="fas fa-unlock-alt"></i> Recuperar contraseña
-                </a>
+                <button type="button" class="btnOlvido btn btn-block btn-danger">
+                    <div class="d-flex justify-content-around">
+                        <i class="fas fa-unlock-alt"></i> Recuperar contraseña
+                    </div>
+                </button>
             </div>
             <!-- /.col -->
         </div>

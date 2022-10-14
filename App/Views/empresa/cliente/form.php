@@ -28,5 +28,4 @@
     <div class="col-md-12">
         <?= view('base/persona/ubicacion', $dataProvincias) ?>
     </div>
-
 </div>

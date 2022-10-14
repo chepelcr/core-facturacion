@@ -95,10 +95,10 @@
                                         <div class="dropdown-item p-1">
                                             <div class="row">
                                                 <?php
-                                                if ($documento->envio_atv != '1') {
+                                                if ($documento->envio_atv == '1') {
                                                     //Mostrar boton de enviar
                                                     echo '<div class="col-md-6">
-                                                            <button disabled onclick="enviar_documento(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Enviar documento" class="btn btn-success btn-enviar btn-block">
+                                                            <button onclick="enviar_hacienda(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Enviar documento" class="btn btn-success btn-enviar btn-block">
                                                                 <i class="fas fa-paper-plane"></i>
                                                             </button>
                                                         </div>';
@@ -111,49 +111,7 @@
                                                         </div>';
                                                 }
 
-                                                if ($documento->valido_atv == '0' && $documento->envio_atv == '1') {
-                                                    //Mostrar boton de validar
-                                                    echo '<div class="col-md-12">
-                                                            <button onclick="validar_documento(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Validar documento" class="btn btn-warning btn-validar btn-block">
-                                                                <i class="fas fa-check-circle"></i>
-                                                            </button>
-                                                        </div>';
-                                                }
-
-                                                if ($documento->valido_atv == '1') {
-                                                    if($documento->correo_enviado == '0'){
-                                                        //Mostrar boton de enviar correo
-                                                        echo '<div class="col-md-12">
-                                                                <button onclick="enviar_documento(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Enviar correo" class="btn btn-info btn-correo btn-block">
-                                                                    <i class="fas fa-envelope"></i>
-                                                                </button>
-                                                            </div>';
-                                                    }
-    
-                                                    else
-                                                    {
-                                                        //Mostrar boton de reenviar correo
-                                                        echo '<div class="col-md-4">
-                                                                <button onclick="enviar_documento(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Reenviar correo" class="btn btn-info btn-correo btn-block">
-                                                                    <i class="fas fa-envelope"></i>
-                                                                </button>
-                                                            </div>';
-
-                                                        //Emitir nota de credito
-                                                    echo '<div class="col-md-4">
-                                                            <button onclick="emitir_nota_credito(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" disabled title="Emitir nota de credito" class="btn btn-danger btn-nota-credito btn-block">
-                                                                <i class="fas fa-funnel-dollar"></i>
-                                                            </button>
-                                                        </div>';
-
-                                                    //Emitir nota de debito
-                                                    echo '<div class="col-md-4">
-                                                            <button onclick="emitir_nota_debito(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" disabled title="Emitir nota de debito" class="btn btn-warning btn-nota-debito btn-block">
-                                                                <i class="fas fa-coins"></i>
-                                                            </button>
-                                                        </div>';
-                                                    }
-                                                }
+                                                
                                                 ?>
                                             </div>
                                         </div>

@@ -16,8 +16,60 @@
             <div class="card-body scroll_vertical">
                 <div class="row">
                     <!-- Recorrer los modulos -->
-                    <?php foreach($modulos as $modulo):?>
-                    <div class="col-md-4">
+                    <?php 
+                        $cantidad_modulos = count((array)$modulos);
+                        $modulos_recorridos = 0;
+
+                        foreach($modulos as $modulo):
+                        
+                            $modulos_recorridos++;
+
+                            echo '<!-- '.$modulo->nombre_modulo.' -->';
+                            
+                            switch ($cantidad_modulos) {
+                                case '1':
+                                    echo '<div class="col-md-12">';
+                                    break;
+
+                                case '2':
+                                    echo '<div class="col-md-6">';
+                                    break;
+
+                                case '3':
+                                    echo '<div class="col-md-4">';
+                                    break;
+
+                                case '4':
+                                    echo '<div class="col-md-3">';
+                                    break;
+
+                                case '5':
+                                    if($modulos_recorridos <= 3)
+                                    {
+                                        echo '<div class="col-md-4">';
+                                    }
+                                    else
+                                    {
+                                        echo '<div class="col-md-6">';
+                                    }
+                                    break;
+
+                                case '6':
+                                    echo '<div class="col-md-4">';
+                                    break;
+
+                                case '7':
+                                    if($modulos_recorridos <= 5)
+                                    {
+                                        echo '<div class="col-md-3">';
+                                    }
+                                    else
+                                    {
+                                        echo '<div class="col-md-6">';
+                                    }
+                                    break;
+                            }
+                        ?>
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between">
@@ -38,7 +90,7 @@
 
                             <div class="card-body text-center">
                                 <!-- Boton para obtener el modulo de empresa -->
-                                <button type="button" onclick="cargar_inicio_modulo('<?php echo $modulo->nombre_modulo?>')"
+                                <button type="button" onclick="cargar_inicio_modulo('<?= $modulo->nombre_modulo?>', '<?= $modulo->nombre_vista?>')"
                                     class="btn btn-dark">
                                     Entrar
                                 </button>

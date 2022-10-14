@@ -16,7 +16,11 @@
                         echo icono('walmart.png', 'Walmart');
                     endif;
                 ?>
-                    <?=$nombre_vista?>
+                    <?php
+                        $nombre_vista_modulo = $nombre_vista;
+
+                        echo $nombre_vista_modulo;
+                    ?>
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" onclick="cargar_inicio()" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
@@ -36,7 +40,7 @@
 
                             foreach($submodulos as $submodulo):
                                 $nombre_submodulo = $submodulo->nombre_submodulo;
-                                $nombre_vista = $submodulo->nombre_vista;
+                                $nombre_vista_submodulo = $submodulo->nombre_vista;
                                 $icono = $submodulo->icono;
                                 $url = $submodulo->url;
                                 $acciones = $submodulo->acciones;
@@ -93,7 +97,7 @@
                                     <div class="card-header">
                                         <div class="d-flex justify-content-between">
                                             <h3 class="card-title">
-                                                <?=$nombre_vista?>
+                                                <?=$nombre_vista_submodulo?>
                                             </h3>
 
                                             <?php
@@ -115,8 +119,8 @@
                                             <div class="col-md-8">
                                                 <!-- Boton para entrar al modulo -->
                                                 <button class="btn btn-info btn-block" data-toggle="tooltip"
-                                                    title="Ir a <?=$nombre_vista?>"
-                                                    onclick="cargar_listado('<?=$nombre_modulo?>', '<?=$nombre_submodulo?>', '<?= baseUrl($url)?>')">
+                                                    title="Ir a <?=$nombre_vista_submodulo?>"
+                                                    onclick="cargar_listado('<?=$nombre_modulo?>', '<?=$nombre_submodulo?>', '<?=$nombre_vista_modulo?>', '<?=$nombre_vista_submodulo?>', '<?= baseUrl($url)?>')">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
                                             </div>

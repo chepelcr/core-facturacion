@@ -10,7 +10,7 @@
                     <i class="fa <?=$icono?>"></i>
                     <!-- Contenedor para cambiar el titulo: .titulo-submodulo -->
                     <span class="titulo-submodulo">
-                        <?=ucfirst(str_replace('_', ' ', $nombre_submodulo))?>
+                        <?=$nombre_vista?>
                     </span>
                 </h5>
                 <button type="button" class="close text-white" onclick="cargar_inicio_modulo('<?=$nombre_modulo?>')"
@@ -35,7 +35,7 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <button type="button" class="btn bg-gradient-teal btn-block"
-                                            onclick="cargar_inicio_modulo('<?=$nombre_modulo?>')" data-toggle="tooltip"
+                                            onclick="cargar_inicio_modulo('<?=$nombre_modulo?>', '<?=$nombre_vista?>')" data-toggle="tooltip"
                                             title="Volver" data-dismiss="modal">
                                             <i class="fa fa-arrow-left"></i>
                                         </button>
@@ -57,6 +57,7 @@
                                 </div>
                             </div>
 
+                            <?php if($nombre_modulo != 'configuracion'):?>
                             <div class="col-md-4 card-table">
                                 <div class="row">
                                     <!-- Descargar listado -->
@@ -92,6 +93,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <?php endif;?>
 
                             <div class="col-md-12 card-frm">
                                 <div class="row d-flex justify-content-between">
@@ -102,7 +104,7 @@
                                         </button>
                                     </div>
 
-                                    <?php if(validar_permiso($nombre_modulo, $nombre_submodulo, 'insertar')):?>
+                                    <?php if(validar_permiso($nombre_modulo, $nombre_submodulo, 'insertar') && $nombre_modulo!= 'configuracion'):?>
                                     <div class="col-md-2 btt-grd">
                                         <button type="button" onclick="enviar_formulario()" class="btn btn-success btn-grd btn-block" data-toggle="tooltip"
                                             title="Guardar">

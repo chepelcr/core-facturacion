@@ -12,7 +12,7 @@
         </div>
         <!-- /.card-body -->
 
-        <div class="card card-footer bg-gradient-blue">
+        <div class="card-footer bg-gradient-blue">
             <div class="row d-flex justify-content-around">
                 <?php if(!getSession('contrasenia_expiro')): ?>
                 <div class="col-3 text-center">

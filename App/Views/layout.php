@@ -93,7 +93,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
                         <div class="col-md-12">
-                            <div class="card card-body contenedor" id="contenedor">
+                            <div class="contenedor" id="contenedor">
                             </div>
                         </div>
                     </div>

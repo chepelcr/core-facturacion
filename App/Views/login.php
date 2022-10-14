@@ -29,6 +29,8 @@
 <body class="hold-transition login-page bg-olive">
     <div class="login-box">
         <?=view('seguridad/login/login')?>
+
+        <?=view('seguridad/login/olvido')?>
     </div>
     <!-- /.login-box -->
 
