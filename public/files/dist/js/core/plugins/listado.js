@@ -23,10 +23,12 @@ let nombre_vista_modulo = '';
  * */
 let nombre_vista_submodulo = '';
 
-/**Cargar el listado en el contenedor
+/**
+ * Cargar el listado en el contenedor
  * @param {string} modulo Nombre del modulo
  * @param {string} submodulo Nombre del submodulo
- * @param {string} vista Nombre del submodulo
+ * @param {string} vista_modulo Nombre visual del modulo
+ * @param {string} vista_submodulo Nombre visual del submodulo
  * @param {string} url Url del listado
  */
 function cargar_listado(modulo = '', submodulo = '', vista_modulo ="", vista_submodulo ="", url = '') {

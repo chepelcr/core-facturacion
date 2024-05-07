@@ -17,7 +17,11 @@ var submodulo_activo = '';
 /**Elemento grafico activo en la aplicacion */
 var elemento_activo = '';
 
-/**Abrir el modal login */
+/** 
+ * Abrir el modal login 
+ * @param {string} modi - Modo en el que se abrira el modal login
+ * 
+*/
 function abrir_login(modo = "login") {
     /**Mostrar el #modal_login */
     $('#modal_login').modal('show');
@@ -117,7 +121,7 @@ function salir() {
 
 //Cuando el documento este listo
 $(document).ready(function () {
-    //Iniciar sesion en la aplicacin
+    //Iniciar sesion en la aplicacion
     $("#frmLogin").on("submit", function (e) {
         e.preventDefault();
 

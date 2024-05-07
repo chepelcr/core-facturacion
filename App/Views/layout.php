@@ -26,7 +26,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </figure>
         </div>
 
-        <?= view('base/nav', array('modulos'=>$modulos))?>
+        <?= view('base/navbar', array('modulos'=>$modulos))?>
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">

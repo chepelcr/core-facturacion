@@ -7,7 +7,6 @@ use App\Models\CodigosPaisesModel;
 use App\Models\EmpresasModel;
 use App\Models\RolesModel;
 use App\Models\TipoIdentificacionModel;
-use App\Models\UbicacionesModel;
 use App\Models\UsuariosModel;
 use Core\Auditorias\AuditoriaModel;
 use Core\Auditorias\ErroresModel;
@@ -35,6 +34,11 @@ class Seguridad extends BaseController
 		'roles' => true,
 	);
 
+	/**
+	 * Cargar pagina de inicio del modulo de seguridad
+	 * 
+	 * @return view Vista de inicio del modulo
+	 */
 	public function index()
 	{
 		if (is_login()) {
@@ -55,7 +59,11 @@ class Seguridad extends BaseController
 			header('Location: ' . baseUrl('login'));
 	} //Fin de la funcion index
 
-	/**Obtener todos los usuarios del sistema */
+	/**
+	 * Obtener todos los usuarios de la apliacion 
+	 * 
+	 * @return json Lista de usuarios
+	 */
 	public function usuarios()
 	{
 		if (!is_login()) {

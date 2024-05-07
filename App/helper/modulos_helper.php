@@ -123,3 +123,61 @@ function desformatear_cedula($cedula)
         return 0;
     }
 }
+
+/**
+ * Obtener el tamaño de una columna para un grid
+ * 
+ * @param int $v_cantidad_modulos Cantidad de modulos que se mostrarán en el grid
+ * @param int $v_recorridos Cantidad de modulos que se han recorrido
+ * 
+ * @return string Tamaño del card en col-md-*
+ */
+function getMdSize($v_cantidad_modulos, $v_recorridos)
+{
+    switch ($v_cantidad_modulos) {
+        case '1':
+            echo 'col-md-12';
+            break;
+
+        case '2':
+            echo 'col-md-6';
+            break;
+
+        case '3':
+            echo 'col-md-4';
+            break;
+
+        case '4':
+            echo 'col-md-3';
+            break;
+
+        case '5':
+            if ($v_recorridos <= 3) {
+                echo 'col-md-4';
+            } else {
+                echo 'col-md-6';
+            }
+            break;
+
+        case '6':
+            echo 'col-md-4';
+            break;
+
+        case '7':
+            if ($v_recorridos <= 5) {
+                echo 'col-md-3';
+            } else {
+                echo 'col-md-6';
+            }
+            break;
+    }
+}
+
+$response = array(
+    'status' => 404,
+    'message' => 'No se ha podido iniciar sesion'
+);
+
+return json_encode($response);
+
+

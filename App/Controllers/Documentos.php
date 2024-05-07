@@ -12,6 +12,7 @@ use App\Models\ConsecutivosModel;
 use App\Models\DocumentoModel;
 use App\Models\EmpresasModel;
 use App\Models\ProductosModel;
+use App\Models\TipoCambioModel;
 use Core\Config\Header;
 use DOMDocument;
 
@@ -694,6 +695,11 @@ class Documentos extends BaseController
 
             $moneda = post('moneda');
             $tipo_cambio = post('tipo_cambio');
+
+            if(!$tipo_cambio){
+                $tipoCambioModel = new TipoCambioModel();
+                $tipo_cambio = $tipoCambioModel->obtener($moneda);
+            }
 
             //Efectivo
             $efectivo = post('efectivo');

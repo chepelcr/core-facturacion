@@ -22,12 +22,24 @@ class TipoCambioModel extends Model
 
 	protected $auditorias = true;
 
-	/**Obtener el tipo de cambio mas reciente por el codigo de indicador */
+	/**Obtener el tipo de cambio mas reciente por el codigo de indicador 
+	 * @param int $id
+	 * 
+	 * @return object|array Objeto con el tipo de cambio o array con todos los tipos de cambio
+	 */
 	function obtener($id)
 	{
 		switch ($id) {
 			case 'all':
 				return $this->getAll();
+				break;
+
+			case 'CRC':
+				return $this->where('codigo_indicador', 317)->fila();
+				break;
+
+			case 'USD':
+				return $this->where('codigo_indicador', 318)->fila();
 				break;
 
 			default:
@@ -36,4 +48,3 @@ class TipoCambioModel extends Model
 		}
 	}
 }//Fin de la clase
-?>

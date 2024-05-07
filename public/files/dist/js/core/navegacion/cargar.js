@@ -1,4 +1,9 @@
-/**Cargar el modulo de inicio de un modulo */
+/**
+ * Cargar el modulo de inicio de un modulo 
+ * 
+ * @param {string} nombre_modulo Nombre del modulo
+ * @param {string} vista_modulo Nombre visual del modulo
+ */
 function cargar_inicio_modulo(nombre_modulo, vista_modulo = '') {
     modulo_activo = nombre_modulo;
     submodulo_activo = '';
@@ -37,6 +42,7 @@ function loading(function_cargar = function () { }) {
                 $('.main-header').show();
                 $('.main-footer').show();
                 $('.content-wrapper').show();
+                $('.navbar').show();
 
                 obtener_tipo_cambio();
 

@@ -1,70 +1,114 @@
 <?php
-    namespace Core\Permisos;
 
-    use Core\Model;
+namespace Core\Permisos;
 
-    /**Manejar los submodulos de la aplicacion */
-    class SubmodulosAccionesModel extends Model
+use Core\Model;
+
+/** 
+ * Manejar los modulos, submodulos y acciones de la aplicacion.
+ * 
+ * @package Core\Permisos\
+ * @version 1.0.0
+ * @author JCampos
+ */
+class SubmodulosAccionesModel extends Model
+{
+    protected $nombreTabla = "submodulos_acciones";
+
+    protected $vistaTabla = 'submodulos_acciones_view';
+
+    protected $dbGroup = 'seguridad';
+
+    protected $camposTabla = [
+        'id_modulo',
+        'id_submodulo',
+        'id_accion',
+    ];
+
+    protected $camposVista = [
+        'nombre_modulo',
+        'nombre_submodulo',
+        'nombre_accion',
+    ];
+
+    protected $auditorias = true;
+
+    /**
+     * Obtener todos los modulos de la aplicacion 
+     * 
+     * @return array Modulos de la aplicacion
+     */
+    public function modulos()
     {
-        protected $nombreTabla = "submodulos_acciones";
+        $this->vista('modulos');
+        
+        $this->select('id_modulo');
+        $this->select('nombre_modulo');
+        $this->select('icono');
 
-        protected $vistaTabla = 'submodulos_acciones_view';
+        $modulos = $this->getAll();
 
-        protected $dbGroup = 'seguridad';
+        foreach ($modulos as $modulo) {
+            $permisosModel = new SubmodulosAccionesModel();
+            $submodulos = $permisosModel->submodulos($modulo->id_modulo);
 
-        protected $camposTabla = [
-            'id_modulo',
-            'id_submodulo',
-            'id_accion',
-        ];
+            $modulo->submodulos = $submodulos;
+        }
 
-        protected $camposVista = [
-            'nombre_modulo',
-            'nombre_submodulo',
-            'nombre_accion',
-        ];
+        return $modulos;
+    } //Fin de la funcion
 
-        protected $auditorias = true;
+    /**
+     * Obtener todos los submodulos para un modulo 
+     * 
+     * @param int $id_modulo ID del modulo a consultar
+     * 
+     * @return array Submodulos del modulo
+     */
+    public function submodulos($id_modulo)
+    {
+        $this->vista('submodulos_view');
 
-        /**Obtener todos los modulos de la aplicacion */
-        public function modulos()
-        {
-            $this->vista('modulos')->select('id_modulo')->select('nombre_modulo')->select('icono');
+        $this->select('id_submodulo');
+        $this->select('nombre_submodulo');
+        $this->select('icono');
+        $this->select('objeto');
+        $this->select('url');
 
-            $modulos = $this->getAll();
+        $this->where('id_modulo', $id_modulo);
 
-            foreach ($modulos as $modulo) {
-                $permisosModel = new SubmodulosAccionesModel();
-                $submodulos = $permisosModel->submodulos($modulo->id_modulo);
+        $submodulos = $this->getAll();
 
-                $modulo->submodulos = $submodulos;
-            }
+        foreach ($submodulos as $submodulo) {
+            $permisosModel = new SubmodulosAccionesModel();
+            $acciones = $permisosModel->acciones($id_modulo, $submodulo->id_submodulo);
 
-            return $modulos;
-        }//Fin de la funcion
+            $submodulo->acciones = $acciones;
+        }
 
-        /**Obtener todos los submodulos para un modulo */
-        public function submodulos($id_modulo)
-        {
-            $this->vista('submodulos_view')->select('id_submodulo')->select('nombre_submodulo')->select('icono')->select('objeto')->select('url')->where('id_modulo', $id_modulo);
-            $submodulos = $this->getAll();
-            
-            foreach ($submodulos as $submodulo) {
-                $permisosModel = new SubmodulosAccionesModel();
-                $acciones = $permisosModel->acciones($id_modulo, $submodulo->id_submodulo);
+        return (object) $submodulos;
+    } //Fin de la funcion
 
-                $submodulo->acciones = $acciones;
-            }
+    /**
+     * Obtener todas las acciones para un submodulo
+     * 
+     * @param int $id_modulo ID del modulo a consultar
+     * @param int $id_submodulo ID del submodulo a consultar
+     * 
+     * @return array Acciones del submodulo
+     */
+    public function acciones($id_modulo, $id_submodulo)
+    {
+        $this->select('id_accion');
+        $this->select('nombre_accion');
+        $this->select('icono');
 
-            return (object) $submodulos;
-        }//Fin de la funcion
+        $this->where('id_modulo', $id_modulo);
+        $this->where('id_submodulo', $id_submodulo);
 
-        public function acciones($id_modulo, $id_submodulo)
-        {
-            $this->select('id_accion')->select('nombre_accion')->select('icono')->where('id_modulo', $id_modulo)->where('id_submodulo', $id_submodulo);
-            $acciones = $this->getAll();
+        $acciones = $this->getAll();
 
-            return (object) $acciones;
-        }//Fin de la funcion
+        return (object) $acciones;
+    } //Fin de la funcion
 
-    }//Fin de la clase
+}//Fin de la clase

@@ -431,6 +431,8 @@ function enviar_formulario() {
 
         var formData = new FormData($('#' + nombre_form)[0]);
 
+        //Agregar el nombre de 
+
         //console.log(formData);
 
         campos_activos(true, nombre_form);

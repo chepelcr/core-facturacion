@@ -59,7 +59,7 @@
                     <?php
                         foreach ($submodulos as $submodulo):
                             $nombre_submodulo = $submodulo->nombre_submodulo;
-                            $nombre_vista = $submodulo->nombre_vista;
+                            $nombre_vista_submodulo = $submodulo->nombre_vista;
                             $icono = $submodulo->icono;
                             $url = $submodulo->url;
 
@@ -67,9 +67,9 @@
                                 if(validar_permiso($nombre_modulo, $nombre_submodulo, 'consultar')):
                             ?>
                             <div class="p-1">
-                                <button data-toggle="tooltip" title="<?= $nombre_vista?>"
+                                <button data-toggle="tooltip" title="<?= $nombre_vista_submodulo?>"
                                     class="w-50 btn btn-dark nav-button btn_<?=$nombre_modulo.'_'.$nombre_submodulo?>"
-                                    onclick="cargar_listado('<?=$nombre_modulo?>', '<?=$nombre_submodulo?>', '<?=baseUrl($url)?>')">
+                                    onclick="cargar_listado('<?=$nombre_modulo?>', '<?=$nombre_submodulo?>', '<?=$nombre_vista?>', '<?=$nombre_vista_submodulo?>', '<?= baseUrl($url)?>')">
                                     <i class="fa-solid <?=$icono?>"></i>
                                 </button>
                             </div>
@@ -80,7 +80,7 @@
                                 if($nombre_submodulo != 'importar'):
                             ?>
                             <div class="p-1">
-                                <button data-toggle="tooltip" title="<?=$nombre_vista?>"
+                                <button data-toggle="tooltip" title="<?=$nombre_vista_submodulo?>"
                                     class="w-50 btn btn-dark nav-button btn_<?=$nombre_modulo.'_'.$nombre_submodulo?>"
                                     onclick="cargar_documentos('<?=$nombre_submodulo?>')">
                                     <i class="fa-solid <?=$icono?>"></i>
@@ -90,7 +90,7 @@
                                 else:
                             ?>
                             <div class="p-1">
-                                <button data-toggle="tooltip" title="<?=$nombre_vista?>"
+                                <button data-toggle="tooltip" title="<?=$nombre_vista_submodulo?>"
                                     class="w-50 btn btn-dark nav-button btn_<?=$nombre_modulo.'_'.$nombre_submodulo?>"
                                     onclick="importar_documentos()">
                                     <i class="fa-solid <?=$icono?>"></i>
