@@ -2,3 +2,5 @@
 .env
 public/archivos/
 .env
+
+.DS_Store
