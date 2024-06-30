@@ -10,7 +10,7 @@
 
         protected $vistaTabla = 'submodulos_acciones_view';
 
-        protected $dbGroup = 'seguridad';
+        
 
         protected $camposTabla = [
             'id_modulo',

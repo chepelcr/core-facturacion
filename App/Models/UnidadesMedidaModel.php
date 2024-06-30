@@ -15,7 +15,7 @@ class UnidadesMedidaModel extends Model
 		'simbolo',
 	];
 
-	protected $dbGroup = 'facturacion';
+	
 
 	protected $autoIncrement = true;
 

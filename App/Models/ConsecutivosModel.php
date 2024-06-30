@@ -15,7 +15,7 @@ class ConsecutivosModel extends Model
         'consecutivo'
     ];
 
-    protected $dbGroup = 'facturacion';
+    
 
 	protected $autoIncrement = true;
 

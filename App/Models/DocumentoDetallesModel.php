@@ -38,7 +38,6 @@ class DocumentoDetallesModel extends Model
 
     protected $autoIncrement = true;
 
-    protected $dbGroup = 'facturacion';
 
     protected $auditorias = true;
 

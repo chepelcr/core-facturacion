@@ -43,7 +43,7 @@ class ClientesModel extends Model
         'codigo_telefono'
     ];
 
-    protected $dbGroup = 'facturacion';
+    
 
     protected $autoIncrement = true;
 

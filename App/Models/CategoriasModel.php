@@ -15,7 +15,7 @@ class CategoriasModel extends Model
 		'updated_at'
 	];
 
-	protected $dbGroup = 'facturacion';
+	
 
 	protected $autoIncrement = true;
 

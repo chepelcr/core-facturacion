@@ -19,9 +19,11 @@
 	
 			$user = getEnt('database.'.$dbGroup.'.user');
 			$pswd = getEnt('database.'.$dbGroup.'.pswd');
+
+			$port = getEnt('database.'.$dbGroup.'.port');
 			
 			if (!isset(self::$instance[$dbGroup])) {
-				self::$instance[$dbGroup] = new PDO('mysql:host='.$host.';dbname='.$database, $user, $pswd, $pdo_options);
+				self::$instance[$dbGroup] = new PDO('mysql:host='.$host.';dbname='.$database.';port='.$port, $user, $pswd, $pdo_options);
 			}//Fin de validacion de instancia de conexion
 
 			//Poner el conjunto de caracteres a utf8

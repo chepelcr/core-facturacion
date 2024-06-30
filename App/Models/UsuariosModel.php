@@ -12,7 +12,7 @@ class UsuariosModel extends Model
 
 	protected $pk_tabla = 'id_usuario';
 
-	protected $dbGroup = 'seguridad';
+	
 
 	protected $camposTabla = [
 		'nombre',

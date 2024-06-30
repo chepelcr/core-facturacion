@@ -16,7 +16,7 @@ class FormatosModel extends Model
         'estado',
 	];
 
-	protected $dbGroup = 'walmart';
+	
 
 	protected $autoIncrement = true;
 

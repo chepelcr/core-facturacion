@@ -6,6 +6,7 @@
     class ProductosCompraModel extends Model
     {
         protected $nombreTabla = 'productos';
+        
         protected $pk_tabla = 'id_producto';
 
         protected $vistaTabla = 'productos_compras_view';

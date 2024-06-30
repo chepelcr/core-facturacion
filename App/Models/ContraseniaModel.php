@@ -8,7 +8,7 @@ class ContraseniaModel extends Model
         protected $nombreTabla = 'contrasenia_usuarios';
         protected $pk_tabla = 'id_contrasenia';
 
-        protected $dbGroup = 'seguridad';
+        
 
         protected $camposTabla = [
             'id_usuario',

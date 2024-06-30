@@ -12,7 +12,7 @@
 
         protected $vistaTabla = 'permisos_view';
 
-        protected $dbGroup = 'seguridad';
+        
 
         protected $camposTabla = [
             'id_rol',

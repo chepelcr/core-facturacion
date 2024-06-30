@@ -37,7 +37,7 @@
             'nombre_categoria',
         ];
 
-        protected $dbGroup = 'facturacion';
+        
 
         protected $autoIncrement = true;
 

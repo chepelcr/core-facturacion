@@ -40,7 +40,7 @@ class EmpresasModel extends Model
         'barrio',
     ];
 
-    protected $dbGroup = 'seguridad';
+    
 
     protected $auditorias = true;
     protected $autoIncrement = true;

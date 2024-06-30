@@ -19,7 +19,7 @@ class TiendasModel extends Model
         'estado',
 	];
 
-	protected $dbGroup = 'walmart';
+	
 
 	protected $autoIncrement = true;
 

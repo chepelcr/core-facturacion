@@ -15,5 +15,5 @@
             'codigo_telefono'
         ];
 
-        protected $dbGroup = 'seguridad';
+        
     }//Fin de la clase

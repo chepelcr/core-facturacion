@@ -13,6 +13,6 @@ class TipoIdentificacionModel extends Model
 		'tipo_identificacion',
 	];
 
-	protected $dbGroup = 'seguridad';
+	
 }//Fin de la clase
 ?>

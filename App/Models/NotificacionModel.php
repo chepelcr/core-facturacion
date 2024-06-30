@@ -20,7 +20,7 @@ class TiendasModel extends Model
 		'id_usuario',
 	];
 
-	protected $dbGroup = 'seguridad';
+	
 
 	protected $autoIncrement = true;
 

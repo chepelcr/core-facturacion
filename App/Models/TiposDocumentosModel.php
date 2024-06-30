@@ -15,6 +15,6 @@ class TiposDocumentosModel extends Model
 		'estado',
 	];
 
-	protected $dbGroup = 'facturacion';
+	
 }//Fin de la clase
 ?>

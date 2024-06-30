@@ -15,7 +15,7 @@ class TiposReferenciaModel extends Model
 		'estado',
 	];
 
-	protected $dbGroup = 'facturacion';
+	
 
 
 	protected $auditorias = true;

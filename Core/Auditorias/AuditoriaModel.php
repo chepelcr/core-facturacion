@@ -11,7 +11,7 @@ class AuditoriaModel extends Model
 
 	protected $vistaTabla = "auditorias_view";
 
-	protected $dbGroup = 'seguridad';
+	
 
 	protected $camposTabla = [
 		'id_fila',

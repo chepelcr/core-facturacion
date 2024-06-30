@@ -17,7 +17,7 @@ class TipoCambioModel extends Model
 		'cod_pais',
 	];
 
-	protected $dbGroup = 'facturacion';
+	
 
 	protected $autoIncrement = true;
 

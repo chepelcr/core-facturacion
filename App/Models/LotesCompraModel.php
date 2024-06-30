@@ -6,6 +6,7 @@
     class LotesCompraModel extends Model
     {
         protected $nombreTabla = 'lotes';
+        
         protected $pk_tabla = 'id_lote';
 
         protected $vistaTabla = 'lotes_compra_view';
