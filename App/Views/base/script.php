@@ -1,136 +1,85 @@
-<!-- Base -->
-
 <!-- jQuery -->
-<?=getScript('plugins/jquery/jquery.min')?>
+<script src="<?=getFile('dist/plugins/jquery/jquery.min.js')?>"></script>
 
 <!-- Bootstrap 4 -->
-<?=getScript('plugins/bootstrap/js/bootstrap.bundle.min')?>
+<script src="<?=getFile('dist/plugins/bootstrap/js/bootstrap.bundle.min.js')?>"></script>
 
 <!-- AdminLTE App -->
-<?=getScript('adminlte.min')?>
+<script src="<?=getFile('dist/js/adminlte.min.js')?>"></script>
 
+<!-- Pace -->
+<script src="<?=getFile('dist/plugins/pace-progress/pace.min.js')?>"></script>
 
-<!-- Plugins -->
+<!-- overlayScrollbars -->
+<script src="<?=getFile('dist/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js')?>"></script>
 
-<!-- Plugins | Pace -->
-<?=getScript('plugins/pace-progress/pace.min')?>
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Plugins | overlayScrollbars -->
-<?=getScript('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min')?>
+<!-- Font-Awesome -->
+<script src="https://kit.fontawesome.com/3e7bda16db.js" crossorigin="anonymous"></script>
 
-<!-- Plugins | SweetAlert -->
-<?=getScript('https://cdn.jsdelivr.net/npm/sweetalert2@11', true)?>
-
-<!-- Plugins | Font-Awesome -->
-<?=getScript('https://kit.fontawesome.com/3e7bda16db.js', true, "anonymous")?>
-
-<!-- Plugins | DataTables-->
-<?=getScript('https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js', true, "", "utf8")?>
+<!--DataTables-->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
 
 <!-- DataTables || Select -->
-<?=getScript('https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js', true)?>
+<script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
 
-<!-- Plugins | Modernizr -->
-<?=getScript('plugins/modernizr-custom/modernizr-custom')?>
+<!-- Base | Mensajes -->
+<?=getScript('base/mensajes')?>
 
-
-
-<!-- Scripts -->
-
-<!-- Core | Plugins | Mensajes -->
-<?=getScript('core/plugins/mensajes')?>
-
-<!-- Core | Seguridad | Login -->
-<?=getScript('core/seguridad/login')?>
+<!-- Base | Login -->
+<?=getScript('base/login')?>
 
 <?php
     if(is_login())
     {
 ?>
 
-<!-- Core | Navegacion | Cargar -->
-<?=getScript('core/navegacion/cargar')?>
+<!-- Base | Nav -->
+<?=getScript('base/nav')?>
 
-<!-- Core | Navegacion | Modulos -->
-<?=getScript('core/navegacion/modulos')?>
+<!-- Base | Modulos -->
+<?=getScript('base/modulos')?>
 
-<!-- Core | Navegacion | Navbar -->
-<?=getScript('core/navegacion/navbar')?>
+<!-- Base | Listado -->
+<?=getScript('base/listado')?>
 
-<!-- Core | Plugins | Archivos -->
-<?=getScript('core/plugins/archivos')?>
-
-<!-- Core | Plugins | Cedula -->
-<?=getScript('core/plugins/cedula')?>
-
-<!-- Core | Plugins | Formatos -->
-<?=getScript('core/plugins/formatos')?>
-
-<!-- Core | Plugins | Listado -->
-<?=getScript('core/plugins/listado')?>
-
-<!-- Core | Plugins | Modal -->
-<?=getScript('core/plugins/modal')?>
-
-<!-- Core | Plugins | Ubicaciones -->
-<?=getScript('core/plugins/ubicaciones')?>
-
-<!-- Core | Plugins | Usuarios -->
-<?=getScript('core/plugins/usuarios')?>
+<!-- Base | Ubicaciones -->
+<?=getScript('base/ubicaciones')?>
 
 <!-- Form | Campos -->
-<?=getScript('core/form/campos')?>
+<?=getScript('form/campos')?>
 
 <!-- Form | Operaciones -->
-<?=getScript('core/form/operaciones')?>
+<?=getScript('form/operaciones')?>
 
-<!-- Core | Form | Permisos -->
-<?=getScript('core/form/permisos')?>
+<!-- Form || Permisos -->
+<?=getScript('form/permisos')?>
 
-<!-- Core | Productos | Cabys -->
-<?=getScript('core/productos/cabys')?>
+<!-- Empresa || Productos -->
+<?=getScript('empresa/productos')?>
 
-<!-- Core | Productos | Calculos -->
-<?=getScript('core/productos/calculos')?>
+<!-- Facturacion | Documentos -->
+<?=getScript('facturacion/documentos')?>
 
-<!-- Facturacion | Inicio | Documentos -->
-<?=getScript('core/facturacion/inicio/acciones')?>
+<!-- Facturacion | Lineas -->
+<?=getScript('facturacion/lineas')?>
 
-<!-- Facturacion | Inicio | Hacienda -->
-<?=getScript('core/facturacion/inicio/hacienda')?>
+<!-- Facturacion | Hacienda -->
+<?=getScript('facturacion/hacienda')?>
 
-<!-- Facturacion | Documento | Acciones -->
-<?=getScript('core/facturacion/documento/acciones')?>
+<!-- Facturacion | Clientes -->
+<?=getScript('facturacion/clientes')?>
 
-<!-- Facturacion | Documento | Clientes -->
-<?=getScript('core/facturacion/documento/clientes')?>
+<!-- Facturacion | Productos -->
+<?=getScript('facturacion/productos')?>
 
-<!-- Facturacion | Documento | Lineas -->
-<?=getScript('core/facturacion/documento/lineas')?>
+<!-- Facturacion | Walmart -->
+<?=getScript('facturacion/walmart')?>
 
-<!-- Facturacion | Documento | Otros -->
-<?=getScript('core/facturacion/documento/otros')?>
-
-<!-- Facturacion | Documento | Productos -->
-<?=getScript('core/facturacion/documento/productos')?>
-
-<!-- Facturacion | Documento | Referencias -->
-<?=getScript('core/facturacion/documento/referencias')?>
-
-<!-- Facturacion | Documento | Walmart -->
-<?=getScript('core/facturacion/documento/walmart')?>
-
-<!-- Facturacion | Lineas | Descuentos -->
-<?=getScript('core/facturacion/lineas/descuentos')?>
-
-<!-- Facturacion | Lineas | Impuestos -->
-<?=getScript('core/facturacion/lineas/impuestos')?>
-
-<!-- Core | Seguridad | Contrasenia -->
-<?=getScript('core/seguridad/contrasenia')?>
-
-<!-- Core | Seguridad | Perfil -->
-<?=getScript('core/seguridad/perfil')?>
+<!-- Seguridad | Usuarios -->
+<?=getScript('seguridad/usuarios')?>
 
 <?php
     }//is_login

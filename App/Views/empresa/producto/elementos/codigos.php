@@ -22,7 +22,7 @@
                                 <i class="fas fa-barcode"></i>
                             </span>
                         </div>
-                        <input onblur="validar(this.value, 'producto')" class="form-control inp codigo_venta" type="number"
+                        <input onblur="validar(this.value, 'producto')" class="form-control inp" type="number" id="codigo_venta"
                             name="codigo_venta">
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                                 <i class="fas fa-cart-arrow-down"></i>
                             </span>
                         </div>
-                        <input class="form-control inp codigo_interno" type="number" name="codigo_interno">
+                        <input class="form-control inp" type="number" id="codigo_interno" name="codigo_interno">
                     </div>
                 </div>
             </div>

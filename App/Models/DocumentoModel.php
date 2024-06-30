@@ -67,10 +67,8 @@ class DocumentoModel extends Model
         'fecha_valido',
         'correo_enviado',
         'fecha_correo',
-        'id_empresa',
-        //'id_sucursal',
-        //'id_caja',
         'id_usuario',
+        'id_empresa',
     ];
 
     protected $autoIncrement = true;
@@ -78,8 +76,6 @@ class DocumentoModel extends Model
     protected $dbGroup = 'facturacion';
 
     protected $auditorias = true;
-
-    protected $tipos_documentos = 'emitidos';
 
     public function obtener($id)
 	{
@@ -117,21 +113,13 @@ class DocumentoModel extends Model
                 return $this->proceso();
                 break;
 
-            case 'emitidos':
-                return $this->diarios();
-                break;
-
-            case 'recibidos':
-                return $this->recibidos();
-                break;
-
             default:
                 $documento = $this->getById($id);
 
                 if($documento)
                 {
                     $detalles_model = model('documentoDetalles');
-                    $documento->detalles = (object) $detalles_model->obtener($id);
+                    $documento->detalles = (object) $detalles_model->where('id_documento', $id)->obtener('all');
 
                     $referencias_model = model('documentoReferencias');
                     $documento->referencias = (object) $referencias_model->where('id_documento', $id)->obtener('all');
@@ -146,29 +134,7 @@ class DocumentoModel extends Model
         }
 
         return $documento;
-	}//Fin de la funcion para obtener documentos electronicos
-
-    /**Obtener los documentos recibidos */
-    public function recibidos()
-    {
-        return array();
-    }
-
-    /**Obtener documentos emitidos o recibidos */
-    public function documentos($tipos_documentos = 'emitidos')
-    {
-        switch ($tipos_documentos){
-            case 'emitidos':
-                $this->where('emisor_cedula', getSession('empresa_identificacion'));
-                break;
-            
-            default:
-                $this->where('receptor_cedula', getSession('empresa_identificacion'));
-                break;
-        }
-
-        return $this;
-    }//Fin de la funcion para obtener documentos electronicos
+	}
 
     /**Establecer la empresa para obtener los documentos */
     public function empresa($id_empresa, $id_sucursal = null, $id_caja = null)
@@ -188,7 +154,6 @@ class DocumentoModel extends Model
         return $this;
     }
 
-    /**Obtener un documento mediante clave */
     public function clave($clave)
     {
         $this->where('clave', $clave);
@@ -273,7 +238,7 @@ class DocumentoModel extends Model
     }
 
     /**Obtener todos los documentos en proceso */
-    private function proceso()
+    public function proceso()
     {
         $this->vista('documentos_proceso');
         return $this->getAll();

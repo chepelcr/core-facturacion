@@ -24,7 +24,7 @@
                                 <i class="fas fa-keyboard"></i>
                             </span>
                         </div>
-                        <input class="form-control inp codigo_cabys" name="codigo_cabys" required max="13">
+                        <input class="form-control inp" id="codigo_cabys" name="codigo_cabys" required max="13">
 
                         <!-- Buscar codigo -->
                         <div class="input-group-append">
@@ -44,7 +44,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-percent"></i></i></span>
                         </div>
-                        <input readonly class="form-control inp valor-producto impuesto" name="impuesto" type="number" required
+                        <input readonly class="form-control inp valor-producto" id="impuesto" name="impuesto" type="number" required
                             max="100">
                     </div>
                 </div>

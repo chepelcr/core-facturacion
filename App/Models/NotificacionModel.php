@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Core\Model;
 
-/** Modelo para la tabla de notificaciones del sistema */
-class NotificacionModel extends Model
+/** Modelo para la tabla de usuarios */
+class TiendasModel extends Model
 {
 	protected $nombreTabla = 'notificaciones';
 	protected $pk_tabla = 'id_notificacion';
 
 	protected $camposTabla = [
-		'titulo',
-		'contenido',
-		'enlace',
-		'fecha_notificacion',
-		'fecha_lectura',
-		'id_usuario',
+		'descripcion',
+		'fecha',
 		'estado',
+	];
+
+	protected $camposVista = [
+		'id_usuario',
 	];
 
 	protected $dbGroup = 'seguridad';

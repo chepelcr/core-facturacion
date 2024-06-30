@@ -6,7 +6,7 @@ use Core\Model;
 use Core\Permisos\PermisosModel;
 
 /**
- * Modelo para el acceso a la base de datos y funciones CRUD de la tabla: Roles
+* Modelo para el acceso a la base de datos y funciones CRUD
 */
 class RolesModel extends Model
 {

@@ -22,5 +22,11 @@ class DocumentoOtrosModel extends Model
     protected $dbGroup = 'facturacion';
 
     protected $auditorias = true;
+
+    public function getDocumentoReferencias($id_documento)
+    {
+        $this->where('id_documento', $id_documento);
+        return $this->getAll();
+    }
 }//Fin de la clase
 ?>

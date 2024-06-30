@@ -24,14 +24,10 @@ class BaseController extends Controller
                                 $(document).ready(function(){
                                     //Esperar 5 segundos para mostrar el modal
                                     setTimeout(function(){
-                                        Toast.fire({
-                                            icon: "warning",
-                                            title: "Su contraseña ha expirado",
-                                            timer: 2000
-                                        }).then((result) => {
-                                            cambio_contrasenia();
-                                        });
-                                    }, 6000);
+                                        mensajeAutomatico("Atencion", "Su contraseña ha expirado, por favor cambiela.", "warning");
+                                        
+                                        cambio_contrasenia();
+                                    }, 10000);
                                 });
                             </script>';
 				
@@ -42,13 +38,7 @@ class BaseController extends Controller
                     $data->script = $script;
 			}
 
-            $tiposDocumentosModel = model('tiposDocumentos');
-
             $data->modulos = getModulos();
-            
-            $data->facturacion = (object) array(
-                'tipos_documentos' => $tiposDocumentosModel->obtener('documentos'),
-            );
 
             return view('layout', $data);
         }//Fin de la validacion

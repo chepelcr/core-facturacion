@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-md-12 col-opciones">
                 <!-- Factura -->
-                <button class="btn bg-gradient-olive btn-block" title="Factura de venta" data-toggle="tooltip"
+                <button class="btn bg-gradient-olive btn-block" title="Factura" data-toggle="tooltip"
                     onclick="agregar_documento('factura')">
                     <i class="fas fa-receipt"></i>
                 </button>
@@ -33,15 +33,9 @@
                 </button>
 
                 <!-- Factura de compra -->
-                <button class="btn bg-gradient-purple btn-block" title="Factura de compra" data-toggle="tooltip"
+                <button class="btn bg-gradient-purple btn-block" disabled title="Factura de compra" data-toggle="tooltip"
                     onclick="agregar_documento('factura_compra')">
                     <i class="fas fa-shopping-cart"></i>
-                </button>
-
-                <!-- Factura de exportacion -->
-                <button class="btn bg-gradient-primary btn-block" title="Factura de exportación"
-                    data-toggle="tooltip" onclick="agregar_documento('factura_exportacion')">
-                    <i class="fas fa-plane"></i>
                 </button>
             </div>
         </div>

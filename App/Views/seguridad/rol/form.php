@@ -1,5 +1,5 @@
 <div class="row">
-    <input class="id_rol" name="id_rol" type="hidden">
+    <input class="form-control form-control-lg inp" id="id_rol" name="id_rol" type="hidden">
 
     <!-- Nombre del rol -->
     <div class="col-md-12">
@@ -12,7 +12,7 @@
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                        title="Cerrar">
+                        title="Collapse">
                         <i class="fas fa-minus"></i>
                     </button>
                 </div>
@@ -27,7 +27,7 @@
                                 <i class="fas fa-user-tag"></i>
                             </div>
                         </div>
-                        <input class="form-control inp nombre_rol" name="nombre_rol" type="text"
+                        <input class="form-control inp" id="nombre_rol" name="nombre_rol" type="text"
                             placeholder="Nombre del rol" required>
                     </div>
                 </div>

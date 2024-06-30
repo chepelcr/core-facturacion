@@ -9,7 +9,7 @@
     <tbody id="clientes">
         <?php foreach ($clientes as $key => $cliente):?>
         <tr>
-            <td><?=formatear_cedula($cliente->identificacion, $cliente->id_tipo_identificacion)?></td>
+            <td><?=$cliente->identificacion?></td>
             <td><?=$cliente->razon?></td>
             <td>
                 <div class="btn-group">

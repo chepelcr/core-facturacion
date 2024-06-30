@@ -25,27 +25,17 @@
             <!-- Modulos -->
             <?php foreach ($modulos as $modulo):
             $nombre_modulo = $modulo->nombre_modulo;
-            $nombre_vista = $modulo->nombre_vista;
             $icono = $modulo->icono;
             $submodulos = $modulo->submodulos;
 
-            if(count((array) $submodulos) > 0):
+            if($nombre_modulo != 'documentos' && count((array) $submodulos) > 0):
         ?>
 
             <li class="nav-item dropdown">
                 <button class="btn btn-secondary nav-modulo nav-<?=$nombre_modulo?>" data-toggle="tooltip"
-                    title="<?=$nombre_vista?>"
+                    title="<?=ucwords(str_replace('_', ' ', $nombre_modulo))?>"
                     onclick="cargar_inicio_modulo('<?php echo $modulo->nombre_modulo?>')" type="button">
-                    
-                    <?php
-                        if($modulo->icono != 'walmart'):
-                    ?>
-                    <i class="fa-solid <?= $modulo->icono?> nav-icon"></i>
-                    <?php
-                        else:
-                            echo icono('walmart.png', 'Walmart', 'nav-icon');
-                        endif;
-                    ?>
+                    <i class="fa <?=$icono?> nav-icon"></i>
                 </button>
 
                 <button type="button"
@@ -56,68 +46,38 @@
 
                 <div class="dropdown-menu drp-nav dropdown-menu-left bg-transparent border-0 shadow-none"
                     aria-labelledby="nav-<?=$nombre_modulo?>">
-                    <?php
-                        foreach ($submodulos as $submodulo):
-                            $nombre_submodulo = $submodulo->nombre_submodulo;
-                            $nombre_vista = $submodulo->nombre_vista;
-                            $icono = $submodulo->icono;
-                            $url = $submodulo->url;
+                    <?php foreach ($submodulos as $submodulo):
+                        $nombre_submodulo = $submodulo->nombre_submodulo;
+                        $icono = $submodulo->icono;
+                        $url = $submodulo->url;
 
-                            if($nombre_modulo != 'documentos'):
-                                if(validar_permiso($nombre_modulo, $nombre_submodulo, 'consultar')):
-                            ?>
-                            <div class="p-1">
-                                <button data-toggle="tooltip" title="<?= $nombre_vista?>"
-                                    class="w-50 btn btn-dark nav-button btn_<?=$nombre_modulo.'_'.$nombre_submodulo?>"
-                                    onclick="cargar_listado('<?=$nombre_modulo?>', '<?=$nombre_submodulo?>', '<?=baseUrl($url)?>')">
-                                    <i class="fa-solid <?=$icono?>"></i>
-                                </button>
-                            </div>
-                            <?php
-                                endif;
-
-                            else:
-                                if($nombre_submodulo != 'importar'):
-                            ?>
-                            <div class="p-1">
-                                <button data-toggle="tooltip" title="<?=$nombre_vista?>"
-                                    class="w-50 btn btn-dark nav-button btn_<?=$nombre_modulo.'_'.$nombre_submodulo?>"
-                                    onclick="cargar_documentos('<?=$nombre_submodulo?>')">
-                                    <i class="fa-solid <?=$icono?>"></i>
-                                </button>
-                            </div>
-                            <?php
-                                else:
-                            ?>
-                            <div class="p-1">
-                                <button data-toggle="tooltip" title="<?=$nombre_vista?>"
-                                    class="w-50 btn btn-dark nav-button btn_<?=$nombre_modulo.'_'.$nombre_submodulo?>"
-                                    onclick="importar_documentos()">
-                                    <i class="fa-solid <?=$icono?>"></i>
-                                </button>
-                            </div>
-                            <?php
-                                endif;
-                            endif;
-                        endforeach;
+                        if(validar_permiso($nombre_modulo, $nombre_submodulo, 'consultar')):
                     ?>
+                    <div class="p-1">
+                        <button data-toggle="tooltip" title="<?=ucwords(str_replace('_', ' ', $nombre_submodulo))?>"
+                            class="w-50 btn btn-dark nav-button btn_<?=$nombre_modulo.'_'.$nombre_submodulo?>"
+                            onclick="cargar_listado('<?=$nombre_modulo?>', '<?=$nombre_submodulo?>', '<?=baseUrl($url)?>')">
+                            <i class="fa <?=$icono?>"></i>
+                        </button>
+                    </div>
+                    <?php endif; endforeach;?>
                 </div>
             </li>
 
             <?php
-                else:
-            ?>
+            else:
+        ?>
 
-                <li class="nav-item">
-                    <button class="btn btn-secondary nav-modulo nav-<?=$nombre_modulo?>" data-toggle="tooltip"
-                    title="<?=$nombre_vista?>" onclick="cargar_inicio_modulo('<?= $modulo->nombre_modulo?>')"
-                        type="button">
-                        <i class="fa <?=$icono?> nav-icon"></i>
-                    </button>
-                </li>
+            <li class="nav-item">
+                <button class="btn btn-secondary nav-modulo nav-<?=$nombre_modulo?>" data-toggle="tooltip"
+                    title="Facturacion" onclick="cargar_inicio_modulo('<?php echo $modulo->nombre_modulo?>')"
+                    type="button">
+                    <i class="fa <?=$icono?> nav-icon"></i>
+                </button>
+            </li>
 
-                <?php
-                endif;
+            <?php
+            endif;
             endforeach;
         ?>
         </ul>

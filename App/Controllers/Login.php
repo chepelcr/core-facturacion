@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\EmpresasModel;
 use App\Models\UsuariosModel;
 
 /** Clase para iniciar sesion en la aplicacion */
@@ -12,7 +11,7 @@ class Login extends BaseController
 		public function index()
 		{
 			if(!is_login())
-				return view('login');
+				return view('seguridad/login/login');
 
 			else
 				//Cargar la pagina principal
@@ -22,26 +21,28 @@ class Login extends BaseController
 		/** Funcion para consultar si el usuario existe en la base de datos */
 		public function consultar()
 		{
+			$respuesta = array(
+				'estado' => 0,
+				'error' => 'Usuario o contraseña incorrectos.'
+			);
+
 			//Validar si el usuario ha iniciado sesion
 			if (!is_login())
 			{
-				$respuesta = array(
-					'estado' => 0,
-					'error' => 'Usuario o contraseña incorrectos.'
-				);
-
 				$user = post('usuario');
 				$pswd = post('contrasenia');
 
 				$usuariosModel = new UsuariosModel();
+
 				$usuariosModel->where('correo', $user);
 			
 				$usuario = $usuariosModel->fila();
 
 				if($usuario && $usuario->estado != 0)
 				{
-					//Obtener el estado de la contraseña del usuario
 					$estado_contrasenia = validar_contrasenia($usuario->id_usuario, $pswd);
+
+					//$estado_contrasenia = 1;
 
 					//Validar si la contrasenia es correcta
 					switch ($estado_contrasenia)
@@ -88,24 +89,14 @@ class Login extends BaseController
 								'error' => 'Debe esperar un momento para volver a intentar.');
 						break;
 					}//Fin del switch
-
-					//Si el estado es diferente de 3
-					if($estado_contrasenia != 3)
-					{
-						//var_dump($estado_contrasenia);
-
-						//Obtener la empresa del usuario
-						$empresasModel = new EmpresasModel();
-						$empresasModel->getEmpresa();
-					}//Fin del if
 				}//Fin del if
 
 				return json_encode($respuesta);
 			}//Fin de la validacion
 			
 			else
-				return json_encode(array(
-					'estado' => '1',));
+				return $respuesta = array(
+					'estado' => '1',);
 					
 		}//Fin de la funcion para consultar un usuario
 

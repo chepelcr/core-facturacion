@@ -8,14 +8,13 @@ Options All -Indexes
 # Turning on the rewrite engine is necessary for the following rules and features.
 # FollowSymLinks must be enabled for this to work.
 <IfModule mod_rewrite.c>
-	Options +FollowSymlinks
+	Options FollowSymlinks
 	RewriteEngine On
 
 	# If you installed the App in a subfolder, you will need to
 	# change the following line to match the subfolder you need.
 	# http://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase
-	#RewriteBase /www/core-facturacion/public
-	RewriteBase /core-facturacion/public
+	# RewriteBase /modas-laura/Sitema-costos/public
 
 	# Redirect Trailing Slashes...
 	RewriteCond %{REQUEST_FILENAME} !-d

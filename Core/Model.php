@@ -70,6 +70,9 @@ class Model
     //Conexion a la base de datos
     private PDO $db;
 
+    /**Valor para la seleccion del valor maximo de un campo */
+    private $campoMax;
+
     /**Variable para varios valores de maximo */
     private $camposMax = array();
 
@@ -128,35 +131,27 @@ class Model
     /**Insertar un registro en la tabla de errores */
     public function insertError($ex)
     {
-        try
-        {
-            $id_usuario = getSession('id_usuario');
+        $id_usuario = getSession('id_usuario');
                 
-            if(!$id_usuario)
-                $id_usuario = 0;
-                    
-            $code = $ex->getCode();
-            $message = $ex->getMessage();
-            $file = $ex->getFile();
-            $line = $ex->getLine();
+        if(!$id_usuario)
+            $id_usuario = 0;
+                
+        $code = $ex->getCode();
+        $message = $ex->getMessage();
+        $file = $ex->getFile();
+        $line = $ex->getLine();
 
-            $messagecomplet = "Error generado en el archivo $file, linea $line: [Codigo de error $code] $message";
+        $messagecomplet = "Error generado en el archivo $file, linea $line: [Codigo de error $code] $message";
 
-            $data = array(
-                'sentencia'=>$messagecomplet,
-                'controlador'=>$this->nombreTabla,
-                'id_usuario'=>$id_usuario
-            );
+        $data = array(
+            'sentencia'=>$messagecomplet,
+            'controlador'=>$this->nombreTabla,
+            'id_usuario'=>$id_usuario
+        );
 
-            $this->error = $data;
-            
-            insertError($data);
-        }
-
-        catch(Throwable $th)
-        {
-            echo $th->getMessage();
-        }
+        $this->error = $data;
+        
+        insertError($data);
     }//Fin de la funcion
 
     /**Obtener el error generado en el modelo */
@@ -222,6 +217,8 @@ class Model
 
         catch (\Exception $ex) 
         {
+            var_dump($ex);
+
             if($this->auditorias)
             {
                 $this->insertError($ex);
@@ -1041,9 +1038,9 @@ class Model
         }//Fin del catch
 	}//Fin de la funcion delete
 
-    private function query()
+    public function query()
     {
         return $this->db;
     }//Fin de la funcion
-}//Fin de la clase principal del modelo
+}//Fin 
 ?>

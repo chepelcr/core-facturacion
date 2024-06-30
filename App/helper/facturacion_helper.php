@@ -2,30 +2,15 @@
 
 use App\Models\UbicacionesModel;
 use App\Librerias\Indicador;
-use App\Models\TiposDocumentosModel;
 
 /**Obtener un nuevo documento */
 function documento($tipo_documento = '01', $numero_documento)
 {
     $nombreVista = 'facturacion/elementos/documento';
 
-    $tiposDocumentosModel = new TiposDocumentosModel();
-    
+    $tiposDocumentosModel = model('tiposDocumentos');
     $uniMedidaModel = model('unidadesMedida');
     $tiposReferenciaModel = model('tiposReferencia');
-    $tiposImpuestoModel = model('tiposImpuesto');
-    $tarifaImpuestoModel = model('tarifaImpuesto');
-    $tiposExoneracionModel = model('tiposExoneracion');
-
-    $impuestos = array(
-        'impuestos' => $tiposImpuestoModel->obtener('activos'),
-        'tarifas' => $tarifaImpuestoModel->obtener('activos'),
-        'exoneraciones' => $tiposExoneracionModel->obtener('activos'),
-    );
-
-    $modalLinea = array(
-        'data_impuesto' => $impuestos
-    );
 
     $modalCierreDocumento = array(
         'numero_documento' => $numero_documento,
@@ -35,21 +20,18 @@ function documento($tipo_documento = '01', $numero_documento)
     if($tipo_documento == '02' || $tipo_documento == '03')
     {
         $data_referencias = array(
-            'tipos_documentos' => $tiposDocumentosModel->obtener('referencias'),
+            'tipos_documentos' => $tiposDocumentosModel->obtener('all'),
             'codigos_referencia' => $tiposReferenciaModel->obtener('all'),
         );
     }
 
-    $tiposDocumentosModel = model('tiposDocumentos');
-
     $dataView = array(
         'id_tipo_documento' => $tipo_documento,
-        'tipos_documentos' => $tiposDocumentosModel->obtener('documentos'), 
+        'tipos_documentos' => $tiposDocumentosModel->getAll(),
         'unidades_medida' => $uniMedidaModel->getAll(),
         'numero_documento' => $numero_documento,
         'modalCierreDocumento' => $modalCierreDocumento,
         'data_referencias' => $data_referencias ?? null,
-        'modalLinea' => $modalLinea,
     );
 
     return view($nombreVista, $dataView);
@@ -84,10 +66,10 @@ function getInfoClientes()
 function getInfoWalmart()
 {
     $tiendasModel = model('tiendas');
-    $numerosProveedorModel = model('departamentos');
+    $numerosProveedorModel = model('numerosProveedor');
 
     $dataTiendas = array(
-        'tiendas' => $tiendasModel->obtener('activos'),
+        'tiendas' => $tiendasModel->getAll(),
     );
 
     $data = array(
@@ -100,29 +82,14 @@ function getInfoWalmart()
 
 function obtenerInidicadores($tipo = 'CRC')
 {
-    if($tipo)
-    {
-        $indicadores = new Indicador();
-        $tipo_cambio = $indicadores->obtenerIndicadorEconomico($tipo);
+    $indicadores = new Indicador();
 
-        $data = array(
-            'tipo_cambio' => $tipo_cambio,
-        );
+    $tipo_cambio = $indicadores->obtenerIndicadorEconomico($tipo);
 
-        return $data;
-    }
+    $data = array(
+        'tipo_cambio' => $tipo_cambio,
+    );
 
-    else
-    {
-        $indicadores = new Indicador();
-        $compra = $indicadores->obtenerIndicadorEconomico('CRC');
-        $venta = $indicadores->obtenerIndicadorEconomico('USD');
+    return $data;
 
-        $data = array(
-            'compra' => $compra,
-            'venta' => $venta,
-        );
-
-        return $data;
-    }
 }

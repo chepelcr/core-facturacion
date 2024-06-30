@@ -15,86 +15,77 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Medio de pago -->
-                    <div class="col-md-5">
-                        <div class="row">
-                            <!-- Efectivo -->
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="card form-check custom-radio">
-                                        <div class="card-header d-flex justify-content-center">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <div class="d-flex justify-content-around text-center">
+                                <!-- Efectivo -->
+                                <div class="card form-check custom-radio">
+                                    <div class="card-header">
+                                        <div class="h4 text-center">
                                             <label for="efectivo" class="card-title">
-                                                <i class="fas fa-money-bill-alt fa-2x"></i></label>
-                                        </div>
-
-                                        <div class="card-body">
-                                            <input class="form-check-input chk-pg inp-fct efectivo" type="radio"
-                                                value="01" name="efectivo" id="efectivo">
-                                            <label class="form-check-label" for="efectivo">
-                                                Efectivo
-                                            </label>
+                                                <i class="fas fa-money-bill-alt fa-3x"></i></label>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <!-- Sinpe -->
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="card form-check custom-radio">
-                                        <div class="card-header d-flex justify-content-center">
-                                            <label for="transferencia" class="card-title">
-                                                <i class="fas fa-exchange-alt fa-2x"></i></label>
-
-                                        </div>
-
-                                        <div class="card-body">
-                                            <input class="form-check-input chk-pg inp-fct transferencia"
-                                                name="transferencia" type="radio" value="04" id="transferencia">
-                                            <label class="form-check-label" for="transferencia">
-                                                SINPE
-                                            </label>
-                                        </div>
+                                    <div class="card-body">
+                                        <input class="form-check-input chk-pg inp-fct efectivo" type="radio" value="01"
+                                            name="efectivo" id="efectivo">
+                                        <label class="form-check-label" for="efectivo">
+                                            Efectivo
+                                        </label>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Tarjeta -->
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="card form-check custom-radio">
-                                        <div class="card-header d-flex justify-content-center">
+                                <!-- Sinpe -->
+                                <div class="card form-check custom-radio">
+                                    <div class="card-header">
+                                        <div class="h4 text-center">
+                                            <label for="transferencia" class="card-title text-center">
+                                                <i class="fas fa-exchange-alt fa-3x"></i></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <input class="form-check-input chk-pg inp-fct transferencia" name="transferencia"
+                                            type="radio" value="04" id="transferencia">
+                                        <label class="form-check-label" for="transferencia">
+                                            SINPE
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Tarjeta -->
+                                <div class="card form-check custom-radio">
+                                    <div class="card-header">
+                                        <div class="h4 text-center">
                                             <label for="tarjeta" class="card-title"><i
-                                                    class="fas fa-credit-card fa-2x"></i></label>
-
-                                        </div>
-
-                                        <div class="card-body">
-                                            <input class="form-check-input tarjeta chk-pg inp-fct" name="tarjeta"
-                                                type="radio" value="03" id="tarjeta">
-                                            <label class="form-check-label" for="tarjeta">
-                                                Tarjeta
-                                            </label>
+                                                    class="fas fa-credit-card fa-3x"></i></label>
                                         </div>
                                     </div>
+
+                                    <div class="card-body">
+                                        <input class="form-check-input tarjeta chk-pg inp-fct" name="tarjeta" type="radio"
+                                            value="03" id="tarjeta">
+                                        <label class="form-check-label" for="tarjeta">
+                                            Tarjeta
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Otros -->
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="card form-check custom-radio">
-                                        <div class="card-header d-flex justify-content-center">
+                                <!-- Otros -->
+                                <div class="card form-check custom-radio">
+                                    <div class="card-header">
+                                        <div class="h4 text-center">
                                             <label for="otros" class="card-title"><i
-                                                    class="fas fa-file-invoice-dollar fa-2x"></i></label>
+                                                    class="fas fa-file-invoice-dollar fa-3x"></i></label>
                                         </div>
+                                    </div>
 
-                                        <div class="card-body">
-                                            <input class="form-check-input chk-pg inp-fct otros" type="radio" value=""
-                                                id="otros">
-                                            <label class="form-check-label" for="otros">
-                                                Otros
-                                            </label>
-                                        </div>
+                                    <div class="card-body">
+                                        <input class="form-check-input chk-pg inp-fct otros" type="radio" value="" id="otros">
+                                        <label class="form-check-label" for="otros">
+                                            Otros
+                                        </label>
                                     </div>
                                 </div>
                             </div>

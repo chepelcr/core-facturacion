@@ -111,7 +111,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <textarea class="form-control inp otras_senas" name="otras_senas" cols="30" rows="3"
+                        <textarea class="form-control inp" id="otras_senas" name="otras_senas" cols="30" rows="3"
                             placeholder="Otras señas"
                             <?php if(isset($otras_senas)) echo 'value="'.$otras_senas.'"'; ?>></textarea>
                     </div>

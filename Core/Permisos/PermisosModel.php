@@ -19,7 +19,6 @@
             'id_modulo',
             'id_submodulo',
             'id_accion',
-            'nombre_vista', 
             'icono',
             'objeto',
             'url',
@@ -42,7 +41,7 @@
         /**Obtener todos los modulos de un rol */
         public function modulos($id_rol)
         {
-            $this->vista('modulos_roles_view')->select('id_modulo')->select('nombre_modulo')->select('nombre_vista')->select('icono')->where('id_rol', $id_rol);
+            $this->vista('modulos_roles_view')->select('id_modulo')->select('nombre_modulo')->select('icono')->where('id_rol', $id_rol);
 
             $modulos = $this->getAll();
 
@@ -59,7 +58,7 @@
         /**Obtener todos los submodulos para un modulo */
         public function submodulos($id_rol, $id_modulo)
         {
-            $this->vista('submodulos_roles_view')->select('id_submodulo')->select('nombre_submodulo')->select('nombre_vista')->select('icono')->select('objeto')->select('url')->where('id_rol', $id_rol)->where('id_modulo', $id_modulo);
+            $this->vista('submodulos_roles_view')->select('id_submodulo')->select('nombre_submodulo')->select('icono')->select('objeto')->select('url')->where('id_rol', $id_rol)->where('id_modulo', $id_modulo);
             $submodulos = $this->getAll();
             
             foreach ($submodulos as $submodulo) {
@@ -80,17 +79,12 @@
             return (object) $acciones;
         }//Fin de la funcion
 
-        /**Retonar el id del permiso */
         public function get_permiso($id_rol, $id_modulo, $id_submodulo, $id_accion)
         {
             $this->vista('permisos_submodulos');
 
             $this->select('id_permiso')->where('id_rol', $id_rol)->where('id_modulo', $id_modulo)->where('id_submodulo', $id_submodulo)->where('id_accion', $id_accion);
             $permiso = $this->fila();
-
-            if(!$permiso) {
-                return false;
-            }
 
             return $permiso->id_permiso;
         }//Fin de la funcion

@@ -180,6 +180,8 @@ class Empresa extends BaseController
 					case 'listado':
 						$articulosModel = new ProductosModel();
 
+						//var_dump(post('id_estado'));
+
 						$estado = 'all';
 
 						if (post('id_estado') == 'inactivos') {

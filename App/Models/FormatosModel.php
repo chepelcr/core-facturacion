@@ -1,9 +1,10 @@
 <?php
+//Usar la base para el modelo que tenemos creado
 namespace App\Models;
 
 use Core\Model;
 
-/** Modelo para la tabla de formatos de supermercados de Walmart */
+/** Modelo para la tabla de usuarios */
 class FormatosModel extends Model
 {
 	protected $nombreTabla = 'formatos';

@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-body scroll_vertical" style="max-height: 450px; overflow-y: auto;">
+    <div class="card-body scroll_vertical" style="max-height: 300px;">
         <table class="table table-bordered table-hover text-center" id="documentos">
             <thead class="bg-gray-dark">
                 <tr>
@@ -83,10 +83,6 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
 
-                                    <?php
-                                        if($documento->valido_atv != '3'):
-                                    ?>
-
                                     <button type="button" class="btn btn-dark nav-opciones dropdown-toggle dropdown-toggle-split" id="nv-opc_doc" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="sr-only">Toggle Dropdown</span>
                                     </button>
@@ -97,16 +93,9 @@
                                                 <?php
                                                 if ($documento->envio_atv != '1') {
                                                     //Mostrar boton de enviar
-                                                    echo '<div class="col-md-6">
-                                                            <button disabled onclick="enviar_documento(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Enviar documento" class="btn btn-success btn-enviar btn-block">
+                                                    echo '<div class="col-md-12">
+                                                            <button onclick="enviar_hacienda(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Enviar documento" class="btn btn-success btn-enviar btn-block">
                                                                 <i class="fas fa-paper-plane"></i>
-                                                            </button>
-                                                        </div>';
-
-                                                    //Mostrar boton de editar
-                                                    echo '<div class="col-md-6">
-                                                            <button disabled onclick="editar_documento(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Editar documento" class="btn btn-warning btn-editar btn-block">
-                                                                <i class="fas fa-edit"></i>
                                                             </button>
                                                         </div>';
                                                 }
@@ -116,6 +105,16 @@
                                                     echo '<div class="col-md-12">
                                                             <button onclick="validar_documento(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Validar documento" class="btn btn-warning btn-validar btn-block">
                                                                 <i class="fas fa-check-circle"></i>
+                                                            </button>
+                                                        </div>';
+                                                }
+
+                                                if($documento->valido_atv == '3')
+                                                {
+                                                    //Mostrar boton de nota de credito
+                                                    echo '<div class="col-md-12">
+                                                            <button onclick="nota_credito(' . $documento->id_documento . ');" type="button" data-toggle="tooltip" title="Emitir nota de crédito" disabled class="btn btn-danger btn-nota-credito btn-block">
+                                                                <i class="fas fa-funnel-dollar"></i>
                                                             </button>
                                                         </div>';
                                                 }
@@ -158,10 +157,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <?php
-                                        endif;
-                                    ?>
                                 </div>
                             </td>
                         </tr>
@@ -260,7 +255,7 @@
                         <div class="col-md-3">
                             <div class="input-group">
                                 <label class="text-left pr-1">Fecha de inicio:</label>
-                                <input class="form-control form-control-sm" id="fecha_inicio" type="date" name="fecha_inicio" value="<?php echo $fecha_inicio; ?>" max="<?php echo $fecha_fin; ?>" min="<?= $fecha_inicio ?>" onchange="asignar_fecha(this)">
+                                <input class="form-control form-control-sm" id="fecha_inicio" type="date" name="fecha_inicio" value="<?php echo $fecha_inicio; ?>" max="<?php echo $fecha_fin; ?>" min="<?= $fecha_inicio ?>">
                             </div>
                         </div>
 
@@ -275,18 +270,13 @@
                         <!-- Tipo de documento -->
                         <div class="col-md-2">
                             <div class="input-group">
-                                <label class="text-left pr-1">Documento:</label>
+                                <label class="text-left pr-1">Tipo:</label>
                                 <select class="form-control form-control-sm" id="id_tipo_documento" name="id_tipo_documento" onchange="cargar_documentos('busqueda')">
                                     <option value="all">Todos</option>
-                                    <?php foreach ($tipos_documentos as $tipo_documento) : 
-                                        if($tipo_documento->tipo_documento == 'E'):
-                                    ?>
+                                    <?php foreach ($tipos_documentos as $tipo_documento) : ?>
                                         <option value="<?= $tipo_documento->id_tipo_documento ?>" <?php if ($tipo_documento->id_tipo_documento == $id_tipo_documento) echo 'selected' ?>>
-                                            <?= $tipo_documento->descripcion ?></option>
-                                    <?php 
-                                        endif;
-                                    endforeach;
-                                    ?>
+                                            <?= $tipo_documento->tipo_documento ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>

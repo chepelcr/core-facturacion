@@ -10,52 +10,7 @@
                     <div class="col-md-12" id="listado_documentos">
                     </div>
 
-                    <div class="col-md-12 contenedor_facturas">
-                        <div class="card">
-                            <div class="card-body scroll_vertical" id="contenedor_facturas" style="max-height: 450px; overflow-y: auto;">
-
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="row d-flex justify-content-between">
-                                    <!-- Tipos de documentos -->
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <!-- Select con los tipos de documentos -->
-                                            <select class="form-control form-control-sm tipo_documento" disabled id="q_documento">
-                                                <option value="">Tipo de documento</option>
-                                                <!-- Recorrer tipos de documentos -->
-                                                <?php foreach ($tipos_documentos as $tipo_documento): ?>
-                                                    <option value="<?php echo $tipo_documento->id_tipo_documento; ?>">
-                                                        <?php echo $tipo_documento->descripcion; ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <div class="input-group input-group-sm">
-                                            <!-- Codigo de barras -->
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                            </div>
-
-                                            <input class="form-control form-control-sm gnl-agregar" type="text" id="q_codigo_barras"
-                                                placeholder="Ingrese código de barras">
-
-                                            <!-- Buscar articulo -->
-                                            <div class="input-group-append">
-                                                <button class="btn btn-buscar-prod" type="button" data-toggle="tooltip"
-                                                    title="Buscar producto" onclick="buscar_producto(this, '', true)">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-12 scroll_vertical" id="contenedor_facturas">
                     </div>
                 </div>
             </div>
@@ -84,9 +39,9 @@
             </div>
         </div>
     </div>
-</div>
 
-<div id="contenedor_pdf">
+    <div class="col-md-12" id="contenedor_pdf">
+    </div>
 </div>
 
 <?php 

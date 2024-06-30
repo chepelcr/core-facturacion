@@ -44,7 +44,7 @@
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            <button class="btn btn-dark btn-block" type="button" onclick="location.href='<?= baseUrl('login')?>'"><i class="fas fa-arrow-left"></i></button>
+                            <button class="btn btn-dark" type="button" onclick="location.href='<?= baseUrl('login')?>'"><i class="fas fa-arrow-left"></i></button>
                         </div>
                         <!-- /.col -->
                         <div class="col-9">

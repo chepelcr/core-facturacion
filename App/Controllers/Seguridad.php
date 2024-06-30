@@ -55,14 +55,16 @@ class Seguridad extends BaseController
 			header('Location: ' . baseUrl('login'));
 	} //Fin de la funcion index
 
-	/**Obtener todos los usuarios del sistema */
+	/**Ontener todos los usuarios del sistema */
 	public function usuarios()
 	{
-		if (!is_login()) {
+		if (!is_login())
+		{
 			header('Location: ' . baseUrl('login'));
 		}
 
-		if (!validar_permiso('seguridad', 'usuarios', 'consultar')) {
+		if(!validar_permiso('seguridad', 'usuarios', 'consultar'))
+		{
 			$error = $this->object_error(403, 'No tiene permiso para realizar esta acción');
 
 			return  $this->error($error);
@@ -77,7 +79,7 @@ class Seguridad extends BaseController
 
 				$data_tabla = array(
 					'nombreTable' => $nombreTabla,
-					'nombre_tabla' => 'listado_seguridad_usuarios',
+					'nombre_tabla'=> 'listado_seguridad_usuarios',
 					'dataTable' => array(
 						'usuarios' => $usuarios
 					)
@@ -120,7 +122,7 @@ class Seguridad extends BaseController
 
 				return $this->listado($data);
 				break;
-
+			
 			default:
 				$data = array(
 					'script' => "<script>
@@ -132,17 +134,19 @@ class Seguridad extends BaseController
 
 				return $this->inicio($data);
 				break;
-		} //Fin del switch
-	} //Fin de la funcion para retornar los usuarios del sistema
+		}//Fin del switch
+	}//Fin de la funcion para retornar los usuarios del sistema
 
 	/**Obtener todos los roles del sistema */
 	public function roles()
 	{
-		if (!is_login()) {
+		if(!is_login())
+		{
 			header('Location: ' . baseUrl('login'));
 		}
 
-		if (!validar_permiso('seguridad', 'roles', 'consultar')) {
+		if(!validar_permiso('seguridad', 'roles', 'consultar'))
+		{
 			$error = $this->object_error(403, 'No tiene permiso para realizar esta acción');
 
 			return  $this->error($error);
@@ -157,7 +161,7 @@ class Seguridad extends BaseController
 
 				$data_tabla = array(
 					'nombreTable' => $nombreTabla,
-					'nombre_tabla' => 'listado_seguridad_roles',
+					'nombre_tabla'=> 'listado_seguridad_roles',
 					'dataTable' => array(
 						'roles' => $roles
 					)
@@ -184,7 +188,7 @@ class Seguridad extends BaseController
 
 				return $this->listado($data);
 				break;
-
+			
 			default:
 				$data = array(
 					'script' => "<script>
@@ -193,17 +197,18 @@ class Seguridad extends BaseController
 										});
 									</script>"
 				);
-
+				
 				return $this->inicio($data);
 				break;
-		} //Fin del switch
+		}//Fin del switch
 	} //Fin de la funcion
 
 	/**Mostrar las acciones de la base de datos */
 	public function auditorias()
 	{
 		if (is_login()) {
-			if (getSegment(3) == 'listado') {
+			if (getSegment(3) == 'listado')
+			{
 				$auditoriaModel = new AuditoriaModel();
 
 				$dataView = array(
@@ -211,7 +216,9 @@ class Seguridad extends BaseController
 				);
 
 				return view('seguridad/auditoria/listado', $dataView);
-			} else {
+			}
+			else
+			{
 				$data = array(
 					'script' => '<script>
 						$(document).ready(function(){
@@ -232,10 +239,14 @@ class Seguridad extends BaseController
 	/**Obtener los errores del sistema */
 	public function errores()
 	{
-		if (getSegment(3) == 'listado') {
-			if (!is_login()) {
+		if (getSegment(3) == 'listado')
+		{
+			if(!is_login())
+			{
 				return $this->error($this->object_error(505, 'No ha iniciado sesión'));
-			} else {
+			}
+
+			else {
 				$erroresModel = new ErroresModel();
 
 				$errores = $erroresModel->getAll();
@@ -246,8 +257,11 @@ class Seguridad extends BaseController
 
 				return view('seguridad/auditoria/errores', $dataView);
 			}
-		} else {
-			if (!is_login()) {
+		}
+		else
+		{
+			if(!is_login())
+			{
 				header('Location: ' . baseUrl('login'));
 			}
 
@@ -266,14 +280,18 @@ class Seguridad extends BaseController
 	/**Actualizar un objeto de la base de datos */
 	public function update($id, $objeto = null)
 	{
-		if (is_login()) {
+		if (is_login()) 
+		{
 			if ($id == 'perfil' || $id == 'contrasenia')
 				$objeto = 'usuarios';
 
-			if (!is_null($objeto) && in_array($objeto, $this->objetos)) {
-				switch ($objeto) {
+			if (!is_null($objeto) && in_array($objeto, $this->objetos)) 
+			{
+				switch ($objeto) 
+				{
 					case 'usuarios':
-						switch ($id) {
+						switch ($id) 
+						{
 							case 'perfil':
 								$id = getSession('id_usuario');
 
@@ -293,7 +311,6 @@ class Seguridad extends BaseController
 
 									return json_encode(array(
 										'estado' => 1,
-										'success' => 'Se ha actualizado el perfil correctamente'
 									));
 								} //Fin de validacion de operacion
 
@@ -326,101 +343,118 @@ class Seguridad extends BaseController
 
 								$model = model('usuarios');
 
-								if ($model->update($data, $id))
-									return json_encode(array(
-										'estado' => 1,
-										'success' => 'Se actualizó el usuario correctamente.',
-									));
+									if ($model->update($data, $id))
+										return json_encode(array(
+											'estado' => 1,
+											'success' => 'Se actualizó el usuario correctamente.',
+										));
 
-								else
-									return json_encode(array(
-										'error' => 'No se pudo actualizar el usuario',
-									));
+									else
+										return json_encode(array(
+											'error' => 'No se pudo actualizar el usuario',
+										));
 								break;
-						} //Fin del switch de id
+						}//Fin del switch de id
 						break;
 
-					case 'roles':
-						$data = array(
-							'nombre_rol' => post('nombre_rol'),
-						);
+						case 'roles':
+							$data = array(
+								'nombre_rol' => post('nombre_rol'),
+							);
+	
+							$model = model('roles');
+	
+							if ($model->update($data, $id))
+							{
+								$submodulosModel = new SubmodulosAccionesModel();
+	
+								$modulos = $submodulosModel->modulos();
+	
+								//Recorrer modulos
+								foreach ($modulos as $modulo) {
+									$id_modulo = $modulo->id_modulo;
+									$nombre_modulo = $modulo->nombre_modulo;
+	
+									$submodulos = $modulo->submodulos;
+	
+									//Recorrer submodulos
+									foreach ($submodulos as $submodulo) {
+										$id_submodulo = $submodulo->id_submodulo;
+										$nombre_submodulo = $submodulo->nombre_submodulo;
+	
+										$acciones = $submodulo->acciones;
+	
+										//Recorrer acciones
+										foreach ($acciones as $accion) {
+											$id_accion = $accion->id_accion;
+											$nombre_accion = $accion->nombre_accion;
+				
+											$model = new PermisosModel();
+				
+											$id_permiso = $model->get_permiso($id, $id_modulo, $id_submodulo, $id_accion);
+	
+											$model = new PermisosModel();
 
-						$model = model('roles');
-
-						if ($model->update($data, $id)) {
-							$submodulosModel = new SubmodulosAccionesModel();
-
-							$modulos = $submodulosModel->modulos();
-
-							//Recorrer modulos
-							foreach ($modulos as $modulo) {
-								$id_modulo = $modulo->id_modulo;
-								$nombre_modulo = $modulo->nombre_modulo;
-
-								$submodulos = $modulo->submodulos;
-
-								//Recorrer submodulos
-								foreach ($submodulos as $submodulo) {
-									$id_submodulo = $submodulo->id_submodulo;
-									$nombre_submodulo = $submodulo->nombre_submodulo;
-
-									$acciones = $submodulo->acciones;
-
-									//Recorrer acciones
-									foreach ($acciones as $accion) {
-										$id_accion = $accion->id_accion;
-										$nombre_accion = $accion->nombre_accion;
-
-										$model = new PermisosModel();
-
-										$id_permiso = $model->get_permiso($id, $id_modulo, $id_submodulo, $id_accion);
-
-										$model = new PermisosModel();
-
-										if (post('permiso_' . $nombre_modulo . '_' . $nombre_submodulo . '_' . $nombre_accion)) {
-											$data = array(
-												'estado' => 1
-											);
-
-											if (!$id_permiso) {
+											if(post('permiso_'.$nombre_modulo.'_'.$nombre_submodulo.'_'.$nombre_accion)){
 												$data = array(
-													'id_rol' => $id,
-													'id_modulo' => $modulo->id_modulo,
-													'id_submodulo' => $submodulo->id_submodulo,
-													'id_accion' => $accion->id_accion,
 													'estado' => 1
 												);
 
-												$model->insert($data);
-											} else
-												$model->update($data, $id_permiso);
-										} else {
-											if (!$id_permiso) {
-												$data = array(
-													'id_rol' => $id,
-													'id_modulo' => $modulo->id_modulo,
-													'id_submodulo' => $submodulo->id_submodulo,
-													'id_accion' => $accion->id_accion,
-													'estado' => 0
-												);
+												if(!$id_permiso)
+												{
+													$data = array(
+														'id_rol' => $id,
+														'id_modulo' => $modulo->id_modulo,
+														'id_submodulo' => $submodulo->id_submodulo,
+														'id_accion' => $accion->id_accion,
+														'estado' => 1
+													);
 
-												$model->insert($data);
-											} else
-												$model->update(array('estado' => 0), $id_permiso);
+													$model->insert($data);
+
+												}
+
+												else
+													$model->update($data, $id_permiso);
+
+												//var_dump($id_permiso);
+												//var_dump('Estoy llegando a '.$nombre_modulo.'_'.$nombre_submodulo.'_'.$nombre_accion);
+											}
+	
+											else
+											{
+												if(!$id_permiso)
+												{
+													$data = array(
+														'id_rol' => $id,
+														'id_modulo' => $modulo->id_modulo,
+														'id_submodulo' => $submodulo->id_submodulo,
+														'id_accion' => $accion->id_accion,
+														'estado' => 0
+													);
+
+													$model->insert($data);
+
+												}
+
+												else
+													$model->update(array('estado' => 0), $id_permiso);
+											}
 										}
 									}
 								}
+	
+								return json_encode(array(
+									'success' => 'Se actualizó el rol correctamente.',
+								));
 							}
-
-							return json_encode(array(
-								'success' => 'Se actualizó el rol correctamente.',
-							));
-						} else
-							return json_encode(array(
-								'error' => 'No se pudo actualizar el rol',
-							));
+	
+							else
+								return json_encode(array(
+									'error' => 'No se pudo actualizar el rol',
+								));
 						break;
-				} //Fin del switch
+				}//Fin del switch
 			} //Fin de la validacion
 
 			else
@@ -429,11 +463,9 @@ class Seguridad extends BaseController
 				));
 		} //Fin de la validacion de sesion
 
-		else
-		{
-			$error = $this->object_error(420, 'login');
-			return $this->error($error);
-		}
+		return json_encode(array(
+			'error' => 'Debe iniciar sesión para realizar esta acción',
+		));
 	} //Fin del metodo para actualizar un objeto
 
 	/**Guardar un objeto en la base de datos */
@@ -455,12 +487,14 @@ class Seguridad extends BaseController
 							$correo = post('correo');
 							$model->where('correo', $correo);
 
-							if (!$model->fila()) {
+							if(!$model->fila())
+							{
 								$model = model('usuarios');
 								$model->where('identificacion', $identificacion);
-								if (!$model->fila()) {
+								if(!$model->fila())
+								{
 									$model = model('usuarios');
-
+									
 									$data = array(
 										'identificacion' => $identificacion,
 										'id_tipo_identificacion' => post('id_tipo_identificacion'),
@@ -472,24 +506,24 @@ class Seguridad extends BaseController
 										'id_rol' => post('id_rol'),
 										'id_empresa' => post('id_empresa'),
 									);
-
+	
 									$id = $model->insert($data);
-
-									if ($id) {
+	
+									if($id && $id != 0) {
 										$pass = generar_password_complejo(10);
 										//$pass = 1234;
-
+	
 										$data_pass = array(
 											'id_usuario' => $id,
 											'contrasenia' => encriptar_texto($pass),
 											'fecha_expiracion' => date('Y-m-d H:i:s'),
 											'estado' => 1
 										);
-
+	
 										$model = $this->model('contrasenia');
-
+	
 										$id_contrasenia = $model->insert($data_pass);
-
+	
 										//Si el id de la contraseña es mayor a cero, se envia el correo
 										if ($id_contrasenia != 0) {
 											$mensaje = 'Estimado ' . post('nombre') . ',
@@ -510,19 +544,19 @@ class Seguridad extends BaseController
 													<br>
 													<br>
 													<b>Equipo de Modas Laura</b>';
-
+	
 											$correos = array(
 												post('nombre') => post('correo')
 											);
-
+	
 											$data = array(
 												'receptor' => $correos,
 												'asunto' => 'Registro de usuario',
 												'body' => $mensaje
 											);
-
+	
 											$correo = new Correo();
-
+	
 											if ($correo->enviarCorreo($data))
 												return json_encode(array(
 													'success' => 'El usuario se ha registrado correctamente',
@@ -532,24 +566,24 @@ class Seguridad extends BaseController
 													'error' => 'No se pudo enviar el correo, debe enviar una nueva contraseña al usuario',
 												));
 										} //Fin de validacion de id_contrasenia
-
+	
 										else
 											return json_encode(array(
 												'error' => 'No se pudo guardar la contraseña.',
 											));
 									} //Fin de validacion de id
-
+	
 									else
 										return json_encode(array(
 											'error' => 'No se pudo guardar el usuario.',
 										));
-								} //Fin de validacion de identificacion
-
+								}//Fin de validacion de identificacion
+								
 								else
 									return json_encode(array(
-										'error' => 'Ya existe un usuario con la identificación ' . $identificacion,
+										'error' => 'Ya existe un usuario con la identificación '.$identificacion,
 									));
-							} //Fin de validacion de correo
+							}//Fin de validacion de correo
 							else
 								return json_encode(array(
 									'error' => 'El correo ya se encuentra registrado.',
@@ -569,7 +603,7 @@ class Seguridad extends BaseController
 
 						$id = $model->insert($data);
 
-						if ($id) {
+						if ($id != 0) {
 							$submodulos_acciones_model = new SubmodulosAccionesModel();
 
 							$modulos = $submodulos_acciones_model->modulos();
@@ -595,12 +629,12 @@ class Seguridad extends BaseController
 											'id_accion' => $accion->id_accion,
 											'estado' => 0
 										);
-
+			
 										$model = new PermisosModel();
-
+			
 										$id_permiso = $model->insert($data);
 
-										if (post('permiso_' . $nombre_modulo . '_' . $nombre_submodulo . '_' . $nombre_accion)) {
+										if(post('permiso_'.$nombre_modulo.'_'.$nombre_submodulo.'_'.$nombre_accion)){
 											$data = array(
 												'estado' => 1
 											);
@@ -700,7 +734,8 @@ class Seguridad extends BaseController
 
 					$correo = new Correo();
 
-					if ($correo->enviarCorreo($data)) {
+					if ($correo->enviarCorreo($data))
+					{
 						$data = array(
 							'estado' => 1
 						);
@@ -711,7 +746,9 @@ class Seguridad extends BaseController
 						return json_encode(array(
 							'success' => 'Se ha cambiado la contraseña correctamente',
 						));
-					} else
+					}
+
+					else
 						return json_encode(array(
 							'error' => 'No se pudo enviar el correo con la nueva contraseña',
 						));
@@ -738,12 +775,13 @@ class Seguridad extends BaseController
 	/**Enviar una contraseña temporal a un usuario */
 	public function enviar_contrasenia()
 	{
-		if (!is_login()) {
+		if(!is_login())
+		{
 			return json_encode(array(
 				'error' => 'No se ha iniciado sesión',
 			));
 		}
-
+		
 		if (getSegment(3)) {
 			//Validar permiso
 			if (!validar_permiso($this->nombre_modulo, 'usuarios', 'modificar'))

@@ -105,21 +105,13 @@ function formatear_cedula($cedula, $tipo_cedula = '01')
 
 function desformatear_cedula($cedula)
 {
-    if($cedula)
-    {
-        $cedula = str_replace('-', '', $cedula);
+    $cedula = str_replace('-', '', $cedula);
     
-        //Si el primer digito es 0, eliminarlo
-        if($cedula[0] == '0')
-        {
-            $cedula = substr($cedula, 1, strlen($cedula));
-        }
-
-        return $cedula;
-    }
-
-    else
+    //Si el primer digito es 0, eliminarlo
+    if($cedula[0] == '0')
     {
-        return 0;
+        $cedula = substr($cedula, 1, strlen($cedula));
     }
+
+    return $cedula;
 }

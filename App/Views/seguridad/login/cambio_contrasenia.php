@@ -1,4 +1,4 @@
-<div class="card card-dark card-contrasenia">
+<div class="card card-dark bg-gradient-blue">
     <div class="card-header text-center">
         <img src="<?= getFile('dist/img/logo.png') ?>" width="100px">
     </div>
@@ -16,8 +16,9 @@
             <div class="row d-flex justify-content-around">
                 <?php if(!getSession('contrasenia_expiro')): ?>
                 <div class="col-3 text-center">
-                    <!-- Volver -->
-                    <button class="btn btn-secondary btn-block" data-toggle="tooltip" title="Volver" type="button" onclick="volver_perfil()">
+                    <!-- Salir -->
+                    <button class="btn btn-secondary btn-block" data-toggle="tooltip" title="Volver" onclick="abrir_perfil()"
+                        type="button">
                         <i class="fas fa-arrow-left"></i>
                     </button>
                 </div>

@@ -16,21 +16,19 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="valor_unitario">Valor unitario</label>
-                    <input type="text" class="form-control inp valor_unitario valor_vX" placeholder="Valor unitario">
-                    <input type="hidden" name="valor_unitario" class="valor_unitario precio">
-
+                    <input type="number" class="form-control inp valor-producto" id="valor_unitario" name="valor_unitario" placeholder="Valor unitario">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="impuesto">Impuesto</label>
-                    <input type="text" class="form-control valor valor_impuesto" disabled readonly placeholder="Impuesto">
+                    <input type="number" class="form-control valor" id="valor_impuesto" disabled readonly placeholder="Impuesto">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="valor_total">Valor total</label>
-                    <input type="text" class="form-control valor valor_total" disabled readonly placeholder="Valor total">
+                    <input type="text" class="form-control valor" id="valor_total" disabled readonly placeholder="Valor total">
                 </div>
             </div>
         </div>

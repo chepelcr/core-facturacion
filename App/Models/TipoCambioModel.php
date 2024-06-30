@@ -1,9 +1,10 @@
 <?php
+//Usar la base para el modelo que tenemos creado
 namespace App\Models;
 
 use Core\Model;
 
-/** Modelo para la tabla de tipo de cambio del dolar */
+/** Modelo para la tabla de usuarios */
 class TipoCambioModel extends Model
 {
 	protected $nombreTabla = 'tipo_cambio_historico';
@@ -22,7 +23,11 @@ class TipoCambioModel extends Model
 
 	protected $auditorias = true;
 
-	/**Obtener el tipo de cambio mas reciente por el codigo de indicador */
+	/**Obtener el tipo de cambio mas reciente por el codigo de indicador 
+	 * @param int $id
+	 * 
+	 * @return object|array Objeto con el tipo de cambio o array con todos los tipos de cambio
+	 */
 	function obtener($id)
 	{
 		switch ($id) {
@@ -30,10 +35,19 @@ class TipoCambioModel extends Model
 				return $this->getAll();
 				break;
 
+			case 'CRC':
+				return $this->where('codigo_indicador', 317)->fila();
+				break;
+
+			case 'USD':
+				return $this->where('codigo_indicador', 318)->fila();
+				break;
+
 			default:
 				return $this->where('codigo_indicador', $id)->fila();
 				break;
 		}
 	}
+
 }//Fin de la clase
 ?>

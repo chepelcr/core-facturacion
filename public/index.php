@@ -10,6 +10,9 @@ $default_controller = 'Inicio';
 /**Guarda el nombre de la funcion que se llamara si no hay una definida */
 $default_action = 'index';
 
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+
 /**Crear instancia de la clase rutas */
 $app = new Routes();
 

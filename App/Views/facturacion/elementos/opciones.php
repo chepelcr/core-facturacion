@@ -15,7 +15,8 @@
 
                 <button class="btn btn-dark btn-block col-walmart btn-walmart" title="Datos Walmart" data-toggle="tooltip"
                     onclick="ver_walmart()">
-                    <?=icono('walmart.png', 'Walmart')?>
+                    <!-- Icono con imagen personalizada -->
+                    <img src="<?=getFile('dist/img/walmart.png') ?>" alt="Walmart" class="img-fluid icn">
                 </button>
             </div>
         </div>

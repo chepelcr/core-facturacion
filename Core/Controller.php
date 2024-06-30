@@ -59,16 +59,16 @@
 
         public function error($error = array())
         {
-            $error = (object) $error;
-            
             $nombreVista = 'base/error';            
 
 			$dataView = array(
 				'error'=>$error,
 			);
 
-            //Poner el header en 404
-            header('HTTP/1.0 404 '.$error->error);
+            $data = array(
+                'nombreVista'=>$nombreVista,
+                'dataView'=>$dataView
+            );
 
             return view($nombreVista, $dataView);
         }//Fin de la funcion error
