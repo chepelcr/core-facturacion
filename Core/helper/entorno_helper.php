@@ -4,7 +4,7 @@ use Dotenv\Dotenv;
     /**Obtener una variable de entorno */
     function getEnt($name = false)
     {
-        $dotenv = Dotenv::createImmutable('../');
+        $dotenv = Dotenv::createImmutable('.');
         $dotenv->load();
 
         if(!$name||!isset($_ENV[$name]))
@@ -18,5 +18,5 @@ use Dotenv\Dotenv;
     /**Obtener el ambiente de la aplicacion */
     function getEnviroment()
     {
-        return getEnt('app.ENVIROMENT');
+        return getEnt('app.ambiente');
     }

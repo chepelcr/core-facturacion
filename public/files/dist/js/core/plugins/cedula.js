@@ -23,14 +23,10 @@ function obtener_contribuyente(identificacion = null) {
                 "url": url_cedulas,
                 "method": "get",
             }).done(function (response) {
-                if(response.error)
-                {
+                if(response.error) {
                     mensajeAutomatico('Atencion', "Ha ocurrido un error en la consulta", 'error');
                     return false;
-                }
-
-                else
-                {
+                } else {
                     //Si hay elementos en el campo results
                     if (response.results.length > 0) {
                         //Obtener el primer elemento del array

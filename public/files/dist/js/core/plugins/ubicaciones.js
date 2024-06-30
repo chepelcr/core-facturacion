@@ -1,198 +1,256 @@
-function obtener_cantones(cod_provincia = null) {
-    if(cod_provincia == null) {
-        var cod_provincia = $('#' + elemento_activo).find(".provincia").val();
+function obtener_cantones(countryCode = null, stateId = null, countyId = null) {
+    if(countryCode == null) {
+        countryCode = $('#' + elemento_activo).find(".residence_countryCode").val();
+    }
+
+    if(stateId == null) {
+        stateId = $('#' + elemento_activo).find(".residence_stateId").val();
     }
 
     var html = crear_option('', 'Seleccionar');
 
-    $('#' + elemento_activo).find('.distrito').html(html);
-    activar_campo_clase('distrito', true, elemento_activo);
+    $('#' + elemento_activo).find('.residence_districtId').html(html);
+    activar_campo_clase('residence_districtId', true, elemento_activo);
 
-    $('#' + elemento_activo).find('.barrio').html(html);
-    activar_campo_clase('barrio', true, elemento_activo);
+    $('#' + elemento_activo).find('.residence_neighborhoodId').html(html);
+    activar_campo_clase('residence_neighborhoodId', true, elemento_activo);
+
+    data = {
+        "countryCode": countryCode,
+        "stateId": stateId
+    };
 
     Pace.track(function () {
         $.ajax({
-            "url": base + 'ubicacion/cantones/' + cod_provincia,
+            "url": base + 'ubicacion/cantones',
             "dataType": "json",
+            "data": data,
             "method": "GET"
         }).done(function (response) {
             if (response) {
-                //0: {cod_canton:1 , nom_canton: canton}
                 $.each(response, function (i, canton) {
-                    html += crear_option(canton.cod_canton, canton.canton);
+                    if(countyId != null && countyId == canton.countyId) {
+                        html += crear_option(canton.countyId, canton.countyName, true);
+                    } else {
+                        html += crear_option(canton.countyId, canton.countyName);
+                    }
                 });
             }
 
-            $('#' + elemento_activo).find('.canton').html(html);
-            activar_campo_clase('canton', false, elemento_activo);
+            $('#' + elemento_activo).find('.residence_countyId').html(html);
+            activar_campo_clase('residence_countyId', false, elemento_activo);
+
         });
     });
 }
 
-/**Obtener todos los distritos de un canton */
-function obtener_distritos(cod_provincia = null, cod_canton = null) {
-    if(cod_provincia == null) {
-        var cod_provincia = $('#' + elemento_activo).find(".provincia").val();
-    }
-
-    if(cod_canton == null) {
-        var cod_canton = $('#' + elemento_activo).find(".canton").val();
+function obtener_provincias(countryCode = null, stateId = null) {
+    if(countryCode == null) {
+        countryCode = $('#' + elemento_activo).find(".residence_countryCode").val();
     }
 
     var html = crear_option('', 'Seleccionar');
 
-    $('#' + elemento_activo).find('.barrio').html(html);
-    activar_campo_clase('barrio', true, elemento_activo);
+    $('#' + elemento_activo).find('.residence_countyId').html(html);
+    activar_campo_clase('residence_countyId', true, elemento_activo);
+
+    $('#' + elemento_activo).find('.residence_districtId').html(html);
+    activar_campo_clase('residence_districtId', true, elemento_activo);
+
+    $('#' + elemento_activo).find('.residence_neighborhoodId').html(html);
+    activar_campo_clase('residence_neighborhoodId', true, elemento_activo);
+
+    data = {
+        "countryCode": countryCode
+    };
 
     Pace.track(function () {
         $.ajax({
-            "url": base + 'ubicacion/distritos/' + cod_provincia + '/' + cod_canton,
+            "url": base + 'ubicacion/provincias',
             "dataType": "json",
+            "data": data,
+            "method": "GET"
+        }).done(function (response) {
+            if (response) {
+                //0: {stateId:1 , nom_provincia: residence_stateId}
+                $.each(response, function (i, provincia) {
+                    if(stateId != null && stateId == provincia.stateId) {
+                        html += crear_option(provincia.stateId, provincia.stateName, true);
+                    } else {
+                        html += crear_option(provincia.stateId, provincia.stateName);
+                    }
+                });
+            }
+
+            $('#' + elemento_activo).find('.residence_stateId').html(html);
+            activar_campo_clase('residence_stateId', false, elemento_activo);
+        });
+    });
+}
+
+/**Obtener todos los distritos de un residence_countyId */
+function obtener_distritos(countryCode = null, stateId = null, countyId = null, districtId = null) {
+    if(countryCode == null) {
+        var countryCode = $('#' + elemento_activo).find(".residence_countryCode").val();
+    }
+
+    if(stateId == null) {
+        var stateId = $('#' + elemento_activo).find(".residence_stateId").val();
+    }
+
+    if(countyId == null) {
+        var countyId = $('#' + elemento_activo).find(".residence_countyId").val();
+    }
+
+    var html = crear_option('', 'Seleccionar');
+
+    $('#' + elemento_activo).find('.residence_neighborhoodId').html(html);
+    activar_campo_clase('residence_neighborhoodId', true, elemento_activo);
+
+    data = {
+        "countryCode": countryCode,
+        "stateId": stateId,
+        "countyId": countyId
+    };
+
+    Pace.track(function () {
+        $.ajax({
+            "url": base + 'ubicacion/distritos',
+            "dataType": "json",
+            "data": data,
             "method": "GET"
         }).done(function (response) {
             if (response) {
                 $.each(response, function (i, distrito) {
-                    html += crear_option(distrito.cod_distrito, distrito.distrito);
+                    if(districtId =! null && districtId == distrito.districtId) {
+                        html += crear_option(distrito.districtId, distrito.districtName, true);
+                    } else {
+                        html += crear_option(distrito.districtId, distrito.districtName);
+                    }
                 });
             }
 
-            $('#' + elemento_activo).find('.distrito').html(html);
-            activar_campo_clase('distrito', false, elemento_activo);
+            $('#' + elemento_activo).find('.residence_districtId').html(html);
+            activar_campo_clase('residence_districtId', false, elemento_activo);
         });
     });
 }
 
-/**Obtener todos los barrios de un distrito */
-function obtener_barrios(cod_provincia = null, cod_canton = null, cod_distrito = null) {
-    if(cod_provincia == null) {
-        var cod_provincia = $('#' + elemento_activo).find(".provincia").val();
+/**Obtener todos los barrios de un residence_districtId */
+function obtener_barrios(countryCode = null, stateId = null, countyId = null, districtId = null, neighborhoodId = null) {
+    if(countryCode == null) {
+        var countryCode = $('#' + elemento_activo).find(".residence_countryCode").val();
     }
 
-    if(cod_canton == null) {
-        var cod_canton = $('#' + elemento_activo).find(".canton").val();
+    if(stateId == null) {
+        var stateId = $('#' + elemento_activo).find(".residence_stateId").val();
     }
 
-    if(cod_distrito == null) {
-        var cod_distrito = $('#' + elemento_activo).find(".distrito").val();
+    if(countyId == null) {
+        var countyId = $('#' + elemento_activo).find(".residence_countyId").val();
+    }
+
+    if(districtId == null) {
+        var districtId = $('#' + elemento_activo).find(".residence_districtId").val();
     }
 
     var html = crear_option('', 'Seleccionar');
 
+    data = {
+        "countryCode": countryCode,
+        "stateId": stateId,
+        "countyId": countyId,
+        "districtId": districtId
+    };
+
     Pace.track(function () {
         $.ajax({
-            "url": base + 'ubicacion/barrios/' + cod_provincia + '/' + cod_canton + '/' + cod_distrito,
+            "url": base + 'ubicacion/barrios',
             "dataType": "json",
+            "data": data,
             "method": "GET"
         }).done(function (response) {
             if (response) {
                 $.each(response, function (i, barrio) {
-                    html += crear_option(barrio.id_ubicacion, barrio.barrio);
+                    if (neighborhoodId != null && neighborhoodId == barrio.neighborhoodId) {
+                        html += crear_option(barrio.neighborhoodId, barrio.neighborhoodName, true);
+                    } else {
+                        html += crear_option(barrio.neighborhoodId, barrio.neighborhoodName);
+                    }
                 });
             }
 
-            $('#' + elemento_activo).find('.barrio').html(html);
-            activar_campo_clase('barrio', false, elemento_activo);
+            $('#' + elemento_activo).find('.residence_neighborhoodId').html(html);
+            activar_campo_clase('residence_neighborhoodId', false, elemento_activo);
         });
     });
 }
 
 /**Llenar la ubicacion */
-function llenarUbicacion(cod_provincia, cod_canton, cod_distrito, id_ubicacion, ver = false) {
+function llenarUbicacion(residence, ver = false) {
     var html = crear_option('', 'Seleccionar');
 
-    //Poner el codigo de la provincia
-    $('#' + elemento_activo).find('.provincia').val(cod_provincia);
+    $('#' + elemento_activo).find('.residence_countyId').html(html);
+    activar_campo_clase('residence_countyId', true, elemento_activo);
 
-    $('#' + elemento_activo).find('.canton').html(html);
-    activar_campo_clase('canton', true, elemento_activo);
+    $('#' + elemento_activo).find('.residence_districtId').html(html);
+    activar_campo_clase('residence_districtId', true, elemento_activo);
 
-    $('#' + elemento_activo).find('.distrito').html(html);
-    activar_campo_clase('distrito', true, elemento_activo);
+    $('#' + elemento_activo).find('.residence_neighborhoodId').html(html);
+    activar_campo_clase('residence_neighborhoodId', true, elemento_activo);
 
-    $('#' + elemento_activo).find('.barrio').html(html);
-    activar_campo_clase('barrio', true, elemento_activo);
+    countryCode = residence.countryCode;
+    stateId = residence.stateId;
+    countyId = residence.countyId;
+    districtId = residence.districtId;
+    neighborhoodId = residence.neighborhoodId;
 
-    var html_canton = html;
-    var html_distritos = html;
-    var html_barrios = html;
+    $('#' + elemento_activo).find('.residence_countryCode').val(countryCode);
 
-    Pace.track(function () {
-        $.ajax({
-            "url": base + 'ubicacion/cantones/' + cod_provincia,
-            "dataType": "json",
-            "method": "GET"
-        }).done(function (response) {
-            if (response) {
-                //0: {cod_canton:1 , nom_canton: canton}
-                $.each(response, function (i, canton) {
-                    html_canton += crear_option(canton.cod_canton, canton.canton);
-                });
+    obtener_provincias(countryCode, stateId);
+    
+    obtener_cantones(countryCode, stateId, countyId);
 
-                $('#' + elemento_activo).find('.canton').html(html_canton);
-                $('#' + elemento_activo).find('.canton').val(cod_canton);
-                
-                $.ajax({
-                    "url": base + 'ubicacion/distritos/' + cod_provincia + '/' + cod_canton,
-                    "dataType": "json",
-                    "method": "GET"
-                }).done(function (response) {
-                    if (response) {
-                        $.each(response, function (i, distrito) {
-                            html_distritos += crear_option(distrito.cod_distrito, distrito.distrito);
-                        });
+    obtener_distritos(countryCode, stateId, countyId, districtId);
 
-                        $('#' + elemento_activo).find('.distrito').html(html_distritos);
-                        $('#' + elemento_activo).find('.distrito').val(cod_distrito);
+    obtener_barrios(countryCode, stateId, countyId, districtId, neighborhoodId);
 
-                        $.ajax({
-                            "url": base + 'ubicacion/barrios/' + cod_provincia + '/' + cod_canton + '/' + cod_distrito,
-                            "dataType": "json",
-                            "method": "GET"
-                        }).done(function (response) {
-                            if (response) {
-                                $.each(response, function (i, barrio) {
-                                    html_barrios += crear_option(barrio.id_ubicacion, barrio.barrio);
-                                });
+    if(ver) {
+        desactivar_ubicaciones(true, true);
+    } else {
+        desactivar_ubicaciones(false);
+    }
 
-                                $('#' + elemento_activo).find('.barrio').html(html_barrios);
-                                $('#' + elemento_activo).find('.barrio').val(id_ubicacion);
-                            }
-                        });
+    if(residence.address != null) {
+        // Colocar la informacion en el campo de direccion (Text Area)
+        const elemento = document.getElementById(elemento_activo);
+        const textarea = elemento.querySelector('.residence_address');
 
-                        if(ver)
-                        {
-                            desactivar_ubicaciones(true, true);
-                        }
-
-                        else
-                        {
-                            desactivar_ubicaciones(false);
-                        }
-                    }
-                });
-            }
-        });
-    });
+        textarea.value = residence.address;
+    }
 }//Fin de la funcion
 
 /**Vaciar los campos de ubicacion */
 function vaciar_ubicacion() {
     var html = crear_option('', 'Seleccionar');
 
-    $('#' + elemento_activo).find('.provincia').val('');
+    $('#' + elemento_activo).find('.residence_stateId').val('');
 
-    $('#' + elemento_activo).find('.canton').html(html);
-    $('#' + elemento_activo).find('.distrito').html(html);
-    $('#' + elemento_activo).find('.barrio').html(html);
+    $('#' + elemento_activo).find('.residence_countyId').html(html);
+    $('#' + elemento_activo).find('.residence_districtId').html(html);
+    $('#' + elemento_activo).find('.residence_neighborhoodId').html(html);
 
     desactivar_ubicaciones(true);
 }
 
 /**Desactivar los campos de ubicacion */
-function desactivar_ubicaciones(estado = true, provincia = false) {
-    activar_campo_clase('provincia', provincia, elemento_activo);
-    activar_campo_clase('canton', estado, elemento_activo);
-    activar_campo_clase('distrito', estado, elemento_activo);
-    activar_campo_clase('barrio', estado, elemento_activo);
+function desactivar_ubicaciones(estado = true, ver = false) {
+    if(ver) {
+        activar_campo_clase('residence_countryCode', estado, elemento_activo);
+    } else {
+        activar_campo_clase('residence_countryCode', true, elemento_activo);
+    }
+    activar_campo_clase('residence_countyId', estado, elemento_activo);
+    activar_campo_clase('residence_districtId', estado, elemento_activo);
+    activar_campo_clase('residence_neighborhoodId', estado, elemento_activo);
 }

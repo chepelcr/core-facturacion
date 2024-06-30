@@ -13,33 +13,52 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <!-- Telefono -->
-            <div class="col-md-6 contacto">
+            <!-- Telefono personal -->
+            <div class="col-md-7 contacto">
                 <div class="form-group">
-                    <label>
+                    <label for="personalPhone">
                         Teléfono
                     </label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                </div>
+                                <select name="personalPhone[countryCode]" class="form-control inp personalPhone_countryCode">
+                                    <option value="">Seleccionar</option>
+                                    <?php foreach ($countries as $country) : ?>
+                                        <option value="<?= $country->isoCode ?>" <?php if (isset($personalPhone) && $personalPhone->countryCode == $country->isoCode) {echo "selected";} ?>>
+                                            <?= $country->name ?>
+                                        </option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
                         </div>
-                        <input class="form-control inp perfil telefono" name="telefono" type="text" required max="9" min="8"
-                            value="<?php if(isset($telefono)) echo $telefono?>" placeholder="Teléfono">
+
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                </div>
+                                <input class="form-control inp personalPhone_number" name="personalPhone[number]" type="text" required max="8" value="<?php if (isset($personalPhone)) {echo $personalPhone->number;} ?>" placeholder="Teléfono personal">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <!-- Correo electronico -->
-            <div class="col-md-6 contacto">
+            <div class="col-md-5 contacto">
                 <div class="form-group">
-                    <label>
+                    <label for="email">
                         Correo electrónico
                     </label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                         </div>
-                        <input class="form-control inp perfil correo" name="correo" type="email" required max="100"
-                            value="<?php if(isset($correo)) echo $correo?>" placeholder="Correo electrónico">
+                        <input class="form-control inp perfil email" name="email" type="email" required max="100" value="<?php if (isset($email)) {echo $email;} ?>" placeholder="Correo electrónico">
                     </div>
                 </div>
             </div>

@@ -26,9 +26,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa-solid fa-user-tie"></i></span>
                                     </div>
-                                    <input class="form-control inp perfil biller_username" name="biller_username"
-                                        type="text" required value="<?= getEnt("factura.userToken")?>"
-                                        placeholder="Usuario de facturación">
+                                    <input class="form-control inp perfil biller_username" name="biller_username" type="text" required value="<?= getEnt("factura.userToken") ?>" placeholder="Usuario de facturación">
                                 </div>
                             </div>
                         </div>
@@ -43,9 +41,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
                                     </div>
-                                    <input class="form-control inp biller_password" name="biller_password"
-                                        type="password" required max="100" value="<?= getEnt("factura.userPass")?>"
-                                        placeholder="Contraseña">
+                                    <input class="form-control inp biller_password" name="biller_password" type="password" required max="100" value="<?= getEnt("factura.userPass") ?>" placeholder="Contraseña">
                                 </div>
                             </div>
                         </div>
@@ -86,10 +82,7 @@
                                             </div>
                                             <!--- Checkbox -->
                                             <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox"
-                                                    id="biller_notify_aproved_documents"
-                                                    name="biller_notify_aproved_documents"
-                                                    <?php if(isset($biller_notify_aproved_documents) && ($biller_notify_aproved_documents == 1 || $biller_notify_aproved_documents == 3)) echo 'checked'?>>
+                                                <input class="custom-control-input" type="checkbox" id="biller_notify_aproved_documents" name="biller_notify_aproved_documents" <?php if (isset($biller_notify_aproved_documents) && ($biller_notify_aproved_documents == 1 || $biller_notify_aproved_documents == 3)) echo 'checked' ?>>
                                             </div>
                                         </div>
                                     </div>
@@ -107,39 +100,34 @@
                                             </div>
                                             <!--- Checkbox -->
                                             <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox"
-                                                    id="biller_notify_rejected_documents"
-                                                    name="biller_notify_rejected_documents"
-                                                    <?php if(isset($biller_notify_rejected_documents) && ($biller_notify_rejected_documents == 1 || $biller_notify_rejected_documents == 3)) echo 'checked'?>>
+                                                <input class="custom-control-input" type="checkbox" id="biller_notify_rejected_documents" name="biller_notify_rejected_documents" <?php if (isset($biller_notify_rejected_documents) && ($biller_notify_rejected_documents == 1 || $biller_notify_rejected_documents == 3)) echo 'checked' ?>>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Ninguno -->
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>
-                                                Ningun documento
-                                            </label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i
-                                                            class="fa-solid fa-circle"></i></span>
-                                                </div>
-                                                <!--- Checkbox -->
-                                                <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox"
-                                                        id="biller_notify_none_documents"
-                                                        name="biller_notify_none_documents"
-                                                        <?php if(isset($biller_notify_none_documents) && ($biller_notify_none_documents == 1 || $biller_notify_none_documents == 3)) echo 'checked'?>>
-                                                </div>
+                                <!-- Ninguno -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>
+                                            Ningun documento
+                                        </label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa-solid fa-circle"></i></span>
+                                            </div>
+                                            <!--- Checkbox -->
+                                            <div class="custom-control custom-checkbox">
+                                                <input class="custom-control-input" type="checkbox" id="biller_notify_none_documents" name="biller_notify_none_documents" <?php if (isset($biller_notify_none_documents) && ($biller_notify_none_documents == 1 || $biller_notify_none_documents == 3)) echo 'checked' ?>>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 </form>

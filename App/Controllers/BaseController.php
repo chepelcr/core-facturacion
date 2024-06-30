@@ -4,12 +4,12 @@ namespace App\Controllers;
 
 use Core\Controller;
 
-class BaseController extends Controller
-{
+class BaseController extends Controller {
     protected $helpers = ['login', 'modulos', 'facturacion'];
 
-    public function inicio($data = array())
-    {
+    const LOCATION = "'Location: '";
+
+    public function inicio($data = array()) {
         $data = (object) $data;
 
         if (is_login()) {
@@ -51,8 +51,7 @@ class BaseController extends Controller
             header('Location: ' . baseUrl('login'));
     } //Fin de la funcion index
 
-    protected function listado($data)
-    {
+    protected function listado($data) {
         return view('base/listado', $data);
     }
 }//Fin de la clase

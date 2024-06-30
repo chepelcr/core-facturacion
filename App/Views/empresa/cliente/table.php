@@ -7,13 +7,13 @@
     </tr>
 </thead>
 <tbody>
-    <?php foreach ($clientes as $key => $cliente):?>
+    <?php foreach ($clientes as $key => $customer):?>
     <tr>
-        <td class="col-2"><?=formatear_cedula($cliente->identificacion, $cliente->id_tipo_identificacion)?></td>
-        <td class="col-5"><?=$cliente->razon?></td>
-        <td class="col-3"><?=$cliente->correo?></td>
+        <td class="col-2"><?=formatear_cedula($customer->identification->number, $customer->identification->code)?></td>
+        <td class="col-5"><?=$customer->businessName?></td>
+        <td class="col-3"><?=$customer->email?></td>
         <td class="col-2">
-            <?= get_botones($cliente->id_cliente, 'cliente', 'empresa', 'clientes', $cliente->estado)?>
+            <?= get_botones($customer->id, 'cliente', 'empresa', 'clientes', $customer->status)?>
         </td>
         <!--Fin de las opciones-->
     </tr>

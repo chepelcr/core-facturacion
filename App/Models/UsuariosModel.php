@@ -5,8 +5,7 @@ namespace App\Models;
 use Core\Model;
 
 /** Modelo para la tabla de usuarios */
-class UsuariosModel extends Model
-{
+class UsuariosModel extends Model {
 	protected $nombreTabla = 'usuarios';
 	protected $vistaTabla = 'usuarios_view';
 
@@ -43,19 +42,18 @@ class UsuariosModel extends Model
 	/**Obtener usuarios del sistema */
 	public function obtener($id)
 	{
-		switch($id)
-		{
+		switch($id) {
 			case 'all':
 				return $this->getAll();
-				break;
+			break;
 
 			case 'perfil':
 				return $this->getPerfil();
-				break;
+			break;
 
 			default:
 				return $this->getById($id);
-				break;
+			break;
 		}
 	}//Fin del método obtener
 
@@ -65,4 +63,3 @@ class UsuariosModel extends Model
 		return $this->getById(getSession('id_usuario'));
 	}
 }//Fin de la clase
-?>

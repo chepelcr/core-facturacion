@@ -86,7 +86,7 @@
                         <div class=" row d-flex justify-content-between">
                             <div class="col-md-1">
                                 <!-- Agregar referencia -->
-                                <button type="button" onclick="cloneReferencia()"
+                                <button type="button" onclick="agregar_referencia()"
                                     class="btn btn-warning btt-add-ref btn-block" data-toggle='tooltip'
                                     title="Agregar referencia">
                                     <i class="fas fa-plus"></i>

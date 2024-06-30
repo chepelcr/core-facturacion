@@ -248,7 +248,7 @@
                                             <input placeholder="13%"
                                                 class="form-control form-control-sm inp-fct calcular imp_P porcentaje_exoneracion p_Ex_VL"
                                                 type="text">
-                                            <input type="text" name="impuesto[porcentaje_exoneracion][]"
+                                            <input type="text" name="impuesto[porcentaje_exoneracion][]" hidden
                                                 class="imp_P porcentaje_exoneracion">
                                         </div>
                                     </div>

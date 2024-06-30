@@ -1,57 +1,77 @@
 <?php
 namespace App\Controllers;
 
-use App\Models\UbicacionesModel;
+use App\Api\LocationsApi;
 
-class Ubicacion extends BaseController
-{
+/**
+ * Clase controladora para la ubicacion
+ */
+class Ubicacion extends BaseController {
+    private const ERROR_400 = "No se han enviado los parametros necesarios";
+
     /**Obtener todas las provincias */
-    public function provincias()
-    {
-        $ubicacionesModel = new UbicacionesModel();
-        $provincias = $ubicacionesModel->provincias();
+    public function provincias() {
+        if(isset($_GET['countryCode'])){
+            $countryCode = $_GET['countryCode'];
 
-        return json_encode($provincias);
+            $locationsApi = new LocationsApi();
+            $states = $locationsApi->get_states_by_iso_code($countryCode);
+            
+            return json_encode($states);
+        } else {
+            return $this->object_error(400, self::ERROR_400);
+        }
     }//Fin de la funcion provincias
 
     /**Obtener los cantones para una provincia */
-    public function cantones()
-    {
-        if(getSegment(3))
-        {
-            $ubicacionesModel = new UbicacionesModel();
+    public function cantones() {
+        if(isset($_GET['countryCode']) && isset($_GET['stateId'])) {
+            $countryCode = $_GET['countryCode'];
+            $stateId = $_GET['stateId'];
 
-            return json_encode($ubicacionesModel->cantones(getSegment(3)));
+            $locationsApi = new LocationsApi();
+            $counties = $locationsApi->get_counties_by_state_id_and_iso_code($stateId, $countryCode);
+            
+            return json_encode($counties);
+        } else {
+            return $this->object_error(400, self::ERROR_400);
         }
-
-        return json_encode(false);
     }//Fin de la funcion
 
     /**Obtener todos los distritos para un canton */
-    public function distritos()
-    {
-        $ubicacionesModel = new UbicacionesModel();
+    public function distritos() {
+        if(isset($_GET["countryCode"]) && isset($_GET["stateId"]) && isset($_GET["countyId"])){
+            $countryCode = $_GET["countryCode"];
+            $state = $_GET["stateId"];
+            $county = $_GET["countyId"];
 
-        if(getSegment(3) && getSegment(4))
-        {
-            return json_encode($ubicacionesModel->distritos(getSegment(3), getSegment(4)));
+            $locationsApi = new LocationsApi();
+
+            $districts = $locationsApi->get_districts_by_county_id_and_state_id_and_iso_code($county, $state, $countryCode);
+
+            return json_encode($districts);
+            
+        } else {
+            return $this->object_error(400, self::ERROR_400);
         }
-
-        return json_encode(false);
     }//Fin de validacion
 
     /**Obtener todos los distritos para un canton */
-    public function barrios()
-    {
-        $ubicacionesModel = new UbicacionesModel();
+    public function barrios() {
+        if(isset($_GET["countryCode"]) && isset($_GET["stateId"]) && isset($_GET["countyId"]) && isset($_GET["districtId"])){
+            $countryCode = $_GET["countryCode"];
+            $state = $_GET["stateId"];
+            $county = $_GET["countyId"];
+            $district = $_GET["districtId"];
 
-        if(getSegment(3) && getSegment(4) && getSegment(5))
-        {
-            $ubicacionesModel->where('cod_provincia', getSegment(3))->where('cod_canton', getSegment(4))->where('cod_distrito', getSegment(5));
+            $locationsApi = new LocationsApi();
 
-            return json_encode($ubicacionesModel->getAll());
-        }//Fin de validacion
+            $neighborhoods = $locationsApi->get_neighborhoods_by_district_id_and_county_id_and_state_id_and_iso_code($district, $county, $state, $countryCode);
 
-        return json_encode(false);
+            return json_encode($neighborhoods);
+            
+        } else {
+            return $this->object_error(400, self::ERROR_400);
+        }
     }//Fin de la funcion
 }//Fin de la clase

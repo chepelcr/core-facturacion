@@ -1,19 +1,19 @@
 <thead>
     <tr>
-        <th class="col-2">Código</th>
-        <th class="col-5">Nombre</th>
-        <th class="col-2">Unidad de medida</th>
-        <th class="col-2">Opciones</th>
+        <th id="product_name" class="col-6">Nombre</th>
+        <th id="measurementUnit" class="col-2">Unidad de medida</th>
+        <th id="saleprice" class="col-2">Precio de venta</th>
+        <th id="options" class="col-2">Opciones</th>
     </tr>
 </thead>
 <tbody>
-    <?php foreach ($articulos as $key => $articulo):?>
+    <?php foreach ($articulos as $key => $articulo): ?>
     <tr>
-        <td class="col-2"><?=$articulo->codigo_interno?></td>
-        <td class="col-5"><?=$articulo->descripcion?></td>
-        <td class="col-2"><?=$articulo->nombre_unidad?></td>
+        <td class="col-6"><?=$articulo['description']?></td>
+        <td class="col-2"><?=$articulo['measurementUnit']['description']?></td>
+        <td class="col-2"><?=formatMoney($articulo['salePrice'])?></td>
         <td class="col-2">
-            <?= get_botones($articulo->id_producto, 'producto', 'empresa', 'productos', $articulo->estado)?>
+            <?= get_botones($articulo['productId'], 'producto', 'empresa', 'productos', $articulo['status'])?>
         </td>
         <!--Fin de las opciones-->
     </tr>

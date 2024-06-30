@@ -16,11 +16,9 @@ use App\Models\TipoCambioModel;
 use Core\Config\Header;
 use DOMDocument;
 
-class Documentos extends BaseController
-{
+class Documentos extends BaseController {
     /**Cargar los documentos electronicos */
-    public function index()
-    {
+    public function index() {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
@@ -42,8 +40,7 @@ class Documentos extends BaseController
     } //Fin de la funcion index
 
     /**Abrir el submodulo de ventas*/
-    public function facturacion()
-    {
+    public function facturacion() {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
@@ -67,8 +64,7 @@ class Documentos extends BaseController
     } //Fin de la funcion facturacion
 
     /**Cargar documentos emitidos */
-    public function emitidos()
-    {
+    public function emitidos() {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
@@ -90,8 +86,7 @@ class Documentos extends BaseController
     } //Fin de la funcion emitidos
 
     /**Abrir el submodulo de importar */
-    public function importar()
-    {
+    public function importar() {
         if (is_login()) {
             if (getSegment(3) == 'form') {
                 return view('facturacion/elementos/importar');
@@ -117,8 +112,7 @@ class Documentos extends BaseController
     } //Fin de la funcion importar
 
     /**Validar el estado los documentos que se encuentran en proceso en el ministerio de hacienda */
-    public function validar_documentos()
-    {
+    public function validar_documentos() {
         if (!is_login()) {
             return json_encode(array(
                 'error' => 'login',
@@ -177,14 +171,12 @@ class Documentos extends BaseController
     } //Fin de la funcion validar_documentos
 
     /**Obtener los indicadores de compra y venta desde el banco central */
-    public function indicadores()
-    {
+    public function indicadores() {
         return json_encode(obtenerInidicadores(getSegment(3)));
     } //Fin de la funcion indicadores
 
     /**Enviar un documento por correo electronico */
-    public function enviar_documento()
-    {
+    public function enviar_documento() {
         if (is_login()) {
             $data = array(
                 'status' => 'error',
@@ -211,8 +203,7 @@ class Documentos extends BaseController
     }
 
     /**Cargar los documentos de la empresa */
-    public function cargar_documentos()
-    {
+    public function cargar_documentos() {
         if (is_login()) {
             $model = new DocumentoModel();
             $model->empresa(getSession('id_empresa'));
@@ -262,8 +253,7 @@ class Documentos extends BaseController
     }
 
     /**Validar el estado de un documento en el ministerio de hacienda */
-    public function validar_documento()
-    {
+    public function validar_documento() {
         if (is_login()) {
             if (getSegment(3)) {
                 $id_documento = getSegment(3);
@@ -337,8 +327,7 @@ class Documentos extends BaseController
     }
 
     /**Enviar un documento al ministerio de hacienda */
-    public function enviar_hacienda()
-    {
+    public function enviar_hacienda() {
         if (!is_login()) {
             return json_encode(array(
                 'status' => 'error',
@@ -442,8 +431,7 @@ class Documentos extends BaseController
             "respuesta-xml": "PD94bWwgdmVyc2lvbj0iMS4wIiA/Pg0KDQo8ZG9tYWluIHhtbG5zPSJ1cm46amJvc3M6ZG9tYWluOjQuMCI+DQogICAgPGV4dGVuc2lvbnM+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY2x1c3RlcmluZy5pbmZpbmlzcGFuIi8+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY2x1c3RlcmluZy5qZ3JvdXBzIi8+DQogICAgICAgIDxleHRlbnNpb24gbW9kdWxlPSJvcmcuamJvc3MuYXMuY29ubmVjdG9yIi8+DQogICAgICAgIDxleHRlbnNpb24gbW..."
             }
      */
-    public function esperar_respuesta()
-    {
+    public function esperar_respuesta() {
         //Colocar el header para que el navegador sepa que es un json
         header('Content-Type: application/json');
 
@@ -461,8 +449,7 @@ class Documentos extends BaseController
     }
 
     /**Obtener todos los productos */
-    public function get_productos()
-    {
+    public function get_productos() {
         if (is_login()) {
             $model = model('productos');
 
@@ -482,8 +469,7 @@ class Documentos extends BaseController
     } //Fin de la funcion get_productos
 
     /**Obtener todos los clientes */
-    public function get_clientes()
-    {
+    public function get_clientes() {
         if (is_login()) {
             $model = model('clientes');
 
@@ -503,8 +489,7 @@ class Documentos extends BaseController
     } //Fin de la funcion get_clientes
 
     /**Emitir un tiquete electronico */
-    public function tiquete()
-    {
+    public function tiquete() {
         if (is_login()) {
             $id_tipo_documento = '04';
 
@@ -518,8 +503,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir un tiquete electronico
 
     /**Emitir una factura electronica */
-    public function factura()
-    {
+    public function factura() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -534,8 +518,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una factura electronica
 
     /**Emitir una factura electronica de compra */
-    public function factura_compra()
-    {
+    public function factura_compra() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -550,8 +533,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una factura electronica de compra
 
     /** Emitir una factura de exportacion */
-    public function factura_exportacion()
-    {
+    public function factura_exportacion() {
         if (is_login()) {
             $numero_documento = getSegment(3);
 
@@ -563,8 +545,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una factura de exportacion
 
     /**Emitir una nota de credito (03) */
-    public function nota_credito()
-    {
+    public function nota_credito() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -579,8 +560,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una nota de credito
 
     /**Emitir una nota de debito (02) */
-    public function nota_debito()
-    {
+    public function nota_debito() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -595,8 +575,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una nota de debito
 
     /**Obtener un boton para el nuevo documento */
-    public function get_boton()
-    {
+    public function get_boton() {
         if (is_login()) {
             $numero_documento = getSegment(3);
 
@@ -610,8 +589,7 @@ class Documentos extends BaseController
     } //Fin de la funcion get_boton
 
     /**Buscar un cliente por identificacion */
-    public function buscar_cliente()
-    {
+    public function buscar_cliente() {
         if (is_login()) {
             if (getSegment(3)) {
                 $identificacion = getSegment(3);
@@ -642,8 +620,7 @@ class Documentos extends BaseController
     } //Fin de la funcion buscar_cliente
 
     /**Obtener un documento en pdf */
-    public function ver_pdf()
-    {
+    public function ver_pdf() {
         if (is_login()) {
             $clave = getSegment(3);
 
@@ -659,8 +636,7 @@ class Documentos extends BaseController
     }
 
     /**Guardar un  documento electronico*/
-    public function guardar($objeto = null)
-    {
+    public function guardar($objeto = null) {
         if (is_login()) {
             $cantidad_lineas = 0;
 
@@ -1753,8 +1729,7 @@ class Documentos extends BaseController
     } //Fin de la funcion create
 
     /**Obtener el modal de agregar los elementos de Walmart */
-    public function get_walmart()
-    {
+    public function get_walmart() {
         if (is_login()) {
             return view('facturacion/modal/walmart', getInfoWalmart());
         } else
@@ -1764,8 +1739,7 @@ class Documentos extends BaseController
     } //Fin de la funcion get_walmart
 
     /**Descargar un documento en pdf */
-    public function descargar_pdf()
-    {
+    public function descargar_pdf() {
         if (is_login()) {
             $clave = getSegment(3);
 
@@ -1818,8 +1792,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para descargar un documento
 
     /**Descargar un archivo zip */
-    public function descargar_zip()
-    {
+    public function descargar_zip() {
         if (is_login()) {
             if (getSegment(3)) {
                 $nombre_archivo = getSegment(3);
@@ -1842,8 +1815,7 @@ class Documentos extends BaseController
     } //Fin de la funcion  para descargar un archivo zip
 
     /** Ver un documento pdf en el navegador */
-    public function pdf()
-    {
+    public function pdf() {
         $clave = getSegment(3);
 
         $pdf = new Pdf_Manager();
@@ -1893,8 +1865,7 @@ class Documentos extends BaseController
     } //Fin del metodo para generar un pdf
 
     /**Buscar un producto por codigo en la base de datos */
-    function buscar_producto()
-    {
+    function buscar_producto() {
         if (is_login()) {
             if (getSegment(3)) {
                 $productosModel = new ProductosModel();
@@ -1908,8 +1879,7 @@ class Documentos extends BaseController
             ));
     } //Fin de la funcion buscar_producto
 
-    public function reporte()
-    {
+    public function reporte() {
         if (is_login()) {
             $claves = array();
 

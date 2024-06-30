@@ -12,10 +12,28 @@
     </div>
     <div class="card-body">
         <div class="row">
+            <!-- Nombre comercial -->
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="nombre_empresa">Nombre de la Empresa</label>
-                    <input type="text" class="form-control inp nombre_comercial" id="nombre_comercial" name="nombre_comercial" placeholder="Nombre de la empresa" value="<?= $nombre_comercial ?? '' ?>">
+                    <label for="tradeName">Nombre de la Empresa</label>
+                    <input type="text" class="form-control inp tradeName" name="tradeName" placeholder="Nombre de la empresa" value="<?= $tradeName ?? $businessName ?>">
+                </div>
+            </div>
+            <!-- Logo -->
+            <div class="col-md-12">
+                <div class="form-group update_logo" hidden>
+                    <label for="logo">Logo</label>
+                    <input type="file" class="form-control inp logo" name="logo" accept="image/*">
+                </div>
+
+                <!-- Ver logo -->
+                <div class="form-group watch_logo" hidden>
+                    <label for="logo">Logo</label>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-primary" onclick="watch_logo(<?= $logoUrl ?? '' ?>)">
+                            <i class="fas fa-eye"></i> Ver logo
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

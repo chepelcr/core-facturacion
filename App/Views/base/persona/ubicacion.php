@@ -14,6 +14,29 @@
 
     <div class="card-body">
         <div class="row">
+            <!-- País de residencia -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="text-left">País de residencia</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        </div>
+                        <select onchange="obtener_provincias(this.value)" class="form-control inp residence_countryCode" name="residence[stateId]">
+                            <option value="">Seleccionar</option>
+                            <?php foreach ($countries as $country): ?>
+                            <option value="<?=$country->isoCode?>"
+                                <?php
+                                    if((isset($residence->countryCode) && $residence->countryCode == $country->isoCode) || (!isset($residence->countryCode) && getCountryCode() == $country->isoCode)) {echo "selected";} ?>>
+                                <?= ucfirst($country->name)?>
+                            </option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
             <div class="col-md-6">
                 <div class="form-group">
                     <label class="text-left">Provincia</label>
@@ -21,12 +44,12 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select onchange="obtener_cantones(this.value)" class="form-control inp provincia">
+                        <select onchange="obtener_cantones()" class="form-control inp residence_stateId" name="residence[stateId]">
                             <option value="">Seleccionar</option>
-                            <?php foreach ($provincias as $key => $provincia): ?>
-                            <option value="<?=$provincia->cod_provincia?>"
-                                <?php if(isset($cod_provincia) && $cod_provincia == $provincia->cod_provincia) echo "selected"; ?>>
-                                <?= ucfirst($provincia->provincia)?>
+                            <?php foreach ($states as $state): ?>
+                            <option value="<?=$state->stateId?>"
+                                <?php if(isset($residence->stateId) && $residence->stateId == $state->stateId) {echo "selected";} ?>>
+                                <?= ucfirst($state->stateName)?>
                             </option>
                             <?php endforeach ?>
                         </select>
@@ -34,22 +57,22 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label class="text-left">Cantón</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select onchange="obtener_distritos()" class="form-control inp canton">
+                        <select onchange="obtener_distritos()" class="form-control inp residence_countyId" name="residence[countyId]">
                             <option value="">Seleccionar</option>
 
                             <!-- Si existen, recorrer cantones-->
-                            <?php if(isset($cantones)): ?>
-                            <?php foreach ($cantones as $key => $canton): ?>
-                            <option value="<?=$canton->cod_canton?>"
-                                <?php if(isset($cod_canton) && $cod_canton == $canton->cod_canton) echo "selected"; ?>>
-                                <?=ucfirst($canton->canton)?>
+                            <?php if(isset($counties)): ?>
+                            <?php  foreach ($counties as $county): ?>
+                            <option value="<?=$county->countyId?>"
+                                <?php if(isset($residence->countyId) && $residence->countyId == $county->countyId) {echo "selected";} ?>>
+                                <?=ucfirst($county->countyName)?>
                             </option>
                             <?php endforeach ?>
                             <?php endif ?>
@@ -58,22 +81,22 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label class="text-left">Distrito</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select onchange="obtener_barrios()" class="form-control inp distrito">
+                        <select onchange="obtener_barrios()" class="form-control inp residence_districtId" name="residence[districtId]">
                             <option value="">Seleccionar</option>
 
-                            <!-- Si existen, recorrer distritos-->
-                            <?php if(isset($distritos)): ?>
-                            <?php foreach ($distritos as $key => $distrito): ?>
-                            <option value="<?=$distrito->cod_distrito?>"
-                                <?php if(isset($cod_distrito) && $cod_distrito == $distrito->cod_distrito) echo 'selected' ?>>
-                                <?=ucfirst($distrito->distrito)?></option>
+                            <!-- Si existen, recorrer districts-->
+                            <?php if(isset($districts)): ?>
+                            <?php foreach ($districts as $district): ?>
+                            <option value="<?=$district->districtId?>"
+                                <?php if(isset($residence->districtId) && $residence->districtId == $district->districtId) {echo 'selected';} ?>>
+                                <?=ucfirst($district->districtName)?></option>
                             <?php endforeach ?>
                             <?php endif ?>
                         </select>
@@ -81,22 +104,22 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label class="text-left">Barrio</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select class="form-control inp barrio id_ubicacion" name="id_ubicacion">
+                        <select class="form-control inp residence_neighborhoodId" name="residence[neighborhoodId]">
                             <option value="">Seleccionar</option>
 
-                            <!-- Si existen, recorrer barrios-->
-                            <?php if(isset($barrios)): ?>
-                            <?php foreach ($barrios as $key => $barrio): ?>
-                            <option value="<?=$barrio->cod_barrio?>"
-                                <?php if(isset($cod_barrio) && $cod_barrio == $barrio->cod_barrio) echo 'selected' ?>>
-                                <?=ucfirst($barrio->barrio)?></option>
+                            <!-- Si existen, recorrer neighborhoods-->
+                            <?php if(isset($neighborhoods)): ?>
+                            <?php foreach ($neighborhoods as $neighborhood): ?>
+                            <option value="<?=$neighborhood->neighborhoodId?>"
+                                <?php if(isset($residence->neighborhoodId) && $residence->neighborhoodId == $neighborhood->neighborhoodId) {echo 'selected';} ?>>
+                                <?=ucfirst($neighborhood->neighborhoodName)?></option>
                             <?php endforeach ?>
                             <?php endif ?>
                         </select>
@@ -111,9 +134,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <textarea class="form-control inp otras_senas" name="otras_senas" cols="30" rows="3"
-                            placeholder="Otras señas"
-                            <?php if(isset($otras_senas)) echo 'value="'.$otras_senas.'"'; ?>></textarea>
+                        <textarea class="form-control inp residence_address" name="residence[address]" cols="30" rows="3"
+                            placeholder="Direccion Completa"><?= $residence->address ?? '' ?></textarea>
                     </div>
                 </div>
             </div>

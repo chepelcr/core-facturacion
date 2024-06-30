@@ -4,7 +4,7 @@
             <div class="card-body">
                 <div class="error-page">
                     <h2 class="headline text-warning">
-                        <?php if(!is_null($error))
+                        <?php if(isset($error->codigo))
                         {
                             echo $error->codigo;
                         }?></h2>
@@ -15,7 +15,7 @@
                         <h3><i class="fas fa-exclamation-triangle text-warning"></i> Atencion</h3>
 
                         <p>
-                        <?php if(!is_null($error))
+                        <?php if(!isset($error->error))
                         {
                             echo $error->error;
                         }?>

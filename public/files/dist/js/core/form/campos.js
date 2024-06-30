@@ -5,8 +5,13 @@ function campos_productos(estado = false, elemento = '') {
     campos_cabys(estado);
 }//Fin de campos_productos
 
-function crear_option(valor, texto) {
-    var html = '<option value="' + valor + '">' + texto + '</option>';
+function crear_option(valor, texto, selected = false) {
+    var html = '<option value="' + valor + '"';
+    if(selected) {
+        html += ' selected';
+    }
+    html += '>' + texto + '</option>';
+    
     return html;
 }
 
@@ -103,10 +108,10 @@ function vaciar_campo_clase(clase = '', nombre_elemento = '')
 */
 function activar_campos_cedula(estado, nombre_elemento = '')
 {
-    activar_campo_clase('identificacion', estado, nombre_elemento);
-    activar_campo_clase('nombre', estado, nombre_elemento);
-    activar_campo_clase('id_tipo_identificacion', estado, nombre_elemento);
-    activar_campo_clase('cod_pais', estado, nombre_elemento);
+    activar_campo_clase('identification_number', estado, nombre_elemento);
+    activar_campo_clase('businessName', estado, nombre_elemento);
+    activar_campo_clase('identification_typeId', estado, nombre_elemento);
+    activar_campo_clase('nationality', estado, nombre_elemento);
 }//Fin de la funcion
 
 /**Activar o desactivar campos del codigo cabys */

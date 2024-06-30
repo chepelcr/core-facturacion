@@ -1,21 +1,20 @@
 <?php
 
+use App\Api\LocationsApi;
 use App\Librerias\Correo;
 use App\Models\ContraseniaModel;
-use App\Models\EmpresasModel;
+use App\Api\TaxpayersApi;
 use App\Models\UbicacionesModel;
 use App\Models\UsuariosModel;
 
 /** Validar si el usuario ha iniciado sesion */
-    function is_login()
-    {
+    function is_login() {
 		return getSession();
 		//return true;
     }//Fin de la validacion para el login
 
 	/**Generar una contraseña aleatoriamente */
-	function generar_password_complejo($largo)
-	{
+	function generar_password_complejo($largo) {
 		$cadena_base =  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$cadena_base .= '0123456789' ;
 		$cadena_base .= '!@#%&*';
@@ -30,8 +29,7 @@ use App\Models\UsuariosModel;
 	}//Fin del metodo para generar una contraseña aleatoriamente
 
 	/**Encriptar un texto */
-	function encriptar_texto($texto)
-	{
+	function encriptar_texto($texto) {
 		$key = 'sistema_inventario';
 		$result = '';
 		$texto = utf8_encode($texto);
@@ -46,8 +44,7 @@ use App\Models\UsuariosModel;
 	}//Fin del metodo para encriptar un texto
 
 	/**Desencriptar un texto */
-	function desencriptar_texto($texto)
-	{
+	function desencriptar_texto($texto) {
 		$key = 'sistema_inventario';
 		$result = '';
 		$texto = base64_decode($texto);
@@ -62,8 +59,7 @@ use App\Models\UsuariosModel;
 	}//Fin del metodo para desencriptar un texto
 
 	//Validar si un texto esta vacio
-	function validar($texto)
-	{
+	function validar($texto) {
 		if($texto && $texto != '')
 			return true;
 		
@@ -71,8 +67,7 @@ use App\Models\UsuariosModel;
 	}//Fin de la funcion para validar si un texto esta vacio
 
 	/**Validar la contrasenia de un usuario */
-	function validar_contrasenia($id_usuario, $pswd)
-	{
+	function validar_contrasenia($id_usuario, $pswd) {
 
 		$contraseniaModel = new ContraseniaModel();
 		$contraseniaModel->where('id_usuario', $id_usuario);
@@ -80,8 +75,7 @@ use App\Models\UsuariosModel;
 		$contrasenia = $contraseniaModel->fila();
 
 		//Si la contrasenia esta bloqueada
-		if($contrasenia->bloqueado == 1)
-		{
+		if($contrasenia->bloqueado == 1) {
 			//Validar fecha de bloqueo
 			if($contrasenia->fecha_desbloqueo > date('Y-m-d H:i:s'))
 			{
@@ -160,8 +154,7 @@ use App\Models\UsuariosModel;
 	}//Fin del metodo para validar la contraseña
 
 	/**Enviar una contrasenia temporal a un usuario por correo electronico */
-	function enviar_contrasenia_temporal($usuario)
-	{
+	function enviar_contrasenia_temporal($usuario) {
 		$pass = generar_password_complejo(8);
 
 		$contraseniaModel = new ContraseniaModel();
@@ -301,72 +294,86 @@ use App\Models\UsuariosModel;
 	{
 		if(is_login())
 		{
-			$empresasModel = new EmpresasModel();
-			$empresa = $empresasModel->getEmpresa();
+			$idNumber = getEnt("ivois.api.taxpayer.idNumber");
+			$nationality = getEnt("ivois.api.taxpayer.nationality");
+
+			$taxpayersApi = new TaxpayersApi();
+			$empresa = $taxpayersApi->getTaxpayerByNationalityAndIdNumber($nationality, $idNumber);
+
 
 			$datos_personales = array(
-				'nombre' => $empresa->nombre,
-				'identificacion' => $empresa->identificacion,
-				'id_tipo_identificacion' => $empresa->id_tipo_identificacion,
-				'cod_pais' => $empresa->cod_pais,
+				'businessName' => $empresa->businessName,
+				'identification' => $empresa->identification,
+				'nationality' => $empresa->nationality,
 				'identificaciones'=>array(
 					(object) array( 
-						'id_tipo_identificacion' => $empresa->id_tipo_identificacion, 
-						'tipo_identificacion' => $empresa->tipo_identificacion ),
+						'typeId' => $empresa->identification->typeId, 
+						'description' => $empresa->identification->description ),
 				),
-				'codigos'=>
+				'countries'=>
 					array(
 						(object) array( 
-							'cod_pais' => $empresa->cod_pais,
-							'nombre' => $empresa->nombre_pais ),
+							'isoCode' => $empresa->nationality->isoCode,
+							'name' => $empresa->nationality->name ),
 					),
 			);
 
+			$locationsApi = new LocationsApi();
+
+			$countries = $locationsApi->get_countries();
+			
 			$datos_contacto = array(
-				'telefono' => $empresa->telefono,
-				'correo' => $empresa->correo,
+				'personalPhone' => $empresa->personalPhone,
+				'fax'=> $empresa->fax ?? null,
+				'businessPhone' => $empresa->businessPhone,
+				'email' => $empresa->email,
+				'countries' => $countries,
 			);
 
-			$provinciasModel = new UbicacionesModel();
-			$provincias = $provinciasModel->provincias();
+			$residenceCountry = $empresa->residence->countryCode;
 
-			$provinciasModel = new UbicacionesModel();
-			$cantones = $provinciasModel->cantones($empresa->cod_provincia);
-
-			$provinciasModel = new UbicacionesModel();
-			$distritos = $provinciasModel->distritos($empresa->cod_provincia, $empresa->cod_canton);
-
-			$provinciasModel = new UbicacionesModel();
-			$barrios = $provinciasModel->barrios($empresa->cod_provincia, $empresa->cod_canton, $empresa->cod_distrito);
+			$provincias = $locationsApi->get_states_by_iso_code($residenceCountry);
+			$cantones = $locationsApi->get_counties_by_state_id_and_iso_code($empresa->residence->stateId, $residenceCountry);
+			$distritos = $locationsApi->get_districts_by_county_id_and_state_id_and_iso_code($empresa->residence->countyId, $empresa->residence->stateId, $residenceCountry);
+			$barrios = $locationsApi->get_neighborhoods_by_district_id_and_county_id_and_state_id_and_iso_code($empresa->residence->districtId, $empresa->residence->countyId, $empresa->residence->stateId, $residenceCountry);
 
 			$dataProvincias = array(
-				'cod_provincia' => $empresa->cod_provincia,
-				'provincia' => $empresa->provincia,
-				'provincias' => $provincias,
-				'cod_canton' => $empresa->cod_canton,
-				'canton' => $empresa->canton,
-				'cantones' => $cantones,
-				'cod_distrito' => $empresa->cod_distrito,
-				'distrito' => $empresa->distrito,
-				'distritos' => $distritos,
-				'cod_barrio' => $empresa->cod_barrio,
-				'barrio' => $empresa->barrio,
-				'barrios' => $barrios,
+				#'cod_provincia' => $empresa->residence->stateId,
+				'countries' => $countries,
+				'states' => $provincias,
+				#'cod_canton' => $empresa->residence->countyId,
+				#'canton' => $empresa->residence->countyName,
+				'counties' => $cantones,
+				#'cod_distrito' => $empresa->residence->districtId,
+				#'distrito' => $empresa->residence->districtName,
+				'districts' => $distritos,
+				#'cod_barrio' => $empresa->residence->neighborhoodId,
+				#'barrio' => $empresa->residence->neighborhoodName,
+				'neighborhoods' => $barrios,
+				'residence'=>$empresa->residence
+				#'otras_senas'=>$empresa->residence->address
 			);
 
 			$datos_empresa = array(
-				'nombre_comercial' => $empresa->nombre_comercial,
+				'tradeName' => $empresa->tradeName,
 			);
 
 			$datos_empresa = array(
-				'id_empresa' => $empresa->id_empresa,
+				'taxpayerId' => $empresa->taxpayerId,
 				'datos_personales' => $datos_personales,
 				'datos_contacto' => $datos_contacto,
 				'dataProvincias' => $dataProvincias,
 				'datos_empresa' => $datos_empresa,
 			);
 
+			setSession("taxpayerId", $empresa->taxpayerId);
+
 			return $datos_empresa;
-		}	
+		}
+
 		return false;
 	}//Fin de la funcion para obtener la empresa del usuario que ha iniciado sesión
+
+	function getCountryCode() {
+        return getEnt("ivois.api.taxpayer.nationality");
+    }

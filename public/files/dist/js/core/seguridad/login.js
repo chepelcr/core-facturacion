@@ -1,7 +1,18 @@
 /**Direccion web de la pagina */
-var base = "http://localhost/core-facturacion/public/";
+var base = "http://localhost/";
 //var base = "https://stag.modaslaura.works/";
 //var base = "https://facturacion.modaslaura.works/";
+
+base = window.location.host
+protocol = window.location.protocol
+
+if (protocol == 'http:') {
+    base = 'http://' + base + '/';
+} else {
+    base = 'https://' + base + '/';
+}
+
+console.log(base);
 
 let empresa = 'Modas Laura';
 

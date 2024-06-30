@@ -23,8 +23,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                                 </div>
-                                <input class="form-control inp identificacion" onblur="validar_identificacion(this.value)"
-                                    name="identificacion" type="text" placeholder="Ingrese el número de cédula" value="<?php if(isset($identificacion)) echo formatear_cedula($identificacion, $id_tipo_identificacion)?>" required max="100">
+                                <input class="form-control inp identification_number" onblur="validar_identificacion(this.value)"
+                                    name="identification[number]" type="text" placeholder="Ingrese el número de cédula" value="<?php if(isset($identification)) {echo formatear_cedula($identification->number, $identification->code);}?>" required max="100">
                                     
                                 <div class="input-group-append">
                                     <!-- Boton para eliminar el contenido del campo -->
@@ -39,18 +39,18 @@
                     <!-- Tipo de cedula-->
                     <div class="col-md-5">
                         <div class="form-group">
-                            <label class="text-left">Tipo de identificación</label>
+                            <label class="text-left" for="identification[typeId]">Tipo de identificación</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                                 </div>
-                                <select name="id_tipo_identificacion"
-                                    class="form-control inp id_tipo_identificacion">
+                                <select name="identification[typeId]"
+                                    class="form-control inp identification_typeId">
                                     <option value="">Seleccionar</option>
-                                    <?php foreach ($identificaciones as $key => $identificacion): ?>
-                                    <option value="<?=$identificacion->id_tipo_identificacion?>"
-                                        <?php if(isset($id_tipo_identificacion) && $id_tipo_identificacion == $identificacion->id_tipo_identificacion) echo "selected"?>>
-                                        <?=$identificacion->tipo_identificacion?></option>
+                                    <?php foreach ($identificaciones as $identificationType): ?>
+                                    <option value="<?=$identificationType->typeId?>"
+                                        <?php if(isset($identification) && $identificationType->typeId == $identification->typeId) {echo "selected";}?>>
+                                        <?=$identificationType->description?></option>
                                     <?php endforeach ?>
                                 </select>
                             </div>
@@ -67,8 +67,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                         </div>
-                        <input class="form-control inp nombre" placeholder="Nombre del contribuyente" name="nombre" required
-                            value="<?php if(isset($nombre)) echo $nombre?>" type="text" max="100">
+                        <input class="form-control inp businessName" placeholder="Nombre del contribuyente" name="businessName" required
+                            value="<?php if(isset($businessName)) { echo $businessName;}?>" type="text" max="100">
                     </div>
                 </div>
             </div>
@@ -80,12 +80,12 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select name="cod_pais" class="form-control inp cod_pais">
+                        <select name="nationality" class="form-control inp nationality">
                             <option value="">Seleccionar</option>
-                            <?php foreach ($codigos as $key => $codigo): ?>
-                            <option value="<?=$codigo->cod_pais?>"
-                                <?php if(isset($cod_pais) && $cod_pais == $codigo->cod_pais) echo "selected"?>>
-                                <?=$codigo->nombre?>
+                            <?php foreach ($countries as $country): ?>
+                            <option value="<?=$country->isoCode?>"
+                                <?php if(isset($nationality) && $nationality->isoCode == $country->isoCode) {echo "selected";}?>>
+                                <?=$country->name?>
                             </option>
                             <?php endforeach ?>
                         </select>

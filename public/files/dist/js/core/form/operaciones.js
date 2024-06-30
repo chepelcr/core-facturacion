@@ -184,33 +184,36 @@ function llenarFrm(objeto, titulo, nombre_form = '', ver = false) {
     $('#' + nombre_form).find('.card').CardWidget('collapse');
 
     if (objeto) {
-        var identificacion = false;
-        var tipo_identificacion = '';
-
         $.each(objeto, function (key, valor) {
-            if (key == 'identificacion') {
-                identificacion = valor;
-            }
+            if (key == 'identification') {
+                var identificacion = valor.number;
+                var tipo_identificacion = valor.code;
 
-            else if (key == 'id_tipo_identificacion') {
-                tipo_identificacion = valor;
-            }
+                identificacion = formatear_cedula(identificacion, tipo_identificacion);
 
-            $('#' + nombre_form).find("." + key).val(valor);
+                console.log(identificacion);
+                console.log(valor);
+
+                $('#' + nombre_form).find(".identification_number").val(identificacion);
+                $('#' + nombre_form).find(".identification_typeId").val(valor.typeId);
+            } else if(key == 'residence') {
+                //llenarUbicacion(valor);
+            } else if(key == 'personalPhone') {
+                $('#' + nombre_form).find(".personalPhone_number").val(valor.number);
+                $('#' + nombre_form).find(".personalPhone_countryCode").val(valor.countryCode);
+            } else if(key == 'nationality') {
+                $('#' + nombre_form).find(".nationality").val(valor.isoCode);
+            } else {
+                $('#' + nombre_form).find("." + key).val(valor);   
+            }
         });
-
-        if (identificacion) {
-            identificacion = formatear_cedula(identificacion, tipo_identificacion);
-            $('#' + nombre_form).find(".identificacion").val(identificacion);
-        }
 
         $('#' + elemento_activo).find(".titulo-form").html(titulo);
 
         //Mostrar el card-frm
         $('#' + elemento_activo).find('.card-frm').show();
 
-        if(ver)
-        {
+        if(ver) {
             $('#' + elemento_activo).find('.btt-mod').hide();
             $('#' + elemento_activo).find('.btt-edt').show();
             $('#' + elemento_activo).find('.btt-grd').hide();
@@ -220,8 +223,7 @@ function llenarFrm(objeto, titulo, nombre_form = '', ver = false) {
             activar_campo_clase('btn-mdf', true, elemento_activo);
         }
 
-        else
-        {
+        else {
             $('#' + elemento_activo).find('.btt-mod').show();
             $('#' + elemento_activo).find('.btt-edt').hide();
             $('#' + elemento_activo).find('.btt-grd').hide();
@@ -376,7 +378,7 @@ function obtener(id, objeto, ver = false) {
     id_objeto = id;
 
     $.ajax({
-        "url": base + modulo_activo + "/obtener/" + id + '/' + submodulo_activo,
+        "url": base + modulo_activo + "/obtener/" + submodulo_activo + '/' + id,
         "method": "get",
         "dataType": "json",
     }).done(function (response) {
@@ -384,7 +386,7 @@ function obtener(id, objeto, ver = false) {
             modulo = modulo_activo;
             submodulo = submodulo_activo;
 
-            ruta_accion = modulo + '/update/' + id_objeto + '/' + submodulo;
+            ruta_accion = modulo + '/update/' + submodulo_activo + '/' + id;
 
             //Collapsar el listado
             $('#' + elemento_activo).find('.card-table').CardWidget('collapse');
@@ -400,7 +402,7 @@ function obtener(id, objeto, ver = false) {
 
             if (objeto == 'cliente') {
                 activar_campos_cedula(true, form_activo);
-                llenarUbicacion(response.cod_provincia, response.cod_canton, response.cod_distrito, response.id_ubicacion, ver);
+                llenarUbicacion(response.residence, ver);
             }
 
             if (objeto == 'producto') {

@@ -26,7 +26,7 @@
 
                         echo '<!-- ' . $modulo->nombre_modulo . ' -->';
                     ?>
-                        <div class="<?= getMdSize($cantidad_modulos, $modulos_recorridos) ?>">';
+                        <div class="<?= getMdSize($cantidad_modulos, $modulos_recorridos) ?>">
                             <div class="card">
                                 <div class="card-header">
                                     <div class="d-flex justify-content-between">

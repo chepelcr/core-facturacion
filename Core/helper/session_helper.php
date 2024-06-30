@@ -9,11 +9,13 @@ function getSession($name = false)
 {
     if(isset($_SESSION[baseUrl()]))
     {
-        if(!$name)
+        if(!$name) {
             return $_SESSION[baseUrl()];
+        }
 
-        if(isset($_SESSION[baseUrl($name)]))
+        if(isset($_SESSION[baseUrl($name)])) {
             return $_SESSION[baseUrl($name)];
+        }
     }
 
     return false;
@@ -27,12 +29,18 @@ function setSession($name, $value)
     $_SESSION[baseUrl($name)] = $value;
 }//Fin del metodo para setear la un valor de la sesion de la aplicacion
 
-function setDataSession($data)
-{
+function setDataSession($data = array()) {
     $_SESSION[baseUrl()] = true;
 
     foreach ($data as $campo => $valor) {
-        setSession($campo, $valor);
+        # Si el campo es un objeto o un array, se recorre para 
+        if(is_array($valor) || is_object($valor)) {
+            foreach ($valor as $key => $value) {
+                setSession($key, $value);
+            }
+        } else {
+            setSession($campo, $valor);
+        }
     }//Fin del ciclo para crear la sesion con data
 }//Fin del metodo para setear la sesion de la aplicacion
 

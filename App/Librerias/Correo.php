@@ -105,39 +105,21 @@ class Correo
             //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
             if ($mail->send()) {
-                $id_usuario = getSession('id_usuario');
 
-                if (!$id_usuario)
-                    $id_usuario = 0;
-
-                $data = array(
-                    'id_fila' => '0',
-                    'tabla' => 'correo',
-                    'id_usuario' => $id_usuario,
-                    'accion' => 'Correo enviado'
-                );
-
-                insertAuditoria($data);
+                insertAuditoria(0, 'correo', 'Correo enviado');
 
                 return true;
             }
         } catch (Exception $ex) {
             $id_usuario = getSession('id_usuario');
 
-            if (!$id_usuario)
+            if (!$id_usuario) {
                 $id_usuario = 0;
+            }
             
             $message = "Su mensaje no se ha enviado: {$mail->ErrorInfo}";
 
-            $messagecomplet = $message;
-
-            $data = array(
-                'sentencia' => $messagecomplet,
-                'controlador' => 'correo',
-                'id_usuario' => $id_usuario
-            );
-
-            insertError($data);
+            insertError($message, 'correo');
 
             return false;
         }

@@ -2,7 +2,7 @@
 
 use PHPBook\View as View;
 
-View\Configuration\View::setViewsPathRoot('main', '../App/Views');
+View\Configuration\View::setViewsPathRoot('main', 'App/Views');
 
 View\Configuration\View::setDefaultPathRoot('main');
 
@@ -27,15 +27,37 @@ function view($nombreVista, $data = null)
     return $view->render();
 } //Fin de la funcion
 
+/**
+ * Formatear un numero para mostrarlo en formato de moneda
+ */
+function formatMoney($number = 0) {
+    #Obtener el signo de la moneda desde el pais en el que se encuentra el usuario
+    $signo = getEnt('moneda.signo');
+
+    // Si el numero es diferente de 0, se debe formatear en formato numerico y agregar el signo de la moneda del pais
+    if($number != 0){
+        return $signo . number_format($number, 2);
+    } else {
+        return 0;
+    }
+}
+
 /**Obtener el nombre de un archivo almacenado en el servidor */
 function getFile($name = '')
 {
     if ($name != '') {
-        return baseUrl('files/' . $name);
+        return baseUrl('public/files/' . $name);
     }
 
     return false;
 } //Fin de la funcion
+
+/**
+ * Obtener un listado de elementos con la lista base
+ */
+function listado($data) {
+    return view('base/listado', $data);
+}
 
 /**Obtener un script de la aplicacion o externamente
  * @param string $name Nombre del script

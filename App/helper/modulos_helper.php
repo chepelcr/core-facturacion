@@ -66,8 +66,7 @@ function formatear_cedula($cedula, $tipo_cedula = '01')
 {
     $identificacion = $cedula;
     
-    if($tipo_cedula == '01')
-    {
+    if($tipo_cedula == '01') {
         //La cedula viene: 123456789
         //El formato debe ser: 01-2345-6789
 
@@ -76,10 +75,7 @@ function formatear_cedula($cedula, $tipo_cedula = '01')
         
         //Formatear la cedula
         $identificacion = substr($identificacion, 0, 2) . '-' . substr($identificacion, 2, 4) . '-' . substr($identificacion, 6, 9);
-    }
-
-    if($tipo_cedula == '02')
-    {
+    } else if($tipo_cedula == '02') {
         //El formato debe ser: 3-123-001245, sin eliminar los ceros a la izquierda
         //La cedula viene 1234567891
         //Separar la cedula en partes

@@ -11,8 +11,10 @@
 
 		private function __clone(){}
 		
-		public static function getConnect($dbGroup = 'default'){
+		public static function getConnect(){
 			$pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+
+			$dbGroup = getEnt("database.db_group");
 	
 			$host = getEnt('database.'.$dbGroup.'.host');
 			$database = getEnt('database.'.$dbGroup.'.name');
@@ -20,15 +22,15 @@
 			$user = getEnt('database.'.$dbGroup.'.user');
 			$pswd = getEnt('database.'.$dbGroup.'.pswd');
 			
-			if (!isset(self::$instance[$dbGroup])) {
-				self::$instance[$dbGroup] = new PDO('mysql:host='.$host.';dbname='.$database, $user, $pswd, $pdo_options);
+			if (!isset(self::$instance)) {
+				self::$instance = new PDO('mysql:host='.$host.';dbname='.$database, $user, $pswd, $pdo_options);
 			}//Fin de validacion de instancia de conexion
 
 			//Poner el conjunto de caracteres a utf8
-			self::$instance[$dbGroup]->exec("SET NAMES utf8");
+			self::$instance->exec("SET NAMES utf8");
 
 			//Retornar la instancia de conexion
-			return self::$instance[$dbGroup];
+			return self::$instance;
 		}//Fin de getConnect
 
 		public static function connectToPlanetScale(){
@@ -42,7 +44,7 @@
 			
 			$pdo = new PDO($dsn, $_ENV["DATABASE_USERNAME"], $_ENV["DATABASE_PASSWORD"], $options);
 
-			pdo->exec("SET NAMES utf8");
+			$pdo->exec("SET NAMES utf8");
 
 			// Query to fetch list of tables
 			$query = "SHOW TABLES";
@@ -58,9 +60,9 @@
 				echo "Successfully ran the query. No tables were found in the database.\n";
 			}
 
-			self::$instance[$dbGroup] = pdo;
+			self::$instance = $pdo;
 
-			return self::$instance[$dbGroup];
+			return self::$instance;
 		}
 	}
 	

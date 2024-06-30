@@ -17,7 +17,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="loader">
             <div class="circle-small"></div>
             <figure>
-                <img class="circle-inner-inner img-fluid" src="<?=baseUrl('files/dist/img/logo.png')?>" alt="Modas Laura">
+                <img class="circle-inner-inner img-fluid" src="<?=baseUrl('public/files/dist/img/logo.png')?>" alt="Modas Laura">
 
                 <!-- Colocar 'cargando' abajo de la imagen -->
                 <figcaption class="text-center p-5">

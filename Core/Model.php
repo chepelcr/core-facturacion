@@ -86,17 +86,12 @@ class Model
     protected $error = array();
  
 	//constructor de la clase
-	function __construct($model_name = null)
+	public function __construct($model_name = null)
     {
         //Intentar conexion a la base de datos
-		try
-        {
+		try {
             //Obtener la conexion a la base de datos
-            if($this->dbGroup!='')
-                $this->db = Conexion::getConnect($this->dbGroup);
-
-            else
-                $this->db = Conexion::getConnect();
+            $this->db = Conexion::getConnect();
         }
         
         catch (Throwable $th) {
@@ -105,8 +100,7 @@ class Model
 	}//Fin del constructor
 
     /**Establecer el nombre de una vista en el modelo */
-    public function vista($nombreVista)
-    {
+    public function vista($nombreVista) {
         $this->vistaTabla = $nombreVista;
         return $this;
     }//Fin de la funcion
@@ -119,63 +113,56 @@ class Model
     }//Fin del metodo para los campos del update
 
     /**Insertar un registro en la tabla de auditorias */
-    public function insertAuditoria($data)
-    {
-        $auditorias = new Auditorias();
-        $auditorias->insertAuditoria($data);
+    public function insertAuditoria($id, $tabla, $accion) {
+        if($this->auditorias) {
+            insertAuditoria($id, $tabla, $accion);
+        }
     }//Fin de la funcion
 
     /**Insertar un registro en la tabla de errores */
-    public function insertError($ex)
-    {
-        try
-        {
-            $id_usuario = getSession('id_usuario');
+    public function insertError($ex) {
+        try {
+            if($this->auditorias) {
+                        
+                $code = $ex->getCode();
+                $message = $ex->getMessage();
+                $file = $ex->getFile();
+                $line = $ex->getLine();
+
+                $messagecomplet = "Error generado en el archivo $file, linea $line: [Codigo de error $code] $message";
+
+                $data = array(
+                    'sentencia'=>$messagecomplet,
+                    'controlador'=>$this->nombreTabla,
+                    'id_usuario'=>getSession('id_usuario') ?? 0,
+                );
+
+                $this->error = $data;
                 
-            if(!$id_usuario)
-                $id_usuario = 0;
-                    
-            $code = $ex->getCode();
-            $message = $ex->getMessage();
-            $file = $ex->getFile();
-            $line = $ex->getLine();
-
-            $messagecomplet = "Error generado en el archivo $file, linea $line: [Codigo de error $code] $message";
-
-            $data = array(
-                'sentencia'=>$messagecomplet,
-                'controlador'=>$this->nombreTabla,
-                'id_usuario'=>$id_usuario
-            );
-
-            $this->error = $data;
-            
-            insertError($data);
+                insertError($messagecomplet, $this->nombreTabla);
+            }
         }
 
-        catch(Throwable $th)
-        {
+        catch(Throwable $th) {
             echo $th->getMessage();
         }
     }//Fin de la funcion
 
     /**Obtener el error generado en el modelo */
-    public function getError()
-    {
+    public function getError() {
         return json_decode(json_encode($this->error));
     }
 
     /**Actualizar un registro en la base de datos */
-    public function update($data, $id=null)
-    {
-        try 
-        {
+    public function update($data, $id=null) {
+        try  {
             $db = $this->query();
 
             $this->setCamposUpdate($data);
             
-            if(isset($id))
+            if(isset($id)) {
                 $this->where($this->pk_tabla, $id);
+            }
 
             $sql = $this->crearQuery('UPDATE');
 
@@ -185,47 +172,23 @@ class Model
                 $update->bindValue($campo, $valor);
             }
 
-            if(isset($id))
+            if(isset($id)) {
                 $update->bindValue($this->pk_tabla, $id);
+            }
 
             $update->execute();
 
-            /**Insertar auditoria */
-            if($this->auditorias)
-            {
-                $id_usuario = getSession('id_usuario');
+            $this->insertAuditoria($id??0, $this->nombreTabla, 'UPDATE');
 
-                if(!$id_usuario)
-                    $id_usuario = 0;
-
-                if(isset($id))
-                    $id_fila = $id;
-    
-                else
-                    $id_fila = 1;
-                    
-                $data = array(
-                    'id_fila'=> $id_fila,
-                    'tabla'=>$this->nombreTabla,
-                    'accion'=>'UPDATE',
-                    'id_usuario'=>$id_usuario
-                );
-
-                $this->insertAuditoria($data);
-            }
-
-            if(isset($id))
+            if(isset($id)) {
                 return $id;
-            
-            return true;
+            } else {
+                return true;
+            }
         }//Fin del try
 
-        catch (\Exception $ex) 
-        {
-            if($this->auditorias)
-            {
-                $this->insertError($ex);
-            }//Fin de validacion
+        catch (\Exception $ex) {
+            $this->insertError($ex);
         }//Fin del catch
 
         return false;
@@ -573,10 +536,7 @@ class Model
             
             catch (\Exception $ex) 
             {
-                if($this->auditorias)
-                {
-                    $this->insertError($ex);
-                }//Fin de validacion
+                $this->insertError($ex);
             }//Fin del catch
             
         }//Fin del if
@@ -587,15 +547,12 @@ class Model
     /**Obtener la primera fila de la tabla */
     public function fila()
     {
-        $db = $this->query();
+        try {
+            $db = $this->query();
 
-        try 
-        {
             //Si la conexion a la base de datos no es nula
-            if($db!=null)
-            {
-                if(isset($this->vistaTabla))
-                {
+            if($db!=null) {
+                if(isset($this->vistaTabla)) {
                     $this->table($this->vistaTabla);
                 }
                 
@@ -615,35 +572,25 @@ class Model
 
                 $result = $select->fetch();
 
-                //var_dump($result);
+                if($result) {
+                    $data = array();
 
-                if(!$result)
-                {
-                    return false;
-                }//Fin del if
+                    $camposTabla = $this->generarCampos();
 
-                $data = array();
-
-                $camposTabla = $this->generarCampos();
-
-                foreach ($camposTabla as $campoTabla) 
-                {
-                    if(isset($result[$campoTabla]))
+                    foreach ($camposTabla as $campoTabla) 
+                    {
+                        if(isset($result[$campoTabla])) {
                             $data[$campoTabla] = $result[$campoTabla];
-                }//Fin del ciclo
-                
-                return (object) $data;
+                        }
+                    }//Fin del ciclo
+                    
+                    return (object) $data;
+                }//Fin del if
             }//Fin del if
         }
         
-        catch (\Exception $ex) 
-        {
-            if($this->auditorias)
-            {
-                $this->insertError($ex);
-            }//Fin de validacion
-
-            return false;
+        catch (\Exception $ex) {
+            $this->insertError($ex);
         }//Fin del catch
 
         return false;
@@ -802,48 +749,25 @@ class Model
 
                 if($insert->execute())
                 {
-                    /**Insertar auditoria */
-                    if($this->auditorias)
-                    {
-                        $id_usuario = getSession('id_usuario');
-
-                        if(!$id_usuario)
-                            $id_usuario = 0;
-                            
-                        $audit = array(
-                            'id_fila'=> $data[$this->pk_tabla],
-                            'tabla'=>$this->nombreTabla,
-                            'accion' => 'INSERT',
-                            'id_usuario'=>$id_usuario
-                        );
-
-                        $this->insertAuditoria($audit);
-                    }//Fin de la insercion de auditoria
+                    //Insertar auditoria
+                    $this->insertAuditoria($data[$this->pk_tabla], $this->nombreTabla, 'INSERT');
 
                     //Si hay un dato en el campo de la llave primaria
-                    if($this->pk_tabla)
+                    if($this->pk_tabla) {
                         return $data[$this->pk_tabla];
+                    }
 
                     return true;
-                }//Fin de la ejecucion
-                
-                else
-                {
-                    return false;
-                }
-                    
+                }//Fin de la ejecucion 
             }//Fin del if
-        } 
+        }
         
         catch (\Exception $ex) 
         {
-            if($this->auditorias)
-            {
-                $this->insertError($ex);
-            }//Fin de validacion
-
-            return false;
+            $this->insertError($ex);
         }//Fin del catch
+
+        return false;
     }//Fin de la funcion
     
     /** Obtener todos los elementos de una tabla */
@@ -858,8 +782,6 @@ class Model
             {
                 if(isset($this->vistaTabla))
                     $this->table($this->vistaTabla);
-
-                    //var_dump($this->nombreTabla);
                 
                 //Crear la sentencia de ejecucion
                 $sql = $this->crearQuery();
@@ -921,12 +843,7 @@ class Model
         
         catch (\Exception $ex)
         {
-            //var_dump($ex);
-
-            if($this->auditorias)
-            {
-                $this->insertError($ex);
-            }//Fin de validacion
+            $this->insertError($ex);
         }//Fin del catch
 
         return false;
@@ -962,10 +879,7 @@ class Model
         
         catch (\Exception $ex) 
         {
-            if($this->auditorias)
-            {
-                $this->insertError($ex);
-            }//Fin de validacion
+            $this->insertError($ex);
         }//Fin del catch
 	}//Fin de getByID
 
@@ -1007,23 +921,8 @@ class Model
     
                 if($delete->execute())
                 {
-                    /**Insertar auditoria */
-                    if($this->auditorias)
-                    {
-                        $id_usuario = getSession('id_usuario');
-    
-                        if(!$id_usuario)
-                            $id_usuario = 0;
-                            
-                        $data = array(
-                            'id_fila'=> $id,
-                            'tabla'=>$this->nombreTabla,
-                            'accion' => 'DELETE',
-                            'id_usuario'=>$id_usuario
-                        );
-    
-                        $this->insertAuditoria($data);
-                    }
+                    //Insertar auditoria
+                    $this->insertAuditoria($id, $this->nombreTabla, 'DELETE');
     
                     return $id;
                 }//Fin del if
@@ -1034,16 +933,16 @@ class Model
         
         catch (\Exception $ex) 
         {
-            if($this->auditorias)
-            {
-                $this->insertError($ex);
-            }//Fin de validacion
+            $this->insertError($ex);
         }//Fin del catch
 	}//Fin de la funcion delete
 
     private function query()
     {
+        if($this->db==null){
+            $this->db = Conexion::getConnect();
+        }
+
         return $this->db;
     }//Fin de la funcion
 }//Fin de la clase principal del modelo
-?>
