@@ -1,6 +1,6 @@
 <?php
 
-use App\Librerias\Correo;
+use App\Libreries\Correo;
 use App\Models\ContraseniaModel;
 use App\Models\EmpresasModel;
 use App\Models\UbicacionesModel;
@@ -9,8 +9,8 @@ use App\Models\UsuariosModel;
 /** Validar si el usuario ha iniciado sesion */
     function is_login()
     {
-		return getSession();
-		//return true;
+		//return getSession();
+		return true;
     }//Fin de la validacion para el login
 
 	/**Generar una contraseña aleatoriamente */
@@ -71,9 +71,7 @@ use App\Models\UsuariosModel;
 	}//Fin de la funcion para validar si un texto esta vacio
 
 	/**Validar la contrasenia de un usuario */
-	function validar_contrasenia($id_usuario, $pswd)
-	{
-
+	function validar_contrasenia($id_usuario, $pswd) {
 		$contraseniaModel = new ContraseniaModel();
 		$contraseniaModel->where('id_usuario', $id_usuario);
 

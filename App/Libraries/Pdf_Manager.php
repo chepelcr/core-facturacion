@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Librerias;
+namespace App\Libraries;
+
 use Dompdf\Dompdf;
 
 class Pdf_Manager extends Dompdf

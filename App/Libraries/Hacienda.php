@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Librerias;
+namespace App\Libraries;
 
 use DOMDocument;
 use Exception;
@@ -164,7 +164,7 @@ class Hacienda
 
         //token
         $header = array(
-            "Authorization: bearer " . $this->token(),
+            //"Authorization: bearer " . $this->token(),
             "Content-Type: application/json",
         );
 

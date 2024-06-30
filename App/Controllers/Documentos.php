@@ -2,11 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Librerias\Correo;
-use App\Librerias\Hacienda;
-use App\Librerias\Myqr;
-use App\Librerias\Pdf_Manager;
-use App\Librerias\Reportes;
+use App\Libraries\Correo;
+use App\Libraries\Hacienda;
+use App\Libraries\Myqr;
+use App\Libraries\Pdf_Manager;
+use App\Libraries\Reportes;
 use App\Models\ClientesModel;
 use App\Models\ConsecutivosModel;
 use App\Models\DocumentoModel;
@@ -18,8 +18,7 @@ use DOMDocument;
 class Documentos extends BaseController
 {
     /**Cargar los documentos electronicos */
-    public function index()
-    {
+    public function index() {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
@@ -41,8 +40,7 @@ class Documentos extends BaseController
     } //Fin de la funcion index
 
     /**Abrir el submodulo de ventas*/
-    public function facturacion()
-    {
+    public function facturacion() {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
@@ -66,8 +64,7 @@ class Documentos extends BaseController
     } //Fin de la funcion facturacion
 
     /**Cargar documentos emitidos */
-    public function emitidos()
-    {
+    public function emitidos() {
         if (is_login()) {
             $script = '<script>
                 $(document).ready(function(){
@@ -89,8 +86,7 @@ class Documentos extends BaseController
     } //Fin de la funcion emitidos
 
     /**Abrir el submodulo de importar */
-    public function importar()
-    {
+    public function importar() {
         if (is_login()) {
             if(getSegment(3) == 'form')
             {
@@ -120,8 +116,7 @@ class Documentos extends BaseController
     } //Fin de la funcion importar
 
     /**Validar el estado los documentos que se encuentran en proceso en el ministerio de hacienda */
-    public function validar_documentos()
-    {
+    public function validar_documentos() {
         if (!is_login()) {
             return json_encode(array(
                 'error' => 'login',
@@ -180,16 +175,13 @@ class Documentos extends BaseController
     }//Fin de la funcion validar_documentos
 
     /**Obtener los indicadores de compra y venta desde el banco central */
-    public function indicadores()
-    {
+    public function indicadores() {
         return json_encode(obtenerInidicadores(getSegment(3)));
     }//Fin de la funcion indicadores
 
     /**Enviar un documento por correo electronico */
-    public function enviar_documento()
-    {
-        if(is_login())
-        {
+    public function enviar_documento() {
+        if(is_login()) {
             $data = array(
                 'status' => 'error',
                 'error' => 'No se pudo enviar el documento',
@@ -218,8 +210,7 @@ class Documentos extends BaseController
     }
 
     /**Cargar los documentos de la empresa */
-    public function cargar_documentos()
-    {
+    public function cargar_documentos() {
         if (is_login()) {
             $model = new DocumentoModel();
             $model->empresa(getSession('id_empresa'));
@@ -269,8 +260,7 @@ class Documentos extends BaseController
     }
 
     /**Validar el estado de un documento en el ministerio de hacienda */
-    public function validar_documento()
-    {
+    public function validar_documento() {
         if (is_login()) {
             if (getSegment(3)) {
                 $id_documento = getSegment(3);
@@ -344,10 +334,8 @@ class Documentos extends BaseController
     }
 
     /**Enviar un documento al ministerio de hacienda */
-    public function enviar_hacienda()
-    {
-        if(!is_login())
-        {
+    public function enviar_hacienda() {
+        if(!is_login()) {
             return json_encode(array(
                 'status' => 'error',
                 'error' => 'login'
@@ -357,25 +345,21 @@ class Documentos extends BaseController
         $documentoModel = model('documento');
         $documento = $documentoModel->obtener(getSegment(3));
 
-        if($documento)
-        {
+        if($documento) {
             $hacienda = new Hacienda();
             $enviar = $hacienda->enviar_documento(getSegment(3));
 
-            if($enviar)
-            {
+            if($enviar) {
                 return json_encode(array(
                     'status' => 'success',
                     'mensaje' => 'Documento enviado correctamente',
                 ));
             }
         }
-
     }//Fin de la function para enviar un documento al ministerio de hacienda
 
     /**Obtener todos los productos */
-    public function get_productos()
-    {
+    public function get_productos() {
         if (is_login()) {
             $model = model('productos');
 
@@ -395,8 +379,7 @@ class Documentos extends BaseController
     } //Fin de la funcion get_productos
 
     /**Obtener todos los clientes */
-    public function get_clientes()
-    {
+    public function get_clientes() {
         if (is_login()) {
             $model = model('clientes');
 
@@ -416,8 +399,7 @@ class Documentos extends BaseController
     } //Fin de la funcion get_clientes
 
     /**Emitir un tiquete electronico */
-    public function tiquete()
-    {
+    public function tiquete() {
         if (is_login()) {
             $id_tipo_documento = '04';
 
@@ -430,9 +412,10 @@ class Documentos extends BaseController
             header('Location: ' . baseUrl());
     } //Fin de la funcion para emitir un tiquete electronico
 
-    /**Emitir una factura electronica */
-    public function factura()
-    {
+    /**
+     * 
+     */
+    public function factura() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -447,8 +430,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una factura electronica
 
     /**Emitir una factura electronica de compra */
-    public function factura_compra()
-    {
+    public function factura_compra() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -463,8 +445,7 @@ class Documentos extends BaseController
     }//Fin de la funcion para emitir una factura electronica de compra
 
     /** Emitir una factura de exportacion */
-    public function factura_exportacion()
-    {
+    public function factura_exportacion() {
         if (is_login()) {
             $numero_documento = getSegment(3);
 
@@ -477,8 +458,7 @@ class Documentos extends BaseController
     }//Fin de la funcion para emitir una factura de exportacion
 
     /**Emitir una nota de credito (03) */
-    public function nota_credito()
-    {
+    public function nota_credito() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -493,8 +473,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una nota de credito
 
     /**Emitir una nota de debito (02) */
-    public function nota_debito()
-    {
+    public function nota_debito() {
         if (is_login()) {
 
             $numero_documento = getSegment(3);
@@ -509,8 +488,7 @@ class Documentos extends BaseController
     } //Fin de la funcion para emitir una nota de debito
 
     /**Obtener un boton para el nuevo documento */
-    public function get_boton()
-    {
+    public function get_boton() {
         if (is_login()) {
             $numero_documento = getSegment(3);
 
@@ -524,8 +502,7 @@ class Documentos extends BaseController
     } //Fin de la funcion get_boton
 
     /**Buscar un cliente por identificacion */
-    public function buscar_cliente()
-    {
+    public function buscar_cliente() {
         if (is_login()) {
             if (getSegment(3)) {
                 $identificacion = getSegment(3);
@@ -556,8 +533,7 @@ class Documentos extends BaseController
     } //Fin de la funcion buscar_cliente
 
     /**Obtener un documento en pdf */
-    public function ver_pdf()
-    {
+    public function ver_pdf() {
         if (is_login()) {
             $clave = getSegment(3);
 
@@ -573,8 +549,7 @@ class Documentos extends BaseController
     }
 
     /**Guardar un  documento electronico*/
-    public function guardar($objeto = null)
-    {
+    public function guardar($objeto = null) {
         if (is_login()) {
             $cantidad_lineas = 0;
 
@@ -1237,8 +1212,10 @@ class Documentos extends BaseController
                 }//Fin de validacion de codigo
             }//Fin del ciclo para recorrer las lineas
 
-            /**Si el documento no es un tiquete electronico y hay un receptor asignado,
-             * agregar informacion del cliente en la factura */
+            /**
+             * Si el documento no es un tiquete electronico y hay un receptor asignado,
+             * agregar informacion del cliente en la factura 
+             */
             if ($id_tipo_documento != '04' && $receptor) {
                 $data_factura = array(
                     "consecutivo" => $consecutivo,

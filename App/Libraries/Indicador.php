@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Librerias;
+namespace App\Libraries;
 
 use App\Models\TipoCambioModel;
 use Exception;

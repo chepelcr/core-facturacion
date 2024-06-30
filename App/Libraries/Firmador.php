@@ -1,5 +1,7 @@
 <?php
-namespace App\Librerias;
+
+namespace App\Libraries;
+
 use JRTEC\XMLSecLibs_Hacienda\XMLSecurityDSig;
 use JRTEC\XMLSecLibs_Hacienda\XMLSecurityKey;
 

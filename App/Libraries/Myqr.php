@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Librerias;
+namespace App\Libraries;
+
 use PHPQRCode\QRcode;
 
 class Myqr extends QRcode {

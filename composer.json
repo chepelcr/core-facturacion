@@ -1,15 +1,14 @@
 {
-    "name": "modas_laura/facturacion_electronica",
-    "description": "Proyecto personal para el curso de multimedios",
+    "name": "jcampos/facturacion_electronica",
+    "description": "Sistema de facturación electrónica para el uso de diferentes empresas.",
     "type": "project",
     "authors": [
         {
-            "name": "chepelcr",
+            "name": "JCampos",
             "email": "chepelcr@outlook.com"
         }
     ],
     "minimum-stability": "stable",
-    
     "require": {
 		"php": "^7.3||^8.0",
 		"phpmailer/phpmailer": "^6.5",
