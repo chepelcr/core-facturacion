@@ -18,7 +18,8 @@
         "pendalff/phpqrcode": "^1.0",
         "phpbook/view": "^1.0",
         "robrichards/xmlseclibs": "^3.1",
-		"jrtec/xmlseclibs_hacienda": "^1.0"
+		"jrtec/xmlseclibs_hacienda": "^1.0",
+        "aws/aws-sdk-php": "^3.315"
 
 	},
     "autoload": {

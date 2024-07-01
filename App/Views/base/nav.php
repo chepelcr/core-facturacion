@@ -25,11 +25,11 @@
             <!-- Modulos -->
             <?php foreach ($modulos as $modulo):
             $nombre_modulo = $modulo->nombre_modulo;
-            $nombre_vista = $modulo->nombre_vista;
+            $nombre_vista = ucfirst($modulo->nombre_modulo);
             $icono = $modulo->icono;
-            $submodulos = $modulo->submodulos;
+            //$submodulos = $modulo->submodulos;
 
-            if(count((array) $submodulos) > 0):
+            /*if(count((array) $submodulos) > 0):
         ?>
 
             <li class="nav-item dropdown">
@@ -105,19 +105,19 @@
             </li>
 
             <?php
-                else:
+                else:*/
             ?>
 
                 <li class="nav-item">
                     <button class="btn btn-secondary nav-modulo nav-<?=$nombre_modulo?>" data-toggle="tooltip"
                     title="<?=$nombre_vista?>" onclick="cargar_inicio_modulo('<?= $modulo->nombre_modulo?>')"
                         type="button">
-                        <i class="fa <?=$icono?> nav-icon"></i>
+                        <i class="fa <?=$icono?> nav-icon"></i> <?= " $nombre_vista"?>
                     </button>
                 </li>
 
                 <?php
-                endif;
+                //endif;
             endforeach;
         ?>
         </ul>

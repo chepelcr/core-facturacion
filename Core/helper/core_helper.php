@@ -29,6 +29,18 @@ function model($model_name = null)
     return false;
 }//Fin de la funcion
 
+
+/**Mostrar una imagen como un icono personalizado 
+ * @param string $icono: Nombre de la imagen ubicada en la carpeta public/files/dist/img/icons
+ * @param string $alt: Texto alternativo para la imagen
+ * @param string $class: Clase CSS para la imagen
+*/
+function icono($icono, $alt, $class = null)
+{
+    return '<!-- Icono con imagen personalizada -->
+        <img src="'.getFile('dist/img/icons/'.$icono).'" alt="'.$alt.'" class="img-fluid icn '.$class.'">';
+}
+
 /**Obtener la localizacion de la aplicacion para almacenar archivos
  * $carpeta: nombre de la carpeta
  * @return string
