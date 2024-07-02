@@ -14,7 +14,7 @@ class DetailsApi extends IvoisApi {
      * Constructor de la clase
      */
     public function __construct($taxpayerId) {
-        parent::__construct(getEnt("ivois.api.details.url"));
+        parent::__construct(getEnt("ivois.api.taxpayers.url"));
 
         $this->productsUrl = getEnt("ivois.api.details.products.url");
 

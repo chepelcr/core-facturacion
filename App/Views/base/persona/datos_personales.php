@@ -75,7 +75,7 @@
 
             <div class="col-md-4">
                 <div class="form-group">
-                    <label class="text-left">Pais</label>
+                    <label class="text-left">Nacionalidad</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>

@@ -58,7 +58,7 @@
 
                     <?php
                         else:
-                            if($estado == 0):
+                            if($estado == 2):
                     ?>
                     <!-- Si el estado del usuario es 0, activar -->
                     <button onclick="habilitar('<?= $id ?>', '<?= $objeto ?>');" type="button"
@@ -107,7 +107,7 @@
 
                     <?php
                         else:
-                            if($estado == 0):
+                            if($estado == 2):
                     ?>
                     <!-- Si el estado del usuario es 0, activar -->
                     <button onclick="habilitar('<?= $id ?>', '<?= $objeto ?>');" type="button"

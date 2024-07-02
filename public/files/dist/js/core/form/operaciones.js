@@ -186,18 +186,37 @@ function llenarFrm(objeto, titulo, nombre_form = '', ver = false) {
     if (objeto) {
         $.each(objeto, function (key, valor) {
             if (key == 'identification') {
+                activar_campos_contribuyente(false, nombre_form);
+
                 var identificacion = valor.number;
-                var tipo_identificacion = valor.code;
+                var tipoIdentificacion = valor.code;
 
-                identificacion = formatear_cedula(identificacion, tipo_identificacion);
+                identificacion = formatear_cedula(identificacion, tipoIdentificacion);
 
-                console.log(identificacion);
-                console.log(valor);
+                //llenar_identificacion(objeto.businessName, identificacion, tipoIdentificacion, nombre_form);
 
                 $('#' + nombre_form).find(".identification_number").val(identificacion);
-                $('#' + nombre_form).find(".identification_typeId").val(valor.typeId);
+                
+                const identifications = $('#' + nombre_form).find(".identification_typeId option");
+
+                console.log(identifications);
+
+                //Recorrer los options con un each
+                $.each(identifications, function (i, option) {
+                    //Si el data-code es igual al tipo de identificacion
+                    if ($(option).data('code') == tipoIdentificacion) {
+                        console.log('entro');
+                        option.selected = true;
+                    } else {
+                        console.log('no entro');
+                        option.selected = false;
+                    }
+                });
+
+                activar_campos_contribuyente(false, form_activo);
+
             } else if(key == 'residence') {
-                //llenarUbicacion(valor);
+                llenarUbicacion(valor, ver);
             } else if(key == 'personalPhone') {
                 $('#' + nombre_form).find(".personalPhone_number").val(valor.number);
                 $('#' + nombre_form).find(".personalPhone_countryCode").val(valor.countryCode);
@@ -323,7 +342,7 @@ function validar(elemento = '', objeto = '') {
 /**Activar un objeto en la base de datos */
 function habilitar(id, objeto) {
     $.ajax({
-        "url": base + modulo_activo + "/activar/" + id + "/" + submodulo_activo,
+        "url": base + modulo_activo + "/activar/" + submodulo_activo + "/" + id,
         "method": "get",
         "dataType": "json",
     }).done(function (response) {
@@ -350,7 +369,7 @@ function habilitar(id, objeto) {
 /**Desactivar un objeto de la base de datos */
 function deshabilitar(id, objeto) {
     $.ajax({
-        "url": base + modulo_activo + "/desactivar/" + id + "/" + submodulo_activo,
+        "url": base + modulo_activo + "/desactivar/" + submodulo_activo + "/" + id,
         "method": "get",
         "dataType": "json",
     }).done(function (response) {
@@ -397,12 +416,15 @@ function obtener(id, objeto, ver = false) {
             llenarFrm(response, 'Editar ' + objeto, 'frm_' + modulo_activo + '_' + submodulo_activo, ver);
 
             if (objeto == 'usuario') {
-                activar_campos_cedula(true, form_activo);
+                //activar_campos_cedula(true, form_activo);
             }
 
             if (objeto == 'cliente') {
-                activar_campos_cedula(true, form_activo);
-                llenarUbicacion(response.residence, ver);
+                //activar_campos_cedula(true, form_activo);
+                
+                if(response.tradeName == null) {
+                    $('#' + form_activo).find('.tradeName').val(response.businessName);
+                }
             }
 
             if (objeto == 'producto') {

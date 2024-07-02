@@ -248,8 +248,9 @@ function desactivar_ubicaciones(estado = true, ver = false) {
     if(ver) {
         activar_campo_clase('residence_countryCode', estado, elemento_activo);
     } else {
-        activar_campo_clase('residence_countryCode', true, elemento_activo);
+        activar_campo_clase('residence_countryCode', false, elemento_activo);
     }
+
     activar_campo_clase('residence_countyId', estado, elemento_activo);
     activar_campo_clase('residence_districtId', estado, elemento_activo);
     activar_campo_clase('residence_neighborhoodId', estado, elemento_activo);

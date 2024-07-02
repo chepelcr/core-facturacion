@@ -1,14 +1,16 @@
 <div class="card card-table">
     <div class="card-body">
-        <table class="table table-bordered table-hover text-center" id="<?=$nombre_tabla?>">
+        <table class="table table-bordered table-hover text-center mx-auto w-auto" id="<?=$nombre_tabla?>">
             <?php
                 if(isset($nombreTable))
                 {
-                    if(isset($dataTable))
+                    if(isset($dataTable)) {
                         echo view($nombreTable, $dataTable);
+                    }
 
-                    else
+                    else {
                         echo view($nombreTable);
+                    }
                 }//Fin de la validacion
             ?>
         </table>

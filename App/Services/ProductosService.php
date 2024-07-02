@@ -33,7 +33,7 @@ class ProductosService extends BaseService {
         $productos = $this->getData('all', $filters);
  
         if(isset($productos->error)) {
-            return json_encode($productos);
+            return $productos;
         }
 
         $estado = 'all';
@@ -97,5 +97,11 @@ class ProductosService extends BaseService {
         $productosApi = new DetailsApi(getEnt('ivois.api.taxpayer.id'));
 
         return $productosApi->updateDetail($id, $data);
+    }
+
+    public function create($data) {
+        $productosApi = new DetailsApi(getEnt('ivois.api.taxpayer.id'));
+
+        return $productosApi->saveProduct($data);
     }
 }

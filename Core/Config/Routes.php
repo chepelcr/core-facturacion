@@ -60,23 +60,27 @@ class Routes
             case 'guardar':
                 /**Si la solicitud contiene datos */
                 if (post()) {
-                    if (getSegment(3))
-                        echo $controller->guardar(getSegment(3));
-
-                    /**Realizar la accion por defecto del metodo */
-                    else
-                        echo $controller->guardar();
+                    if (getSegment(3)) {
+                        $controller->setObjectName(getSegment(3));
+                        echo $controller->guardar($_POST);
+                    } else {
+                        echo $controller->guardar($_POST);
+                    }
                 } //Fin de la validacion de la solicitud
 
                 else
                     header('Location: ' . baseUrl(getSegment(1)));
                 break;
 
-                //Obtener una fila especifica del objeto solicitado  
+                //Obtener una fila especifica del objeto solicitado
                 //http://localhost/controlador/update/objeto/id
             case 'update':
                 if (post()) {
                     if (getSegment(3) && getSegment(4)) {
+                        /*var_dump("If de 3 y 4");
+                        var_dump(getSegment(3));
+                        var_dump(getSegment(4));*/
+
                         $controller->setObjectName(getSegment(3));
                         echo $controller->update(getSegment(4), $_POST);
                     } elseif (getSegment(3)) {
@@ -93,15 +97,11 @@ class Routes
                 //http://localhost/controlador/activar/objeto/id
             case 'activar':
                 if (getSegment(3) && getSegment(4)) {
-                    echo $controller->activar(getSegment(4), getSegment(3));
-                }
-
-                /**Realizar la accion por defecto del metodo */
-                elseif (getSegment(3)) {
+                    $controller->setObjectName(getSegment(3));
+                    echo $controller->activar(getSegment(4));
+                } elseif (getSegment(3)) {
                     echo $controller->activar(getSegment(3));
-                }
-
-                else {
+                } else {
                     echo $controller->activar();
                 }
                 break;
@@ -109,15 +109,14 @@ class Routes
                 //Desactivar un objeto especifico
                 //http://localhost/controlador/desactivar/objeto/id
             case 'desactivar':
-                if (getSegment(3) && getSegment(4))
-                    echo $controller->desactivar(getSegment(4), getSegment(3));
-
-                /**Realizar la accion por defecto del metodo */
-                elseif (getSegment(3))
+                if (getSegment(3) && getSegment(4)) {
+                    $controller->setObjectName(getSegment(3));
+                    echo $controller->desactivar(getSegment(4));
+                } elseif (getSegment(3)) {
                     echo $controller->desactivar(getSegment(3));
-
-                else
+                } else {
                     echo $controller->desactivar();
+                }
                 break;
 
             case 'obtener':
@@ -143,14 +142,15 @@ class Routes
             case 'validar':
                 /**Validar si un campo una fila especifica del objeto solicitado 
                  *
-                 * http://localhost/controlador/validar/objeto
+                 * http://localhost/controlador/validar/id/objeto
                  */
-                if (getSegment(3)) {
+                if (getSegment(4)) {
+                    $controller->setObjectName(getSegment(4));
                     echo $controller->validar(getSegment(3));
                 }
                 /**Realizar la accion por defecto del metodo */
                 else {
-                    echo $controller->validar();
+                    echo $controller->validar(getSegment(3));
                 }
                 break;
 

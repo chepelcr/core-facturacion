@@ -24,10 +24,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <!--DataTables-->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
-
-<!-- DataTables || Select -->
-<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.4/css/select.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-2.0.8/sl-2.0.3/datatables.min.css">
 
 <!-- Estilo personalizado -->
 <link rel="stylesheet" href="<?=getFile('dist/css/estilos.css')?>">

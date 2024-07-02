@@ -93,15 +93,15 @@ function formatear_cedula(cedula, tipo_cedula = "01") {
 
 /**Vaciar los campos relacionados con la cedula de un contribuyente */
 function vaciar_cedula() {
-    $("#" + form_activo).find(".identificacion").val('');
-    $("#" + form_activo).find(".nombre").val('');
-    $("#" + form_activo).find(".id_tipo_identificacion").val('');
-    $("#" + form_activo).find(".cod_pais").val('');
+    $("#" + form_activo).find(".identification_number").val('');
+    $("#" + form_activo).find(".businessName").val('');
+    $("#" + form_activo).find(".identification_typeId").val('');
+    $("#" + form_activo).find(".nationality").val('');
 
     activar_campos_contribuyente(true, form_activo);
 
-    $("#" + form_activo).find(".identificacion").attr("disabled", false);
-    $("#" + form_activo).find(".identificacion").attr("readonly", false);
+    $("#" + form_activo).find(".identification_number").attr("disabled", false);
+    $("#" + form_activo).find(".identification_number").attr("readonly", false);
 
     formato = false;
 }//Fin de vaciar los campos relacionados con la cedula de un contribuyente

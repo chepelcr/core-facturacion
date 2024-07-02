@@ -180,13 +180,15 @@
         }//Fin de la funcion para obtener objetos de la aplicacion
 
         /**Validar si existe un objeto de la base de datos por código */
-        public function validar($objeto = null) {
+        public function validar($id = null) {
             
             $validacion = false;
+            $objeto = $this->modelName;
+            
 
             if($this->isModulo) {
                 //Si el objeto no es nulo, y se encuentra registrado en el modulo
-                if(!is_null($objeto) && in_array($objeto, $this->objetos)) {
+                if(in_array($objeto, $this->objetos)) {
                     //Validar si el usuario tiene que iniciar sesion para obtener los datos
                     if(isset($this->loginValidation[$objeto])) {
                         $loginValidation = $this->loginValidation[$objeto];
@@ -220,14 +222,15 @@
                     return $this->dataError(4, 'Debe iniciar sesion para obtener la informacion');
                 }
             } else {
-                $validacion = $service->validarExistencia($_GET);
+                $validacion = $service->validarExistencia($id);
             }
 
             return json_encode($validacion);
         }//Fin de la validacion de un objeto
 
         /**Desactivar un objeto de la base de datos */
-        public function desactivar($id = '', $objeto = null) {
+        public function desactivar($id = '') {
+            $objeto = $this->modelName;
             $loginValidation = false;
 
             /**Validar si el controlador es un modulo */
@@ -305,7 +308,8 @@
         }//Fin de la funcion para desactivar un objeto
 
         /**Activar un objeto de la base de datos */
-        public function activar($id = '', $objeto = null) {
+        public function activar($id = '') {
+            $objeto = $this->modelName;
             $loginValidation = false;
 
             /**Validar si el controlador es un modulo */

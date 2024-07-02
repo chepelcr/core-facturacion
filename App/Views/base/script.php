@@ -25,10 +25,7 @@
 <?=getScript('https://kit.fontawesome.com/3e7bda16db.js', true, "anonymous")?>
 
 <!-- Plugins | DataTables-->
-<?=getScript('https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js', true, "", "utf8")?>
-
-<!-- DataTables || Select -->
-<?=getScript('https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js', true)?>
+<?=getScript('https://cdn.datatables.net/v/dt/dt-2.0.8/sl-2.0.3/datatables.min.js', true, "", "utf8")?>
 
 <!-- Plugins | Modernizr -->
 <?=getScript('plugins/modernizr-custom/modernizr-custom')?>

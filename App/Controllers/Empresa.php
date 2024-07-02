@@ -128,7 +128,21 @@ class Empresa extends BaseController {
                 if(getSegment(3) == 'listado'){
                     $productosService = new ProductosService();
 
-                    return $productosService->getProductsListView($_GET);
+                    $productosView = $productosService->getProductsListView($_GET);
+
+                    var_dump($productosView);
+                    
+                    if(isset($productosView->error)) {
+                        $data = array(
+                            'error' => $productosView->error,
+                            'codigo' => $productosView->status
+                        );
+
+                        return $this->error($data);
+                    } else {
+                        return $productosView;
+                    }
+
                 } else {
                     $script = '<script type="text/javascript" >
                         //Cuando el documento esta listo, cargar los productos
@@ -187,185 +201,92 @@ class Empresa extends BaseController {
     public function update($id, $data) {
         $objeto = $this->modelName;
 
+        //var_dump($objeto);
+
         if (in_array($objeto, $this->objetos)) {
             if (is_login()) {
-                if(validar_permiso('empresa', $objeto, 'actualizar')) {
+                if(validar_permiso('empresa', $objeto, 'modificar')) {
                     if($objeto == 'productos') {
                         $productosService = new ProductosService();
 
-                        return $productosService->update($id, $data);
-                    } else if ($objeto == 'clientes') {
+                        $result = $productosService->update($id, $data);
+                    } elseif ($objeto == 'clientes') {
                         $clientesService = new ClientesService();
 
-                        return $clientesService->update($id, $data);
+                        $result = $clientesService->update($id, $data);
                     }
 
+                } else {
+                    $result = array(
+                        'error' => 'No tiene permisos para realizar esta acción'
+                    );
                 }
-
-                /*switch ($objeto) {
-                    /*case 'productos':
-                        $valor_unitario = post('valor_unitario');
-                        $impuesto = post('impuesto');
-
-                        $valor_impuesto = $valor_unitario * $impuesto / 100;
-                        $valor_total = $valor_unitario + $valor_impuesto;
-
-                        //Colocar con dos decimales
-                        $valor_unitario = number_format($valor_unitario, 2, '.', '');
-                        $valor_impuesto = number_format($valor_impuesto, 2, '.', '');
-
-                        $data = array(
-                            'descripcion' => post('descripcion'),
-                            'id_unidad' => post('id_unidad'),
-                            'unidad_empaque' => post('unidad_empaque'),
-                            'codigo_cabys' => post('codigo_cabys'),
-                            'impuesto' => post('impuesto'),
-                            'id_categoria' => post('id_categoria'),
-                            'valor_unitario' => post('valor_unitario'),
-                            'valor_impuesto' => $valor_impuesto,
-                            'valor_total' => $valor_total,
-                        );
-
-                        if ($model->update($data, $id)) {
-                            return json_encode(array('success' => 'Se ha actualizado el producto'));
-                        }
-                        break;
-
-                    case 'clientes':
-                        $data = array(
-                            'nombre_comercial' => post('nombre_comercial'),
-                            'correo' => post('correo'),
-                            'id_ubicacion' => post('id_ubicacion'),
-                            'otras_senas' => post('otras_senas'),
-                            'telefono' => post('telefono'),
-                        );
-
-                        if ($model->update($data, $id)) {
-                            return json_encode(array('success' => 'Se ha actualizado el cliente'));
-                        }
-                        break;
-                }*/
-
-                return json_encode(array(
-                    'error' => 'Se ha generado un error'
-                ));
-            } //Fin de la validación de permisos
-
-            return json_encode(array(
-                'error' => 'No ha iniciado sesión'
-            ));
-        } //Fin de la validacion de objeto
-
-        else {
-            return json_encode(array(
-                'error' => 'Ha ocurrido un error'
-            ));
+            } else {
+                $result = array(
+                    'error' => 'No ha iniciado sesion'
+                );
+            }
+        } else {
+            $result = array(
+                'error' => 'Acceso no autorizado'
+            );
         }
+
+        return json_encode($result);
     } //Fin de la función para actualizar un producto
 
     /**Guardar un cliente en la base de datos */
-    public function guardar($objeto = null) {
+    public function guardar($data = null) {
         if (!is_login()) {
-            return json_encode(array(
+            $result = array(
                 'error' => 'No ha iniciado sesion',
-            ));
+            );
         }
+
+        $objeto = $this->modelName;
 
         if (validar_permiso('empresa', $objeto, 'insertar')) {
             if (!is_null($objeto) && in_array($objeto, $this->objetos)) {
-                switch ($objeto) {
-                    case 'productos':
-                        $valor_unitario = post('valor_unitario');
-                        $impuesto = post('impuesto');
+                if($objeto == 'productos') {
+                    $productosService = new ProductosService();
+                    
 
-                        $valor_impuesto = $valor_unitario * $impuesto / 100;
-                        $valor_total = $valor_unitario + $valor_impuesto;
+                    $result = $productosService->create($data);
+                    $objeto = 'producto';
+                } elseif ($objeto == 'clientes') {
+                    $clientesService = new ClientesService();
 
-                        //Colocar con dos decimales
-                        $valor_unitario = number_format($valor_unitario, 2, '.', '');
-                        $valor_impuesto = number_format($valor_impuesto, 2, '.', '');
-                        $data = array(
-                            'descripcion' => post('descripcion'),
-                            'id_unidad' => post('id_unidad'),
-                            'id_empresa' => getSession('id_empresa'),
-                            'unidad_empaque' => post('unidad_empaque'),
-                            'id_categoria' => post('id_categoria'),
-                            'codigo_venta' => post('codigo_venta'),
-                            'codigo_interno' => post('codigo_interno'),
-                            'codigo_cabys' => post('codigo_cabys'),
-                            'impuesto' => post('impuesto'),
-                            'valor_unitario' => post('valor_unitario'),
-                            'valor_impuesto' => $valor_impuesto,
-                            'valor_total' => $valor_total,
-                            'estado' => 1
-                        );
+                    $identification = $data['identification']['number'];
+                    $data['identification']['number'] = desformatear_cedula($identification);
 
-                        $model = model('productos');
+                    $result = $clientesService->create($data);
+                    $objeto = 'cliente';
+                }
 
-                        $id = $model->insert($data);
-
-                        if ($id) {
-                            return json_encode(array(
-                                'success' => 'Se ha guardado el producto correctamente',
-                                'id' => $id
-                            ));
-                        } else {
-                            return json_encode(array(
-                                'error' => 'Se ha generado un error al guardar el producto'
-                            ));
-                        }
-                        break;
-
-                    case 'clientes':
-                        $identificacion = post('identificacion');
-
-                        //Eliminar los guiónes del número de identificación
-                        $identificacion = desformatear_cedula($identificacion);
-
-                        $data = array(
-                            'identificacion' => $identificacion,
-                            'id_tipo_identificacion' => post('id_tipo_identificacion'),
-                            'razon' => post('nombre'),
-                            'nombre_comercial' => post('nombre_comercial'),
-                            'correo' => post('correo'),
-                            'id_ubicacion' => post('id_ubicacion'),
-                            'otras_senas' => post('otras_senas'),
-                            'telefono' => post('telefono'),
-                            'cod_pais' => post('cod_pais'),
-                            'id_empresa' => getSession('id_empresa'),
-                            'estado' => 1
-                        );
-
-                        //var_dump($data);
-
-                        $model = model('clientes');
-
-                        $id = $model->insert($data);
-
-                        if ($id) {
-                            return json_encode(array(
-                                'success' => 'Se ha guardado el cliente correctamente',
-                                'id' => $id
-                            ));
-                        } else {
-                            return json_encode(array(
-                                'error' => 'Se ha generado un error al guardar el cliente'
-                            ));
-                        }
-                        break;
+                // Si el resultato no contiene error
+                if (!isset($result->error)) {
+                    $result = array(
+                        'success' => "Se ha guardado el $objeto correctamente",
+                    );
+                } else {
+                    $result = array(
+                        'error' => "Se ha generado un error al guardar el $objeto"
+                    );
                 }
             } //Fin de la validacion de objeto
 
             else {
-                return json_encode(array(
-                    'error' => 'Ha ocurrido un error'
-                ));
+                $result = array(
+                    'error' => 'A ocurrido un error al guardar el objeto'
+                );
             }
-
-            return json_encode(array(
+        } else {
+            $result = array(
                 'error' => 'No tiene permisos para realizar esta acción'
-            ));
-        } //Fin de la validación de permisos
+            );
+        }
+
+        return json_encode($result);
     } //Fin de la función para guardar un objeto
 
     public function empresas() {

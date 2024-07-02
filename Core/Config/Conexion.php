@@ -5,25 +5,32 @@
 	
 	class Conexion
 	{
-		private static $instance=NULL;
+		private static $instance = null;
 		
 		private function __construct(){}
 
 		private function __clone(){}
 		
 		public static function getConnect(){
-			$pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-
-			$dbGroup = getEnt("database.db_group");
-	
-			$host = getEnt('database.'.$dbGroup.'.host');
-			$database = getEnt('database.'.$dbGroup.'.name');
-	
-			$user = getEnt('database.'.$dbGroup.'.user');
-			$pswd = getEnt('database.'.$dbGroup.'.pswd');
-			
 			if (!isset(self::$instance)) {
-				self::$instance = new PDO('mysql:host='.$host.';dbname='.$database, $user, $pswd, $pdo_options);
+				$pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+
+				$dbGroup = getEnt("database.db_group");
+		
+				$host = getEnt('database.'.$dbGroup.'.host');
+				$database = getEnt('database.'.$dbGroup.'.name');
+		
+				$user = getEnt('database.'.$dbGroup.'.user');
+				$pswd = getEnt('database.'.$dbGroup.'.pswd');
+
+				$port = getEnt('database.'.$dbGroup.'.port');
+			
+				if($port != ""){
+					$dsn = "mysql:host=$host;port=$port;dbname=$database";
+				} else {
+					$dsn = "mysql:host=$host;dbname=$database";
+				}
+				self::$instance = new PDO($dsn, $user, $pswd, $pdo_options);
 			}//Fin de validacion de instancia de conexion
 
 			//Poner el conjunto de caracteres a utf8

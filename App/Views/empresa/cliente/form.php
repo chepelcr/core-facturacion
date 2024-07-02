@@ -1,27 +1,16 @@
 <div class="row">
-    <div class="col-md-8">
-        <?= view('base/persona/datos_personales', $datos_personales)?>
-    </div>
-
-    <!-- Informacion de empresa-->
-    <div class="col-md-4">
-        <?php
-            if(isset($datos_empresa))
-                echo view('base/persona/nombre_empresa', $datos_empresa);
-
-            else
-                echo view('base/persona/nombre_empresa');
-        ?>
+    <div class="col-md-12">
+        <?= view('empresa/cliente/elementos/datos_personales', $datos_personales)?>
     </div>
 
     <!-- Informacion de contacto-->
     <div class="col-md-12">
         <?php
-            if(isset($datos_contacto))
+            if(isset($datos_contacto)) {
                 echo view('base/persona/contacto', $datos_contacto);
-
-            else
+            } else {
                 echo view('base/persona/contacto');
+            }
         ?>
     </div>
 

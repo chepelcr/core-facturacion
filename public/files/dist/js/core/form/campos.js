@@ -24,14 +24,10 @@ function campos_valor(estado = false , elemento = '') {
 function activar_campo_clase(clase = '', estado = false, nombre_elemento = '')
 {
     if (clase != '') {
-        if(nombre_elemento != '')
-        {
+        if(nombre_elemento != '') {
             $('#' + nombre_elemento).find("." + clase).attr("readonly", estado);
             $('#' + nombre_elemento).find("." + clase).attr("disabled", estado);
-        }
-
-        else
-        {
+        } else {
             $("." + clase).attr("readonly", estado);
             $("." + clase).attr("disabled", estado);
         }
@@ -122,9 +118,10 @@ function campos_cabys(estado, elemento = '') {
 
 /**Activar o desactivar campos de un contribuyente */
 function activar_campos_contribuyente(estado = false, elemento = '') {
-    activar_campo_clase('id_tipo_identificacion', estado, elemento);
-    activar_campo_clase('cod_pais', estado, elemento);
-    activar_campo_clase('nombre', estado, elemento);
+    activar_campo_clase('identification_typeId', estado, elemento);
+    activar_campo_clase('nationality', estado, elemento);
+    activar_campo_clase('businessName', estado, elemento);
+    activar_campo_clase('nationality', estado, elemento);
 
     if(estado)
     {

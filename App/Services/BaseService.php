@@ -9,7 +9,7 @@ abstract class BaseService {
 
     abstract public function getData($id = null, $filters = null);
 
-    #abstract public function create($data);
+    abstract public function create($data);
 
     abstract public function update($id, $data);
 

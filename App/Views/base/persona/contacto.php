@@ -25,7 +25,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                 </div>
-                                <select name="personalPhone[countryCode]" class="form-control inp personalPhone_countryCode">
+                                <select name="personalPhone[countryCode]" class="form-control inp personalPhone_countryCode" required>
                                     <option value="">Seleccionar</option>
                                     <?php foreach ($countries as $country) : ?>
                                         <option value="<?= $country->isoCode ?>" <?php if (isset($personalPhone) && $personalPhone->countryCode == $country->isoCode) {echo "selected";} ?>>

@@ -6,16 +6,28 @@ use App\Api\CustomersApi;
 use App\Api\DataServiceApi;
 use App\Api\LocationsApi;
 
-class ClientesService extends BaseService {
-    
+class ClientesService extends BaseService
+{
+
+    /**
+     * Crear un cliente
+     */
+    public function create($data)
+    {
+        $customersApi = new CustomersApi(getEnt('ivois.api.taxpayer.id'));
+
+        return $customersApi->saveCustomer($data);
+    }
+
     /**
      * Obtiene los datos de los clientes
      */
-    public function getData($id = 'all', $filters = array()) {
+    public function getData($id = 'all', $filters = array())
+    {
         $customersApi = new CustomersApi(getEnt('ivois.api.taxpayer.id'));
 
         if ($id == 'all') {
-            if(!empty($filters) && isset($filters['statusId'])) {
+            if (!empty($filters) && isset($filters['statusId'])) {
                 return $customersApi->getCustomersByStatus($filters['statusId']);
             } else {
                 return $customersApi->getCustomersByTaxpayerId();
@@ -48,16 +60,17 @@ class ClientesService extends BaseService {
     /**
      * Obtiene la vista de los clientes
      */
-    public function getCustomersListView($filters = array()) {
+    public function getCustomersListView($filters = array())
+    {
         $clientes = $this->getData('all', $filters);
 
         //var_dump($clientes);
 
-        if(isset($clientes->error)) {
+        if (isset($clientes->error)) {
             return $clientes;
         }
 
-        if(isset($filters['id_estado'])) {
+        if (isset($filters['id_estado'])) {
             $estado = $filters['id_estado'];
         } else {
             $estado = 'all';
@@ -120,25 +133,15 @@ class ClientesService extends BaseService {
     /**
      * Validar si ya existe un cliente en la plataforma
      */
-    public function validarExistencia($data) {
+    public function validarExistencia($idNumber)
+    {
         $customersApi = new CustomersApi(getEnt('ivois.api.taxpayer.id'));
 
-        # Si viene el idNumber, la nacionalidad y el id de la empresa
-        if (isset($data['idNumber']) && isset($data['nationality'])) {
-            $exist = $customersApi->getCustomerByNationalityAndIdNumber($data['nationality'], $data['idNumber']);
+        $exist = $customersApi->getCustomerByNationalityAndIdNumber(getEnt('ivois.taxpayer.nationality'), $idNumber);
 
-            $data = array(
-                'exists' => $exist,
-                'status' => 1
-            );
-
-        } else {
-            $data = array(
-                'status' => 0,
-                'error' => 'No se ha enviado la informacion necesaria para validar la existencia del cliente.'
-            );
-        }
-
-        return $data;
+        return array(
+            'exists' => $exist,
+            'status' => 1
+        );
     }
 }

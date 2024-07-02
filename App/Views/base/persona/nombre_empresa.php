@@ -30,7 +30,7 @@
                 <div class="form-group watch_logo" hidden>
                     <label for="logo">Logo</label>
                     <div class="input-group">
-                        <button type="button" class="btn btn-primary" onclick="watch_logo(<?= $logoUrl ?? '' ?>)">
+                        <button type="button" disabled class="btn btn-primary" onclick="watch_logo(<?= $logoUrl ?? '' ?>)">
                             <i class="fas fa-eye"></i> Ver logo
                         </button>
                     </div>

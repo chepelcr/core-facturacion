@@ -22,7 +22,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select onchange="obtener_provincias(this.value)" class="form-control inp residence_countryCode" name="residence[stateId]">
+                        <select onchange="obtener_provincias(this.value)" class="form-control inp residence_countryCode" name="residence[countryCode]" required>
                             <option value="">Seleccionar</option>
                             <?php foreach ($countries as $country): ?>
                             <option value="<?=$country->isoCode?>"
@@ -44,7 +44,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select onchange="obtener_cantones()" class="form-control inp residence_stateId" name="residence[stateId]">
+                        <select onchange="obtener_cantones()" class="form-control inp residence_stateId" name="residence[stateId]" required>
                             <option value="">Seleccionar</option>
                             <?php foreach ($states as $state): ?>
                             <option value="<?=$state->stateId?>"
@@ -64,7 +64,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select onchange="obtener_distritos()" class="form-control inp residence_countyId" name="residence[countyId]">
+                        <select onchange="obtener_distritos()" class="form-control inp residence_countyId" name="residence[countyId]" required>
                             <option value="">Seleccionar</option>
 
                             <!-- Si existen, recorrer cantones-->
@@ -88,7 +88,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select onchange="obtener_barrios()" class="form-control inp residence_districtId" name="residence[districtId]">
+                        <select onchange="obtener_barrios()" class="form-control inp residence_districtId" name="residence[districtId]" required>
                             <option value="">Seleccionar</option>
 
                             <!-- Si existen, recorrer districts-->
@@ -111,7 +111,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <select class="form-control inp residence_neighborhoodId" name="residence[neighborhoodId]">
+                        <select class="form-control inp residence_neighborhoodId" name="residence[neighborhoodId]" required>
                             <option value="">Seleccionar</option>
 
                             <!-- Si existen, recorrer neighborhoods-->
@@ -134,7 +134,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                         </div>
-                        <textarea class="form-control inp residence_address" name="residence[address]" cols="30" rows="3"
+                        <textarea class="form-control inp residence_address" name="residence[address]" cols="30" rows="3" required
                             placeholder="Direccion Completa"><?= $residence->address ?? '' ?></textarea>
                     </div>
                 </div>
