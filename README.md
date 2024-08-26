@@ -1,2 +1,3 @@
 # minisuper-core
- Sistema de facturacion e inventario para diversas sucursales de un minisuper.
+
+ Este repo se trasladó al repositorio llamado facturacion-aws
